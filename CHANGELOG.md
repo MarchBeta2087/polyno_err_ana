@@ -9,6 +9,9 @@
 - 社区文件：`CODE_OF_CONDUCT.md`（Contributor Covenant v2.1 摘要）、`SECURITY.md`（私有报告渠道与处理时限）
 - GitHub 模板：`.github/ISSUE_TEMPLATE/{bug_report,feature_request,config}.yml`、`PULL_REQUEST_TEMPLATE.md`
 - 注：私有仓库免费计划不支持 Pages，部署作业由仓库变量 `ENABLE_PAGES=true` 控制；转公开后开启即可
+- 开放前准备：`.github/dependabot.yml`（Actions 每周）、`.github/CODEOWNERS`、
+  `release.yml` 增加 macOS 作业（仅公开仓库执行）、检查清单
+  `docs/history/2026-11-07-open-source-checklist.md`
 
 ## v0.14.0-m14
 

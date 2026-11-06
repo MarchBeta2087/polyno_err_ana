@@ -76,6 +76,34 @@ jobs:
           name: windows
           path: dist/*.zip
 
+  macos:
+    # 公开仓库的 macOS runner 免费；私有仓库排队不稳，故仅在公开时执行
+    if: github.event.repository.private == false
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
+      - name: 构建 numextend
+        run: |
+          cmake -S numextend -B numextend/build -DCMAKE_BUILD_TYPE=Release
+          cmake --build numextend/build -j"$(sysctl -n hw.ncpu)"
+      - name: 构建（静态运行库）
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DPOLYNO_STATIC_RUNTIME=ON
+          cmake --build build -j"$(sysctl -n hw.ncpu)"
+      - name: 打包
+        run: |
+          pkg="polyno_err_ana-${GITHUB_REF_NAME}-macos-$(uname -m)"
+          mkdir -p "dist/$pkg"
+          cp build/polyno_err_ana "dist/$pkg/"
+          cp LICENSE.md README.md THIRD_PARTY.md FAQ.md "dist/$pkg/"
+          tar -C dist -czf "dist/$pkg.tar.gz" "$pkg"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: dist/*.tar.gz
+
   publish:
     # 仅发布 linux/windows：该账号的 macOS runner 排队不稳定（见 CHANGELOG v0.11.3）
     needs: [linux, windows]

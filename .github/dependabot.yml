@@ -1,0 +1,11 @@
+# 仅跟踪 GitHub Actions 版本；源码依赖（numextend submodule、GMP/MPFR tarball）
+# 由 deps.lock + scripts/verify-deps.sh 人工固定与校验。
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci"
