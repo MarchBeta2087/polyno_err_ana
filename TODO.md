@@ -15,16 +15,15 @@
 ## P2 — 发布/社区
 
 - [ ] 许可咨询：是否提供商业双许可（见 `FAQ.md` §5）——**需人工决策**
-- [ ] GMP tarball 的 `sha256` 补录（`deps.lock` 里为 `PENDING`）：本机访问 mpfr.org/gmplib.org
-      被 TLS 拦截，需在可联网环境执行 `scripts/verify-deps.sh --fill-hash`
 - [ ] 把 `mpfr/` 从 `aixoss/mpfr` 镜像切换到官方 tarball（4.2.x）+ 校验和
+      （GMP 已改用官方 tarball + sha256，见 `scripts/fetch-gmp.sh`）
 - [ ] 文档站点化（`docs/` 静态页，含表格渲染示例）
 
 ## 已完成（移出，见 CHANGELOG）
 
 - m11：Release 工作流（linux/windows 静态构建 + SHA256SUMS）、`bench/history.csv` 与 `bench_compare.sh`
 - m12：`--json` 输出、`render` 输出块、`deps.lock` + `verify-deps.sh`
-- m13：`--json-schema`、`--lang zh|en`、schema 自检
+- m13：`--json-schema`、`--lang zh|en`、schema 自检、GMP 官方 tarball 校验（`fetch-gmp.sh`）
 
 - m10：`render` 模块、`sym_mul` 增量合并（上限按结果项数判定）、快照 35 条、低精度字面量对齐
 

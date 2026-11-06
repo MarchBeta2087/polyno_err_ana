@@ -2,6 +2,13 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v0.13.1-m13
+
+- GMP 改走官方 tarball：新增 `scripts/fetch-gmp.sh`（下载 → sha256 校验 → 解压，`--tarball` 支持离线），
+  `deps.lock` 补 `gmp_url` 与 `gmp_sha256`
+- `scripts/verify-deps.sh --tarball FILE` 校验本地压缩包；CI 的 linux 作业增加依赖校验步骤
+- README/THIRD_PARTY 记录 GMP 来源与校验和
+
 ## v0.13.0-m13
 
 - 新增 `--json-schema`：输出 `schema/json_out.schema.json`（draft 2020-12），构建时嵌入二进制

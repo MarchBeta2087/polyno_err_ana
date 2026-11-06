@@ -9,7 +9,11 @@ PREFIX="${1:-$ROOT/third_party_prefix}"
 GMP_SRC="${GMP_SRC:-$ROOT/gmp-6.3.0}"
 MPFR_SRC="${MPFR_SRC:-$ROOT/mpfr}"
 
-[ -d "$GMP_SRC" ] || { echo "找不到 GMP 源码：$GMP_SRC"; exit 1; }
+[ -d "$GMP_SRC" ] || {
+    echo "找不到 GMP 源码：$GMP_SRC"
+    echo "先执行 scripts/fetch-gmp.sh（会按 deps.lock 校验 sha256）"
+    exit 1
+}
 [ -d "$MPFR_SRC" ] || { echo "找不到 MPFR 源码：$MPFR_SRC"; exit 1; }
 command -v make >/dev/null || { echo "需要 make"; exit 1; }
 command -v m4 >/dev/null || { echo "需要 m4"; exit 1; }

@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 # 校验子模块与依赖版本是否与 deps.lock 一致。
-# 用法: scripts/verify-deps.sh
+# 用法: scripts/verify-deps.sh [--tarball FILE]
+#   --tarball  额外校验本地 GMP 压缩包的 sha256（离线也可用）
 set -u
+TARBALL=""
+[ "${1:-}" = "--tarball" ] && TARBALL="${2:?--tarball 需要路径}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 LOCK="$ROOT/deps.lock"
 fail=0
@@ -36,6 +39,25 @@ if [ -d "$gmp_dir" ]; then
     fi
 else
     printf 'SKIP gmp: 源码目录不存在（仅 MPFR 内核需要）\n'
+fi
+
+if [ -n "$TARBALL" ]; then
+    if [ -f "$TARBALL" ]; then
+        want="$(get gmp_sha256)"
+        got=$(sha256sum "$TARBALL" | awk '{print $1}')
+        if [ "$got" = "$want" ]; then
+            printf 'ok   gmp tarball sha256
+'
+        else
+            printf 'DRIFT gmp tarball: 期望 %s…，实际 %s…
+' "${want:0:12}" "${got:0:12}"
+            fail=$((fail + 1))
+        fi
+    else
+        printf 'MISS gmp tarball: %s
+' "$TARBALL"
+        fail=$((fail + 1))
+    fi
 fi
 
 if [ "$fail" -eq 0 ]; then

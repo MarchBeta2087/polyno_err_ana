@@ -59,11 +59,15 @@ cmake --build build-mpfr -j
 ./build-mpfr/polyno_err_ana -V        # kernel: mpfr
 ```
 
-GMP/MPFR 需自建为静态库（本项目只链接 `.a`）。用脚本一键构建：
+GMP/MPFR 需自建为静态库（本项目只链接 `.a`）。GMP 走官方 tarball 并校验 sha256
+（`deps.lock` 里有 URL 与哈希），MPFR 用 submodule；一键构建：
 
 ```sh
-scripts/build-mpfr.sh            # 输出到 third_party_prefix/
+scripts/fetch-gmp.sh             # 下载 gmp-6.3.0.tar.xz + 校验 sha256 + 解压
+scripts/build-mpfr.sh            # GMP + MPFR 静态库 → third_party_prefix/
 ```
+
+离线时用已有压缩包：`scripts/fetch-gmp.sh --tarball /path/gmp-6.3.0.tar.xz`。
 
 Windows 需在 MSYS2 MINGW64 环境（`pacman -S --needed mingw-w64-x86_64-gcc make m4`）；
 GCC 14+ 默认 C23 会让 GMP 的 long-long 探针失败，脚本已加 `-std=gnu17`。
@@ -117,7 +121,8 @@ tests/cases.txt        快照用例（CTest: snapshot）
 tests/snapshots/       期望输出（与内核无关）
 src/json_out.hpp|cpp  JSON 输出（--json）
 src/render.hpp|cpp    表格渲染与输出块
-deps.lock             依赖版本锁定（scripts/verify-deps.sh 校验）
+deps.lock             依赖锁定（提交号 + GMP URL/sha256；scripts/verify-deps.sh 校验）
+scripts/fetch-gmp.sh  GMP 源码获取与校验（--tarball 支持离线）
 schema/json_out.schema.json  --json 的 JSON Schema（--json-schema 输出）
 scripts/bench.sh       性能冒烟（--save 追加 bench/history.csv）
 scripts/bench_compare.sh 对比最近 N 次基准
