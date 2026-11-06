@@ -2,6 +2,12 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v0.13.3-m13
+
+- **许可政策定为单许可**：不提供商业双许可，只保留 GPL-3.0-or-later；
+  更新 `FAQ.md`（新增“有无商业授权”“以后会不会换许可”）、`README.md`、`CONTRIBUTING.md`（入站=出站，无 CLA）
+- 决策记录：`docs/history/2026-11-07-license-decision.md`
+
 ## v0.13.2-m13
 
 - MPFR 改用官方 tarball：新增 `scripts/fetch-mpfr.sh`（下载 → sha256 → 解压，支持 `--tarball` 离线、

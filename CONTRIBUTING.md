@@ -54,5 +54,10 @@ bash tests/snapshot_test.sh ./build/polyno_err_ana.exe
 
 ## 许可证
 
-提交即表示同意以 GPL-3.0-or-later 发布。源文件首行保留
-`SPDX-License-Identifier: GPL-3.0-or-later`。
+- 本项目只以 **GPL-3.0-or-later** 发布，不提供商业授权（决定记录见
+  `docs/history/2026-11-07-license-decision.md`）。
+- 采用「入站=出站」：提交 PR 即表示你同意该贡献以 GPL-3.0-or-later 授权，
+  无需签署额外 CLA。
+- 源文件首行保留 `SPDX-License-Identifier: GPL-3.0-or-later`。
+- 注意：将来若要把项目改为其它许可，需要取得**每一位**外部贡献者的同意，
+  因此请勿在未沟通的情况下引入与 GPL 不兼容的代码或大段第三方代码。

@@ -6,6 +6,7 @@
 - 语言：C++23
 - 数值内核：numextend（默认）或 MPFR（`-DPOLYNO_ENABLE_MPFR=ON`）
 - 许可证：GPL-3.0-or-later（见 `LICENSE.md`；第三方组件见 `THIRD_PARTY.md`）
+- **不提供商业双许可**（决定记录：`docs/history/2026-11-07-license-decision.md`）
 - 贡献指南：`CONTRIBUTING.md`；常见问题（含许可边界）：`FAQ.md`；待办与路线图：`TODO.md`
 
 需求与验收：`需求分析.md`（v0.4）；实现说明与偏差：`设计.md`；版本记录：`CHANGELOG.md`。
@@ -133,6 +134,14 @@ scripts/build-mpfr.sh  GMP/MPFR 构建脚本
 docs/history/          历史决策记录（需求修改建议 v0.1）
 mpfr/, numextend/      git submodule（上游依赖）
 ```
+
+## 许可与使用边界
+
+- 仅运行本工具、使用其输出：**不触发** GPL 义务（无分发、无衍生作品）。
+- 把源码/子模块加入自己的工程或与之链接：视为组合作品，分发时须遵循 GPL-3.0-or-later。
+- 需要闭源集成时，用独立进程调用 CLI（标准输入输出交互），不要复制源码。
+- 商用允许；分发二进制时需提供对应源码与许可文本。
+- 本项目只有单一 GPL 许可，**没有商业授权渠道**；详见 `FAQ.md`。
 
 ## 第三方
 
