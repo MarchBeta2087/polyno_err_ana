@@ -29,7 +29,7 @@ jobs:
       - name: 生成站点
         run: scripts/build-docs.sh site/_out
       - name: 上传 artifact（无论 Pages 是否可用都能下载）
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: docs-site
           path: site/_out
