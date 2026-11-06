@@ -2,6 +2,13 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v0.14.1-m14
+
+- 文档站：`scripts/build-docs.sh`（pandoc → `site/_out/`）+ `.github/workflows/pages.yml`
+  （构建 artifact；Pages 可用时自动部署）
+- 社区文件：`CODE_OF_CONDUCT.md`（Contributor Covenant v2.1 摘要）、`SECURITY.md`（私有报告渠道与处理时限）
+- GitHub 模板：`.github/ISSUE_TEMPLATE/{bug_report,feature_request,config}.yml`、`PULL_REQUEST_TEMPLATE.md`
+
 ## v0.14.0-m14
 
 - `--lang` 扩展到 **6 种语言**：`zh`（默认）/ `en` / `ja` / `ko` / `es` / `pt`

@@ -13,7 +13,6 @@
 
 ## P2 — 发布/社区
 
-- [ ] 文档站点化（`docs/` 静态页，含表格渲染示例）
 
 ## 已决策（不再是待办）
 
@@ -21,6 +20,8 @@
   `docs/history/2026-11-07-license-decision.md`
 
 ## 已完成（移出，见 CHANGELOG）
+
+- m14.1：文档站（pandoc + Pages 工作流）、CoC、SECURITY、Issue/PR 模板
 
 - m14：`--lang` 六语言（zh/en/ja/ko/es/pt），单表实现 + 6 份帮助文本
 

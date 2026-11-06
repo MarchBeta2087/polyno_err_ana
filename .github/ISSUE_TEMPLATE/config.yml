@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 常见问题（FAQ）
+    url: https://github.com/MarchBeta2087/polyno_err_ana/blob/main/FAQ.md
+    about: 许可边界、fin/undef 标签、为什么不支持 sin/exp 等
+  - name: 安全漏洞（私有报告）
+    url: https://github.com/MarchBeta2087/polyno_err_ana/security/advisories/new
+    about: 请勿在公开 Issue 中披露未修复的漏洞
+  - name: 文档
+    url: https://github.com/MarchBeta2087/polyno_err_ana#readme
+    about: 构建、用法与设计说明入口

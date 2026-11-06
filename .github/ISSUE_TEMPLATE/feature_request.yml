@@ -1,0 +1,38 @@
+name: 功能建议
+description: 新语法、新输出、新内核或 CLI 改进
+title: "[feat] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        先确认不在 `TODO.md` 与 `需求分析.md` 的“明确不支持”列表里（如三角函数、变量指数）。
+  - type: textarea
+    id: problem
+    attributes:
+      label: 要解决的问题
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 期望的行为 / 接口
+      description: 尽量给出命令示例与期望输出
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 备选方案
+    validations:
+      required: false
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: 影响范围（自评）
+      options:
+        - label: 需求文档（需求分析.md）
+        - label: 符号层 / 表达式语法
+        - label: 输出格式（会改快照）
+        - label: 双内核（numextend 与 mpfr 都要改）

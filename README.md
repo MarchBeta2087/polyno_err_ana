@@ -7,7 +7,9 @@
 - 数值内核：numextend（默认）或 MPFR（`-DPOLYNO_ENABLE_MPFR=ON`）
 - 许可证：GPL-3.0-or-later（见 `LICENSE.md`；第三方组件见 `THIRD_PARTY.md`）
 - **不提供商业双许可**（决定记录：`docs/history/2026-11-07-license-decision.md`）
-- 贡献指南：`CONTRIBUTING.md`；常见问题（含许可边界）：`FAQ.md`；待办与路线图：`TODO.md`
+- 贡献指南：`CONTRIBUTING.md`；行为准则：`CODE_OF_CONDUCT.md`；安全策略：`SECURITY.md`
+- 常见问题（含许可边界）：`FAQ.md`；待办与路线图：`TODO.md`
+- 文档站：<https://marchbeta2087.github.io/polyno_err_ana/>（`scripts/build-docs.sh` 生成，CI 同时上传 artifact）
 
 需求与验收：`需求分析.md`（v0.4）；实现说明与偏差：`设计.md`；版本记录：`CHANGELOG.md`。
 
@@ -128,6 +130,11 @@ deps.lock             依赖锁定（提交号 + GMP URL/sha256；scripts/verify
 scripts/fetch-gmp.sh  GMP 源码获取与校验（--tarball 支持离线）
 scripts/fetch-mpfr.sh MPFR 源码获取与校验（--tarball / --record）
 schema/json_out.schema.json  --json 的 JSON Schema（--json-schema 输出）
+site/                  文档站源（style.css）与产物（_out/）
+CODE_OF_CONDUCT.md     行为准则（Contributor Covenant v2.1 摘要）
+SECURITY.md            安全策略与私有报告渠道
+.github/ISSUE_TEMPLATE Issue 表单（bug/feature）
+scripts/build-docs.sh  文档站生成（pandoc）
 scripts/bench.sh       性能冒烟（--save 追加 bench/history.csv）
 scripts/bench_compare.sh 对比最近 N 次基准
 scripts/build-mpfr.sh  GMP/MPFR 构建脚本

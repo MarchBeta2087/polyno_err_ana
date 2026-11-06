@@ -30,3 +30,6 @@ CMakeUserPresets.json
 # 运行时与临时文件
 *.log
 *.tmp
+
+# 文档站产物
+site/_out/

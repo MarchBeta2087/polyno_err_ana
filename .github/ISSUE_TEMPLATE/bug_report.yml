@@ -1,0 +1,60 @@
+name: Bug 报告
+description: 输出错误、崩溃、挂起或行为与需求不符
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        提交前请先看 `FAQ.md` 与 `docs` 站点；安全漏洞请走 `SECURITY.md` 的私有渠道，不要开公开 Issue。
+  - type: input
+    id: version
+    attributes:
+      label: 版本 / commit
+      description: 运行 `polyno_err_ana -V` 的结果，或 commit hash
+      placeholder: "polyno_err_ana 0.14.0-m14 (kernel: numextend, 256 bit)"
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: 平台
+      options: [Linux, Windows (MSYS2/MinGW), macOS, 其它]
+    validations:
+      required: true
+  - type: dropdown
+    id: kernel
+    attributes:
+      label: 内核
+      options: [numextend, mpfr]
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: 复现命令（含公式）
+      render: shell
+      placeholder: ./polyno_err_ana --real --absolute x 1e-4 -f '(1+x)^4' --vars --lim all
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望结果
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际结果
+      description: 粘贴完整输出；如崩溃请附 stderr 与退出码
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: 其它信息
+      description: 精度（-p）、分支号（-k）、`--json` 输出、是否能稳定复现等
+    validations:
+      required: false

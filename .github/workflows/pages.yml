@@ -1,0 +1,50 @@
+name: pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "*.md"
+      - "site/**"
+      - "scripts/build-docs.sh"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: 依赖
+        run: sudo apt-get update && sudo apt-get install -y pandoc
+      - name: 生成站点
+        run: scripts/build-docs.sh site/_out
+      - name: 上传 artifact（无论 Pages 是否可用都能下载）
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-site
+          path: site/_out
+      - name: 配置 Pages
+        id: pages
+        uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/_out
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
