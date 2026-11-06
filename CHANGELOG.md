@@ -2,6 +2,14 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v0.15.3-m14
+
+- 开启 Discussions（已有 Q&A/Ideas/Show and tell 分类）并发布置顶欢迎帖（#18）：
+  说明提问格式、认领流程、安全报告渠道、平台 Tier
+- 开启 Wiki；新增 `docs/wiki/`（`Home.md`、`_Sidebar.md`、同步说明），
+  定位为社区笔记，规范文档仍以仓库/文档站为准
+- v1.0 检查单移除 i18n 母语审校与 Tier 3 实测（分别由 `OPEN_TASKS` 与 `PLATFORMS` 跟踪，不作为发布门槛）
+
 ## v0.15.2-m14
 
 - 新增 `PLATFORMS.md`：Tier 1（Linux x86_64 / Windows UCRT64 / macOS arm64）、

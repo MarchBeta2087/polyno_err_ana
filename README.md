@@ -14,6 +14,8 @@
 - **不提供商业双许可**（决定记录：`docs/history/2026-11-07-license-decision.md`）
 - 贡献指南：`CONTRIBUTING.md`；行为准则：`CODE_OF_CONDUCT.md`；安全策略：`SECURITY.md`
 - 示例与教程：`EXAMPLES.md`；常见问题（含许可边界）：`FAQ.md`；维护者待办：`TODO.md`；**开放任务**：`OPEN_TASKS.md`
+- 讨论区：[Discussions](https://github.com/MarchBeta2087/polyno_err_ana/discussions)（Q&A / Ideas / Show and tell）；
+  Wiki：<https://github.com/MarchBeta2087/polyno_err_ana/wiki>（社区笔记；版本化镜像见 `docs/wiki/`）
 - 文档站：<https://marchbeta2087.github.io/polyno_err_ana/>（`scripts/build-docs.sh` 生成，
   `pages` 工作流部署；本地可生成到 `site/_out/`）
 - 决策/迁移记录：`docs/history/`
