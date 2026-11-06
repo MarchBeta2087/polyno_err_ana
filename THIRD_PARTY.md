@@ -6,7 +6,7 @@
 | 组件 | 版本 | 用途 | 引入方式 | 许可 |
 | --- | --- | --- | --- | --- |
 | [numextend](https://github.com/MarchBeta2087/numextend) | v1.8.1 | 默认数值内核（bigfloat/bigcomplex 语义） | git submodule `numextend/` | MIT（见 `numextend/LICENSE`） |
-| [MPFR](https://www.mpfr.org/) | 4.2.x（`aixoss/mpfr` 镜像，base 3.1.2） | 可选数值内核 | git submodule `mpfr/` | LGPL-3.0-or-later（见 `mpfr/COPYING.LESSER`） |
+| [MPFR](https://www.mpfr.org/) | 4.2.1 | 可选数值内核 | 官方 tarball `mpfr-4.2.1.tar.xz`，由 `scripts/fetch-mpfr.sh` 下载并按 `deps.lock` 校验 sha256；`mpfr/` submodule 为离线备选 | LGPL-3.0-or-later |
 | [GMP](https://gmplib.org/) | 6.3.0 | MPFR 依赖 | 官方 tarball `gmp-6.3.0.tar.xz`，由 `scripts/fetch-gmp.sh` 下载并按 `deps.lock` 的 sha256 校验后解压（未入库） | LGPL-3.0-or-later / GPL-2.0-or-later（双许可） |
 
 ## 链接方式说明
@@ -17,6 +17,9 @@
   （本项目提供源码与 `scripts/build-mpfr.sh`，构建过程可复现，满足该条）。
   若需更宽松的分发方式，可改用共享库（`--enable-shared`）构建 GMP/MPFR。
 - 本仓库未包含 GMP 源码；CI 使用发行版/包管理器提供的二进制包。
+- MPFR 4.2.1 官方压缩包 sha256（`deps.lock` 记录）：
+  `277807353a6726978996945af13e52829e3abd7a9a5b7fb2793894e18f1fcbb2`（来源
+  `https://www.mpfr.org/mpfr-4.2.1/mpfr-4.2.1.tar.xz`）。
 - GMP 6.3.0 官方压缩包 sha256（`deps.lock` 记录）：
   `a3c2b80201b89e68616f4ad30bc66aee4927c3ce50e33929ca819d5c43538898`（来源
   `https://gmplib.org/download/gmp/gmp-6.3.0.tar.xz`）。

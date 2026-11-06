@@ -59,15 +59,17 @@ cmake --build build-mpfr -j
 ./build-mpfr/polyno_err_ana -V        # kernel: mpfr
 ```
 
-GMP/MPFR 需自建为静态库（本项目只链接 `.a`）。GMP 走官方 tarball 并校验 sha256
-（`deps.lock` 里有 URL 与哈希），MPFR 用 submodule；一键构建：
+GMP/MPFR 需自建为静态库（本项目只链接 `.a`）。两者都走官方 tarball 并按 `deps.lock`
+校验 sha256（MPFR 4.2.1、GMP 6.3.0）；`mpfr/` submodule 仅作为离线备选：
 
 ```sh
-scripts/fetch-gmp.sh             # 下载 gmp-6.3.0.tar.xz + 校验 sha256 + 解压
-scripts/build-mpfr.sh            # GMP + MPFR 静态库 → third_party_prefix/
+scripts/fetch-gmp.sh             # gmp-6.3.0.tar.xz → sha256 → 解压
+scripts/fetch-mpfr.sh            # mpfr-4.2.1.tar.xz → sha256 → 解压
+scripts/build-mpfr.sh            # 两者静态库 → third_party_prefix/
 ```
 
-离线时用已有压缩包：`scripts/fetch-gmp.sh --tarball /path/gmp-6.3.0.tar.xz`。
+离线时用已有压缩包：`scripts/fetch-gmp.sh --tarball …`、`scripts/fetch-mpfr.sh --tarball …`。
+`build-mpfr.sh` 优先用 `mpfr-<version>/`（tarball 目录），不存在时回退到 `mpfr/` submodule。
 
 Windows 需在 MSYS2 MINGW64 环境（`pacman -S --needed mingw-w64-x86_64-gcc make m4`）；
 GCC 14+ 默认 C23 会让 GMP 的 long-long 探针失败，脚本已加 `-std=gnu17`。
@@ -123,6 +125,7 @@ src/json_out.hpp|cpp  JSON 输出（--json）
 src/render.hpp|cpp    表格渲染与输出块
 deps.lock             依赖锁定（提交号 + GMP URL/sha256；scripts/verify-deps.sh 校验）
 scripts/fetch-gmp.sh  GMP 源码获取与校验（--tarball 支持离线）
+scripts/fetch-mpfr.sh MPFR 源码获取与校验（--tarball / --record）
 schema/json_out.schema.json  --json 的 JSON Schema（--json-schema 输出）
 scripts/bench.sh       性能冒烟（--save 追加 bench/history.csv）
 scripts/bench_compare.sh 对比最近 N 次基准
@@ -138,5 +141,5 @@ mpfr/, numextend/      git submodule（上游依赖）
 | 依赖 | 用途 | 许可 |
 | --- | --- | --- |
 | [numextend](https://github.com/MarchBeta2087/numextend) | 默认数值内核 | MIT |
-| [MPFR](https://www.mpfr.org/)（`aixoss/mpfr` 镜像） | 可选内核（`-DPOLYNO_ENABLE_MPFR=ON`） | LGPL-3.0-or-later |
+| [MPFR](https://www.mpfr.org/) 4.2.1（官方 tarball） | 可选内核（`-DPOLYNO_ENABLE_MPFR=ON`） | LGPL-3.0-or-later |
 | [GMP](https://gmplib.org/) | MPFR 依赖（需自建，未入库） | LGPL-3.0-or-later / GPL-2.0+ |

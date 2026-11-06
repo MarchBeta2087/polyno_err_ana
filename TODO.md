@@ -15,15 +15,14 @@
 ## P2 — 发布/社区
 
 - [ ] 许可咨询：是否提供商业双许可（见 `FAQ.md` §5）——**需人工决策**
-- [ ] 把 `mpfr/` 从 `aixoss/mpfr` 镜像切换到官方 tarball（4.2.x）+ 校验和
-      （GMP 已改用官方 tarball + sha256，见 `scripts/fetch-gmp.sh`）
+- [ ] 移除 `mpfr/` submodule（官方 tarball 已接管），保留一次迁移说明
 - [ ] 文档站点化（`docs/` 静态页，含表格渲染示例）
 
 ## 已完成（移出，见 CHANGELOG）
 
 - m11：Release 工作流（linux/windows 静态构建 + SHA256SUMS）、`bench/history.csv` 与 `bench_compare.sh`
 - m12：`--json` 输出、`render` 输出块、`deps.lock` + `verify-deps.sh`
-- m13：`--json-schema`、`--lang zh|en`、schema 自检、GMP 官方 tarball 校验（`fetch-gmp.sh`）
+- m13：`--json-schema`、`--lang zh|en`、schema 自检、GMP/MPFR 官方 tarball 校验（`fetch-gmp.sh` / `fetch-mpfr.sh`）
 
 - m10：`render` 模块、`sym_mul` 增量合并（上限按结果项数判定）、快照 35 条、低精度字面量对齐
 

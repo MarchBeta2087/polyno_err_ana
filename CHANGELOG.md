@@ -2,6 +2,13 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v0.13.2-m13
+
+- MPFR 改用官方 tarball：新增 `scripts/fetch-mpfr.sh`（下载 → sha256 → 解压，支持 `--tarball` 离线、
+  `--record` 首次落库），`deps.lock` 记录 4.2.1 的 URL 与 sha256
+- `build-mpfr.sh` 优先使用 `mpfr-<version>/`，无则回退 `mpfr/` submodule；`verify-deps.sh` 增加 MPFR 目录校验
+- 已用官方 4.2.1 重建并跑通双内核回归（`ctest` 2/2）
+
 ## v0.13.1-m13
 
 - GMP 改走官方 tarball：新增 `scripts/fetch-gmp.sh`（下载 → sha256 校验 → 解压，`--tarball` 支持离线），

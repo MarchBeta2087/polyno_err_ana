@@ -41,6 +41,19 @@ else
     printf 'SKIP gmp: 源码目录不存在（仅 MPFR 内核需要）\n'
 fi
 
+mpfr_ver_dir="$ROOT/$(get mpfr_source)"
+if [ -d "$mpfr_ver_dir" ]; then
+    ver=$(sed -n '1p' "$mpfr_ver_dir/VERSION" 2>/dev/null | tr -d ' ')
+    if [ "$ver" = "$(get mpfr_version)" ]; then
+        printf 'ok   mpfr: %s（官方 tarball 目录）
+' "$ver"
+    else
+        printf 'DRIFT mpfr tarball: 期望 %s，实际 %s
+' "$(get mpfr_version)" "$ver"
+        fail=$((fail + 1))
+    fi
+fi
+
 if [ -n "$TARBALL" ]; then
     if [ -f "$TARBALL" ]; then
         want="$(get gmp_sha256)"

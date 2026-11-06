@@ -7,14 +7,26 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PREFIX="${1:-$ROOT/third_party_prefix}"
 GMP_SRC="${GMP_SRC:-$ROOT/gmp-6.3.0}"
-MPFR_SRC="${MPFR_SRC:-$ROOT/mpfr}"
+# 首选官方 tarball 解压目录（scripts/fetch-mpfr.sh），否则回退 submodule
+MPFR_VER="$(sed -n 's/^mpfr_version *= *//p' "$ROOT/deps.lock" | sed 's/ *#.*//' | tr -d ' ')"
+if [ -z "${MPFR_SRC:-}" ]; then
+    if [ -n "$MPFR_VER" ] && [ -d "$ROOT/mpfr-$MPFR_VER" ]; then
+        MPFR_SRC="$ROOT/mpfr-$MPFR_VER"
+    else
+        MPFR_SRC="$ROOT/mpfr"
+    fi
+fi
 
 [ -d "$GMP_SRC" ] || {
     echo "找不到 GMP 源码：$GMP_SRC"
     echo "先执行 scripts/fetch-gmp.sh（会按 deps.lock 校验 sha256）"
     exit 1
 }
-[ -d "$MPFR_SRC" ] || { echo "找不到 MPFR 源码：$MPFR_SRC"; exit 1; }
+[ -d "$MPFR_SRC" ] || {
+    echo "找不到 MPFR 源码：$MPFR_SRC"
+    echo "先执行 scripts/fetch-mpfr.sh（官方 tarball + 校验），或 git submodule update --init mpfr"
+    exit 1
+}
 command -v make >/dev/null || { echo "需要 make"; exit 1; }
 command -v m4 >/dev/null || { echo "需要 m4"; exit 1; }
 
