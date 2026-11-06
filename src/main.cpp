@@ -133,7 +133,7 @@ Probe probe_power(const Expr& f, const Env& env, const std::string& nm, const St
 
 struct LimSpec {
     std::string var;
-    State state{true, true};
+    std::string text;   // zeros / infs / all / p0 / 0..inf / A..B ...
 };
 
 struct VarView {
@@ -188,6 +188,49 @@ void parse_lim_state(const std::string& s, State& st) {
     else usage_error("非法的 --lim 状态: " + s);
 }
 
+// 展开 --lim 的状态规格：单个状态、zeros/infs/all、以及 A..B 区间。
+std::vector<State> expand_lim(const std::string& text, bool cvar) {
+    static const State real_all[4] = {{true, true}, {true, false}, {false, true}, {false, false}};
+    static const char* real_name[4] = {"p0", "n0", "pinf", "ninf"};
+    const std::vector<State> all = cvar ? std::vector<State>{{true, true}, {false, true}}
+                                       : std::vector<State>(real_all, real_all + 4);
+
+    auto idx_of = [&](const std::string& t) -> int {
+        if (cvar) {
+            if (t == "0") return 0;
+            if (t == "inf") return 1;
+            if (t == "p0" || t == "n0") return 0;      // 复数别名
+            if (t == "pinf" || t == "ninf") return 1;
+            return -1;
+        }
+        for (int i = 0; i < 4; ++i)
+            if (t == real_name[i]) return i;
+        if (t == "0") return 0;      // 区间语境：0 == 零点组起点
+        if (t == "inf") return 3;    // 区间语境：inf == 无穷组终点
+        return -1;
+    };
+
+    if (text == "all") return all;
+    if (text == "zeros") return cvar ? std::vector<State>{{true, true}}
+                                     : std::vector<State>{{true, true}, {true, false}};
+    if (text == "infs") return cvar ? std::vector<State>{{false, true}}
+                                    : std::vector<State>{{false, true}, {false, false}};
+    auto dots = text.find("..");
+    if (dots != std::string::npos) {
+        const std::string a = text.substr(0, dots);
+        const std::string b = text.substr(dots + 2);
+        int ia = idx_of(a), ib = idx_of(b);
+        if (ia < 0 || ib < 0) usage_error("--lim 区间端点非法: " + text);
+        if (ia > ib) std::swap(ia, ib);
+        std::vector<State> out;
+        for (int i = ia; i <= ib; ++i) out.push_back(all[static_cast<size_t>(i)]);
+        return out;
+    }
+    int i = idx_of(text);
+    if (i < 0) usage_error("--lim 状态非法: " + text);
+    return {all[static_cast<size_t>(i)]};
+}
+
 bool is_number(const char* s) {
     if (!s || !*s) return false;
     char* end = nullptr;
@@ -197,6 +240,17 @@ bool is_number(const char* s) {
 
 Opts parse_args(int argc, char** argv) {
     Opts o;
+    // 先扫一遍 -p：让后续 -R/--estimated 的字面量也按目标精度解析
+    for (int i = 1; i + 1 < argc; ++i) {
+        const std::string a = argv[i];
+        if (a == "-p" || a == "--precision") {
+            try {
+                const int bits = std::stoi(argv[i + 1]);
+                if (bits >= 2) set_precision(bits);
+            } catch (const std::exception&) {
+            }
+        }
+    }
     std::vector<std::string> pend_real, pend_comp;
     bool comp_pending = false;
     auto need = [&](int& i, const char* name) -> std::string {
@@ -262,7 +316,8 @@ Opts parse_args(int argc, char** argv) {
                     if (c == std::string::npos) usage_error("--lim 需要 all 或 VAR:STATE");
                     LimSpec sp;
                     sp.var = item.substr(0, c);
-                    parse_lim_state(item.substr(c + 1), sp.state);
+                    sp.text = item.substr(c + 1);
+                    if (sp.text.empty()) usage_error("--lim 缺少状态: " + item);
                     o.lim_specs.push_back(sp);
                 }
             }
@@ -502,8 +557,15 @@ int main(int argc, char** argv) {
             }
 
             std::vector<State> states;
-            for (const auto& sp : o.lim_specs)
-                if (sp.var == nm) states.push_back(sp.state);
+            for (const auto& sp : o.lim_specs) {
+                if (sp.var != nm) continue;
+                for (const auto& st : expand_lim(sp.text, cvar)) {
+                    bool dup = false;
+                    for (const auto& e : states)
+                        dup = dup || (e.to_zero == st.to_zero && e.plus == st.plus);
+                    if (!dup) states.push_back(st);
+                }
+            }
             if (states.empty()) {
                 if (cvar) states = {{true, true}, {false, true}};   // 复数：0 / ∞
                 else if (views.size() == 1 || o.lim_all)

@@ -131,6 +131,31 @@ check_contains "退化后仍有分类" "$out" '极限分类'
 out=$(run -R a 1e-4 b 1e-4 -f '(a+b)*(a+b)' --max-terms 1)
 check_contains "上限 1 仍可算" "$out" '极限分类'
 
+# ---- 精度极值 ----
+out=$(run -R x 1e-4 -f '(1+x)^4' --vars -p 2)
+check_contains "p=2 报告精度" "$out" '2 bit'
+check_contains "p=2 δf" "$out" '0.000366211'
+[ "$(count_rows "$out")" -eq 4 ] || { printf 'FAIL p=2 分类行数
+'; fail=$((fail+1)); }
+
+out=$(run -R x 1e-4 --estimated x=0.6 -f '(1+x)^4' --vars -p 4096)
+check_contains "p=4096 报告精度" "$out" '4096 bit'
+check_contains "p=4096 δf 值" "$out" '0.0016384'
+
+# ---- --lim 区间/分组 ----
+out=$(run -R x 1e-4 -f '(1+x)^4' --lim x:0..inf)
+[ "$(count_rows "$out")" -eq 4 ] || { printf 'FAIL x:0..inf 组数
+'; fail=$((fail+1)); }
+out=$(run -R x 1e-4 -f '(1+x)^4' --lim x:p0..pinf)
+[ "$(count_rows "$out")" -eq 3 ] || { printf 'FAIL x:p0..pinf 组数
+'; fail=$((fail+1)); }
+out=$(run -R x 1e-4 -f '(1+x)^4' --lim x:zeros)
+[ "$(count_rows "$out")" -eq 2 ] || { printf 'FAIL x:zeros 组数
+'; fail=$((fail+1)); }
+out=$(run -C z 1e-4 1e-4 -f '(1+z)^2' --lim z:zeros)
+[ "$(count_rows "$out")" -eq 1 ] || { printf 'FAIL 复数 zeros 组数
+'; fail=$((fail+1)); }
+
 # ---- CLI 错误路径（退出码 2） ----
 expect_rc2() {
     "$BIN" "$@" > /dev/null 2>&1
@@ -142,6 +167,8 @@ expect_rc2 -R x 1e-4 -p 1 -f '(1+x)'
 expect_rc2 -R x 1e-4 -p abc -f '(1+x)'
 expect_rc2 -R x 1e-4 x 1e-4 -f '(1+x)'
 expect_rc2 -R x 1e-4 --lim z:p0 -f '(1+x)'
+expect_rc2 -R x 1e-4 --lim x:bogus -f '(1+x)'
+expect_rc2 -R x 1e-4 --lim x:p0..bogus -f '(1+x)'
 expect_rc2 -R x 1e-4 --limit all -f '(1+x)'
 expect_rc2 --real x 1e-4 --kernel nope -f '(1+x)'
 expect_rc2 -R x 1e-4 --max-terms 0 -f '(1+x)'

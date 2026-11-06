@@ -21,3 +21,8 @@
 --real --absolute x 1e-4 -f '(1+x)^4' --lim x:p0,x:ninf
 -C z 1e-4 1e-4 -f '(1+z)^2' --lim z:inf --vars
 --real --absolute a 1e-4 b 1e-4 c 1e-4 d 1e-4 --max-terms 4 -f '(a+b)*(c+d)' --vars
+--real --absolute x 1e-4 --estimated x=0.6 -f '(1+x)^4' --vars -p 4096
+--real --absolute x 1e-4 -f '(1+x)^4' --vars -p 2
+--real --absolute x 1e-4 -f '(1+x)^4' --lim x:0..inf
+--real --absolute x 1e-4 -f '(1+x)^4' --lim x:p0..pinf
+-C z 1e-4 1e-4 -f '(1+z)^2' --lim z:zeros --vars
