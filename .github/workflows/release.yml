@@ -105,7 +105,9 @@ jobs:
           path: dist/*.tar.gz
 
   publish:
-    needs: [linux, windows, macos]
+    # 不把 macOS 纳入 needs：该账号的 macOS runner 曾长时间排队，
+    # 有产物则一并发布（macos 作业 continue-on-error），没有也照常发 linux/windows。
+    needs: [linux, windows]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -119,6 +121,7 @@ jobs:
           sha256sum *.tar.gz *.zip > SHA256SUMS.txt
       - uses: softprops/action-gh-release@v2
         with:
+          allow_empty: false
           files: |
             artifacts/*.tar.gz
             artifacts/*.zip

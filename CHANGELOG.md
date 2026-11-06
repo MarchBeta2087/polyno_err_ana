@@ -2,6 +2,11 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v0.11.3-m11
+
+- Release 的 `publish` 不再等待 macOS 作业（`needs: [linux, windows]`）：
+  该账号的 macOS runner 屡次排队 10+ 分钟；有 macos 产物时仍会一并上传
+
 ## v0.11.2-m11
 
 - Release 的 macOS 作业改用 `macos-13`（Intel）并设为 `continue-on-error`：
