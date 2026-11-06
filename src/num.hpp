@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // 数值层：numextend bigfloat 的 RAII 包装 + 复数运算（含分支幂）。
 #pragma once
 

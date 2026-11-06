@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // 词法 / 语法 / AST / 数值求值。
 #pragma once
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // MPFR 后端：与 numextend 版实现同一组 Real 原语（见 num.hpp）。
 #include "num.hpp"
 

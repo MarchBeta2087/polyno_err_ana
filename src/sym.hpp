@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // 符号层：以“原子表达式”为因子的 Laurent 单项式之和（多项式和）。
 // 选择原子而非全展开，是为了让 (1+x)^3/(1+x)^4 自然约分为 (1+x)^-1（R-1）。
 #pragma once

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 // polyno_err_ana —— 多项式/有理式误差分析器
 #include <algorithm>
 #include <cmath>

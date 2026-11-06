@@ -32,6 +32,10 @@
 - 精确边界与极限分类改为对齐表格（`var` 列 + `---` 分隔行），不再手工调宽
 - 复变量的状态标签用 `0` / `inf`（不再借用 `+0/-0/+inf/-inf`）
 
+**开源准备**
+- 所有源文件与 `CMakeLists.txt` 加 `SPDX-License-Identifier: GPL-3.0-or-later`
+- 新增 `CONTRIBUTING.md`、`THIRD_PARTY.md`（numextend MIT / MPFR·GMP LGPL 与静态链接说明）
+
 **测试**
 - 快照用例扩到 14 条（`tests/cases.txt`），覆盖单状态 `--lim`、相对模式估计点为 0、`-p 64`、`-R`/`-C` 混合、`0^0`、除零、real-root
 - `tests/checks.sh` 增加 CLI 错误路径断言（8 条），CTest 为 `regression` + `snapshot`

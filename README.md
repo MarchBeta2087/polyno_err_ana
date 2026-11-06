@@ -5,7 +5,8 @@
 
 - 语言：C++23
 - 数值内核：numextend（默认）或 MPFR（`-DPOLYNO_ENABLE_MPFR=ON`）
-- 许可证：GPL-3.0-or-later（见 `LICENSE.md`）
+- 许可证：GPL-3.0-or-later（见 `LICENSE.md`；第三方组件见 `THIRD_PARTY.md`）
+- 贡献指南：`CONTRIBUTING.md`
 
 需求与验收：`需求分析.md`（v0.3）；实现说明与偏差：`设计.md`；版本记录：`CHANGELOG.md`。
 
@@ -107,8 +108,10 @@ mpfr/, numextend/      git submodule（上游依赖）
 
 ## 第三方
 
+见 `THIRD_PARTY.md`。摘要：
+
 | 依赖 | 用途 | 许可 |
 | --- | --- | --- |
-| [numextend](https://github.com/MarchBeta2087/numextend) | 当前数值内核 | 见子模块 `LICENSE` |
+| [numextend](https://github.com/MarchBeta2087/numextend) | 默认数值内核 | MIT |
 | [MPFR](https://www.mpfr.org/)（`aixoss/mpfr` 镜像） | 可选内核（`-DPOLYNO_ENABLE_MPFR=ON`） | LGPL-3.0-or-later |
 | [GMP](https://gmplib.org/) | MPFR 依赖（需自建，未入库） | LGPL-3.0-or-later / GPL-2.0+ |

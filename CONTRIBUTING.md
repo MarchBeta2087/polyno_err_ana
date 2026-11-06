@@ -1,0 +1,53 @@
+# 贡献指南
+
+## 构建与测试
+
+```sh
+# 数值内核（子模块）
+cmake -S numextend -B numextend/build -DCMAKE_BUILD_TYPE=Release
+cmake --build numextend/build -j
+
+# 本项目（numextend 内核）
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
+ctest --test-dir build --output-on-failure
+
+# 可选：MPFR 内核（需 GMP/MPFR 静态库，见 README）
+scripts/build-mpfr.sh
+cmake -S . -B build-mpfr -DCMAKE_BUILD_TYPE=Release \
+      -DPOLYNO_ENABLE_MPFR=ON -DPNA_THIRD_PARTY=$PWD/third_party_prefix
+cmake --build build-mpfr -j
+ctest --test-dir build-mpfr --output-on-failure
+```
+
+## 代码约定
+
+- C++23，无第三方符号/表达式库；格式化用仓库内 `fmt`/`c_fmt`，不引 `{fmt}`。
+- 两个内核（`src/num.cpp` / `src/num_mpfr.cpp`）必须实现 `src/num.hpp` 的同一组原语；
+  改接口时同步改两处，并确认 `ctest` 在两套构建下都通过。
+- 符号层（`src/sym.cpp`）的原子更新必须经 `Node::hash`（见 `ast.cpp:finish`），
+  禁止在比较/归并路径上新增 `to_string`。
+- 新增行为先改 `需求分析.md`，再改代码与 `tests/cases.txt` 快照。
+
+## 测试
+
+- `tests/checks.sh`：断言式回归（布局无关，按列取值）。
+- `tests/cases.txt` + `tests/snapshots/expected.txt`：逐字快照，**两个内核必须一致**。
+- 修改输出格式后：
+
+```sh
+bash tests/snapshot_dump.sh ./build/polyno_err_ana.exe > tests/snapshots/expected.txt
+bash tests/snapshot_test.sh ./build/polyno_err_ana.exe
+```
+
+## 提交
+
+- 信息用中文或英文均可，首行不超过 72 字符，正文说明“为什么”。
+- 一个提交只做一件事；跨内核/跨文档的改动在正文列出影响面。
+- 提交前本地跑：`bash tests/checks.sh <bin>` + 两套 `ctest`。
+- 版本号在 `src/main.cpp:kVersion`，与 `CHANGELOG.md`、git tag 保持一致。
+
+## 许可证
+
+提交即表示同意以 GPL-3.0-or-later 发布。源文件首行保留
+`SPDX-License-Identifier: GPL-3.0-or-later`。
