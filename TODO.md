@@ -10,15 +10,15 @@
 
 ## P1 — 工程
 
-- [ ] 快照用例 30+（当前 27；补 `-p 8/64`、`--lim x:n0..ninf`、多变量三类混合）
-- [ ] 输出渲染从 `src/main.cpp` 抽到 `src/render.{hpp,cpp}`（当前 `render_table` 与各区块仍在 main）
-- [ ] `sym_mul` 的项数预估更精确（按去重后的因子键估算，而非项数乘积）
-- [ ] 错误消息英文版（`--lang en`，需求 N-2 只要求列号，可选；优先级低）
+- [ ] 错误消息英文版（`--lang en`）：需求 N-2 只要求列号，属可选；需先定“输出标签是否也翻译”
+- [ ] JSON schema 化（`schema/json_out.schema.json`）并加 `--json-schema` 自检，便于下游校验
 
 ## P2 — 发布/社区
 
-- [ ] 许可咨询：是否提供商业双许可（见 `FAQ.md` §5）
-- [ ] 把 `mpfr/` 从 `aixoss/mpfr` 镜像改为官方 tarball 校验（当前 base 3.1.2）
+- [ ] 许可咨询：是否提供商业双许可（见 `FAQ.md` §5）——**需人工决策**
+- [ ] GMP tarball 的 `sha256` 补录（`deps.lock` 里为 `PENDING`）：本机访问 mpfr.org/gmplib.org
+      被 TLS 拦截，需在可联网环境执行 `scripts/verify-deps.sh --fill-hash`
+- [ ] 把 `mpfr/` 从 `aixoss/mpfr` 镜像切换到官方 tarball（4.2.x）+ 校验和
 - [ ] 文档站点化（`docs/` 静态页，含表格渲染示例）
 
 ## 已完成（移出，见 CHANGELOG）
