@@ -3,6 +3,7 @@
 # 用法: tests/checks.sh ./build/polyno_err_ana.exe
 set -u
 BIN="${1:?binary path required}"
+HERE="$(cd "$(dirname "$0")" && pwd)"
 fail=0
 run() { "$BIN" "$@" 2>&1; }
 
@@ -230,11 +231,11 @@ PY
 '; fail=$((fail+1)); }
 
 "$BIN" -R x 1e-4 -C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+x)^2+z' --vars --json > "$TMPJSON" 2>&1
-"$PY" - "$TMPJSON" <<'PY'
+"$PY" - "$TMPJSON" "$HERE/../schema/json_out.schema.json" <<'PY'
 import json, sys
 
 doc = json.load(open(sys.argv[1], encoding="utf-8"))
-schema = json.load(open("schema/json_out.schema.json", encoding="utf-8"))
+schema = json.load(open(sys.argv[2], encoding="utf-8"))
 defs = schema["$defs"]
 
 def check(node, sch, path="$"):
