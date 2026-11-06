@@ -2,6 +2,11 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## 未发布
+
+- 修复 Release 竞态：`publish` 改为 `needs: [linux, windows, macos]`（私有仓库 macos 被 skip 时不影响发布，
+  公开仓库会等 mac 包就绪），避免 macOS 产物偶尔漏传
+
 ## v0.14.6-m14
 
 - 修正“GitHub 私信”说法（GitHub 没有 DM）：`SECURITY.md`/`CODE_OF_CONDUCT.md`/`FAQ.md`

@@ -105,8 +105,9 @@ jobs:
           path: dist/*.tar.gz
 
   publish:
-    # 仅发布 linux/windows：该账号的 macOS runner 排队不稳定（见 CHANGELOG v0.11.3）
-    needs: [linux, windows]
+    # 等三个平台都完成再发布：macOS 作业在私有仓库会被 skip（needs 中的 skip 视作通过），
+    # 公开仓库则会等待它，避免 publish 抢跑导致 mac 包漏传。
+    needs: [linux, windows, macos]
     if: always()
     runs-on: ubuntu-latest
     steps:
