@@ -4,8 +4,9 @@
 
 ## v0.11.3-m11
 
-- Release 的 `publish` 不再等待 macOS 作业（`needs: [linux, windows]`）：
-  该账号的 macOS runner 屡次排队 10+ 分钟；有 macos 产物时仍会一并上传
+- Release 的 `publish` 不再等待 macOS 作业（`needs: [linux, windows]`）
+- 移除 Release 的 macOS 作业：该账号的 macOS runner 屡次排队 10+ 分钟不启动；
+  macOS 可编译性仍由 `ci.yml` 的 macos 作业保证，预编译包暂不提供
 
 ## v0.11.2-m11
 

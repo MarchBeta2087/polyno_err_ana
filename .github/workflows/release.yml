@@ -76,34 +76,6 @@ jobs:
           name: windows
           path: dist/*.zip
 
-  macos:
-    runs-on: macos-13            # Intel；macos-latest(arm64) 曾出现排队 15min 被取消
-    continue-on-error: true      # macOS 产物缺失时仍发布 linux/windows
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          submodules: recursive
-      - name: 构建 numextend
-        run: |
-          cmake -S numextend -B numextend/build -DCMAKE_BUILD_TYPE=Release
-          cmake --build numextend/build -j"$(sysctl -n hw.ncpu)"
-      - name: 构建（静态运行库）
-        run: |
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DPOLYNO_STATIC_RUNTIME=ON
-          cmake --build build -j"$(sysctl -n hw.ncpu)"
-      - name: 打包
-        run: |
-          pkg="polyno_err_ana-${GITHUB_REF_NAME}-macos-$(uname -m)"
-          mkdir -p "dist/$pkg"
-          cp build/polyno_err_ana "dist/$pkg/"
-          cp LICENSE.md README.md THIRD_PARTY.md FAQ.md "dist/$pkg/"
-          tar -C dist -czf "dist/$pkg.tar.gz" "$pkg"
-      - uses: actions/upload-artifact@v4
-        with:
-          name: macos
-          path: dist/*.tar.gz
-
   publish:
     # 不把 macOS 纳入 needs：该账号的 macOS runner 曾长时间排队，
     # 有产物则一并发布（macos 作业 continue-on-error），没有也照常发 linux/windows。
