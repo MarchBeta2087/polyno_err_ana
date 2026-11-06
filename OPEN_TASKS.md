@@ -14,7 +14,7 @@
 | 2 | 韩语（ko）文案母语审校 | 低 | 韩语母语者 | [#10](https://github.com/MarchBeta2087/polyno_err_ana/issues/10) |
 | 3 | 西班牙语（es）文案母语审校 | 低 | 西语母语者 | [#11](https://github.com/MarchBeta2087/polyno_err_ana/issues/11) |
 | 4 | 葡萄牙语（pt）文案母语审校 | 低 | 葡语母语者 | [#12](https://github.com/MarchBeta2087/polyno_err_ana/issues/12) |
-| 5 | macOS x86_64 发布产物 | 低 | **部分完成**（arm64 已发；Intel 由 `attach-macos-x86` 自动补挂，等 runner） | [#13](https://github.com/MarchBeta2087/polyno_err_ana/issues/13) |
+| 5 | ~~macOS x86_64 发布产物~~ | — | 已完成（#13）：改为 universal2，单一二进制覆盖 Intel | [#13](https://github.com/MarchBeta2087/polyno_err_ana/issues/13) |
 | 6 | ~~MPFR 内核预编译包~~ | — | 已完成（#14，v0.15.1：linux/windows 两个 `-mpfr` 包） | [#14](https://github.com/MarchBeta2087/polyno_err_ana/issues/14) |
 | 7 | 函数节点 `sin/exp/log` | 高 | C++23 + 符号计算经验 | [#15](https://github.com/MarchBeta2087/polyno_err_ana/issues/15) |
 | 8 | 变量指数 `a^b` | 高 | 同上（依赖 #15） | [#16](https://github.com/MarchBeta2087/polyno_err_ana/issues/16) |

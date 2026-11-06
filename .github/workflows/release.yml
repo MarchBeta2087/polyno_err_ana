@@ -157,66 +157,43 @@ jobs:
           name: windows-mpfr
           path: dist/*.zip
 
-  macos-arm64:
-    # 公开仓库的 macOS runner 免费；私有仓库排队不稳，故仅在公开时执行
+  macos-universal:
+    # 通用二进制（arm64 + x86_64）：只需 arm64 runner 构建，Intel 无需单独排队
     if: github.event.repository.private == false
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v7
         with:
           submodules: recursive
-      - name: 构建 numextend
+      - name: 构建 numextend（通用）
         run: |
-          cmake -S numextend -B numextend/build -DCMAKE_BUILD_TYPE=Release
+          cmake -S numextend -B numextend/build -DCMAKE_BUILD_TYPE=Release                 -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
           cmake --build numextend/build -j"$(sysctl -n hw.ncpu)"
-      - name: 构建（静态运行库）
+      - name: 构建（静态运行库，通用）
         run: |
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DPOLYNO_STATIC_RUNTIME=ON
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release                 -DPOLYNO_STATIC_RUNTIME=ON                 -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"                 -DNEX_LIB="$PWD/numextend/build/libnex.a"
           cmake --build build -j"$(sysctl -n hw.ncpu)"
+      - name: 校验架构
+        run: |
+          lipo -info build/polyno_err_ana | tee /dev/stderr | grep -q 'x86_64'
+          lipo -info build/polyno_err_ana | grep -q 'arm64'
+      - name: 回归（arm64 上运行通用二进制）
+        run: ctest --test-dir build --output-on-failure
       - name: 打包
         run: |
-          pkg="polyno_err_ana-${GITHUB_REF_NAME}-macos-arm64"
+          pkg="polyno_err_ana-${GITHUB_REF_NAME}-macos-universal2"
           mkdir -p "dist/$pkg"
           cp build/polyno_err_ana "dist/$pkg/"
           cp LICENSE.md README.md THIRD_PARTY.md FAQ.md "dist/$pkg/"
           tar -C dist -czf "dist/$pkg.tar.gz" "$pkg"
       - uses: actions/upload-artifact@v7
         with:
-          name: macos-arm64
-          path: dist/*.tar.gz
-
-  macos-x86:
-    # Intel runner（macos-13）排队可能很久：不阻塞发布，完成后由 attach 作业补挂到 Release
-    if: github.event.repository.private == false
-    continue-on-error: true
-    runs-on: macos-13
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          submodules: recursive
-      - name: 构建 numextend
-        run: |
-          cmake -S numextend -B numextend/build -DCMAKE_BUILD_TYPE=Release
-          cmake --build numextend/build -j"$(sysctl -n hw.ncpu)"
-      - name: 构建（静态运行库）
-        run: |
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DPOLYNO_STATIC_RUNTIME=ON
-          cmake --build build -j"$(sysctl -n hw.ncpu)"
-      - name: 打包
-        run: |
-          pkg="polyno_err_ana-${GITHUB_REF_NAME}-macos-x86_64"
-          mkdir -p "dist/$pkg"
-          cp build/polyno_err_ana "dist/$pkg/"
-          cp LICENSE.md README.md THIRD_PARTY.md FAQ.md "dist/$pkg/"
-          tar -C dist -czf "dist/$pkg.tar.gz" "$pkg"
-      - uses: actions/upload-artifact@v7
-        with:
-          name: macos-x86
+          name: macos-universal2
           path: dist/*.tar.gz
 
   publish:
     # 等所有平台完成再发布：macOS 作业在私有仓库会被 skip（needs 中的 skip 视作通过）
-    needs: [linux, linux-mpfr, windows, windows-mpfr, macos-arm64]
+    needs: [linux, linux-mpfr, windows, windows-mpfr, macos-universal]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -244,30 +221,10 @@ jobs:
             | --- | --- | --- |
             | Linux x86_64 | `...-linux-x86_64.tar.gz` | `...-linux-x86_64-mpfr.tar.gz` |
             | Windows x86_64 | `...-windows-x86_64.zip` | `...-windows-x86_64-mpfr.zip` |
-            | macOS arm64 / x86_64 | `...-macos-<arch>.tar.gz` | — |
+            | macOS（通用） | `...-macos-universal2.tar.gz`（arm64 + x86_64 单一二进制） | — |
 
-            校验和见 `SHA256SUMS.txt`（Intel mac 包单独提供 `SHA256SUMS-macos-x86_64.txt`）；
+            校验和见 `SHA256SUMS.txt`；
             `-V` 可确认实际内核；用法见包内 `README.md` 与 `EXAMPLES.md`。
-            平台支持等级见 `PLATFORMS.md`（Tier 1：Linux/Windows/macOS arm64；Tier 2：macOS Intel；
+            平台支持等级见 `PLATFORMS.md`（Tier 1：Linux/Windows/macOS 通用二进制；Tier 2：macOS Intel 运行期未实测；
             Tier 3：BSD 源码构建；Tier 4：其余）。
             静态链接的 MPFR/GMP 属 LGPL，义务说明见包内 `THIRD_PARTY.md`。
-
-  attach-macos-x86:
-    # 补挂 Intel 包（不阻塞发布；若 runner 最终没跑起来就跳过）
-    needs: [publish, macos-x86]
-    if: needs.publish.result == 'success' && needs.macos-x86.result == 'success'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/download-artifact@v8
-        with:
-          name: macos-x86
-          path: pkg
-      - name: 上传到 Release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          cd pkg
-          sha256sum *.tar.gz > SHA256SUMS-macos-x86_64.txt
-          gh release upload "${GITHUB_REF_NAME}" *.tar.gz SHA256SUMS-macos-x86_64.txt              --repo "${GITHUB_REPOSITORY}" --clobber

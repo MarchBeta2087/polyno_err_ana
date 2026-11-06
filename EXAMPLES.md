@@ -301,7 +301,7 @@ schema 随二进制发布（`--json-schema`），可用任意 draft 2020-12 校�
 | 多变量多规格 | `--lim x:p0,y:ninf` 或重复 `--lim` |
 | 低/高精度 | `-p 2` … `-p 4096`（`-R`/`--estimated` 字面量同样按该精度解析） |
 | 机器可读 | `--json`；schema 用 `--json-schema` |
-| 消息语言 | `--lang ja|ko|es|pt`（默认 zh） |
+| 消息语言 | `--lang ja\|ko\|es\|pt`（默认 zh） |
 | 爆项保护 | `--max-terms N`（超限退化为数值探测，退出码仍为 0） |
 
 退出码：`0` 成功、`1` 解析错误（含列号）、`2` 命令行错误、`3` 数值异常。

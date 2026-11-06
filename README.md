@@ -132,15 +132,15 @@ GitHub Releases 提供三平台单文件包（静态运行库，`-DPOLYNO_STATIC
 | --- | --- | --- |
 | Linux x86_64 | `…-linux-x86_64.tar.gz` | `…-linux-x86_64-mpfr.tar.gz` |
 | Windows x86_64 | `…-windows-x86_64.zip` | `…-windows-x86_64-mpfr.zip` |
-| macOS arm64 / x86_64 | `…-macos-arm64.tar.gz` / `…-macos-x86_64.tar.gz`（Intel runner 较慢，可能延后挂载） | — |
+| macOS（arm64 + x86_64） | `…-macos-universal2.tar.gz`（单一通用二进制） | — |
 | 校验 | `SHA256SUMS.txt` | |
 
 平台支持等级见 **`PLATFORMS.md`**：
 
 | Tier | 平台 | 承诺 |
 | --- | --- | --- |
-| 1 | Linux x86_64 / Windows x86_64(UCRT64) / macOS arm64 | 每次 CI 验证 + 每 tag 出包（含 `-mpfr`） |
-| 2 | macOS x86_64（Intel） | 尽力支持：`macos-13` 排队不稳，包异步补挂、不阻塞发布 |
+| 1 | Linux x86_64 / Windows x86_64(UCRT64) / macOS 通用二进制 | 每次 CI 验证 + 每 tag 出包（含 `-mpfr`） |
+| 2 | macOS x86_64（Intel 实机运行） | 由 universal2 覆盖，但**不做 Intel 实机 CI**；严重缺陷走 PATCH |
 | 3 | FreeBSD / OpenBSD / NetBSD | 源码可构建，无 CI/无包，欢迎 PR 修正可移植性 |
 | 4 | 其余（arm64 Linux、musl、MSVC、32 位…） | 不保证 |
 

@@ -9,7 +9,7 @@
 | --- | --- | --- |
 | Linux x86_64 | GCC / Clang（glibc ≥ 2.35，如 Ubuntu 22.04+） | `ci.yml` 全量：双内核构建 + `regression` + `snapshot` + 性能门禁；Release 出包（含 `-mpfr`） |
 | Windows x86_64 | MSYS2 **UCRT64**（GCC ≥ 13） | 同上（含 MPFR 内核 + `-mpfr` 包） |
-| macOS arm64 | AppleClang（macos-latest） | 同上（`ci.yml` + Release 包） |
+| macOS（通用二进制） | AppleClang（macos-latest，`CMAKE_OSX_ARCHITECTURES="arm64;x86_64"`） | `ci.yml` 构建 + `lipo` 校验 + 在 arm64 上跑回归；Release 出 `macos-universal2` 包 |
 
 Tier 1 承诺：
 
@@ -17,19 +17,17 @@ Tier 1 承诺：
 - 每个 tag 提供静态运行库单文件包与 `SHA256SUMS.txt`；
 - 安全/严重缺陷优先修复。
 
-## Tier 2 —— 尽力支持（有 CI，但不阻塞发布）
+## Tier 2 —— 尽力支持（无独立 CI，靠通用二进制覆盖）
 
 | 平台 | 说明 |
 | --- | --- |
-| macOS x86_64（Intel） | 走 `macos-13` runner；该镜像排队时间不可控，故 `continue-on-error`：不阻塞发布，完成后由 `attach-macos-x86` 把 `…-macos-x86_64.tar.gz` 与 `SHA256SUMS-macos-x86_64.txt` 补挂到同一 Release。若长期排不上队，发布可能缺少 Intel 包。 |
+| macOS x86_64（Intel） | **不再单独安排 Intel runner（`macos-13`）**：改为在 arm64 runner 上构建 **universal2**（`arm64;x86_64`）单一二进制，Intel 机器直接运行同一个包。CI 会在构建后 `lipo -info` 校验两个架构都在，并在 arm64 上跑回归；**Intel 实机运行未纳入 CI**。 |
 
-Tier 2 承诺：已知可构建；出现回归会修复但不保证在下一个 tag 前完成。
+Tier 2 承诺：已知可运行；不做 Intel 实机回归，因此 Intel 专属问题（如特定 CPU/OS 组合）
+可能晚发现。若出现**严重缺陷**（崩溃、错误结果），按普通 bug 修复并**发布 PATCH**（`X.Y.Z+1`）。
 
-**Intel（macOS x86_64）特别约定**：
-
-- runner 排队久、可能超时失败或被取消 —— 这本身**不视为回归**，也不阻塞发布；
-- 不提供包的 tag 属正常情况；需要时可在后续任意 tag 一并补挂，不为“补包”单独发版；
-- 若发现 **Intel 专属的严重缺陷**（崩溃、错误结果），按普通 bug 修复并**发布 PATCH**（`X.Y.Z+1`）。
+> 为什么不跑 Intel CI：`macos-13` 排队时间不可控、可能超时或被取消，且不产出额外价值
+> （universal2 已覆盖 x86_64）。如果将来需要实机验证，欢迎在 `OPEN_TASKS.md` 提 Issue 征集。
 
 ## Tier 3 —— 源码可构建，社区验证（无 CI、无预编译包）
 

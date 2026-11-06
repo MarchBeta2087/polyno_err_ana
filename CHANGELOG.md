@@ -2,6 +2,15 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v0.15.5-m14
+
+- **取消 macOS x86 CI**：不再使用 `macos-13`（排队不可控）；改在 arm64 runner 构建
+  **universal2**（`arm64;x86_64`）单一二进制，`lipo -info` 校验两架构，arm64 上跑回归；
+  Release 产物改为 `...-macos-universal2.tar.gz`（Intel 直接可用）
+- 删除 `attach-macos-x86` 作业；`PLATFORMS.md` Tier 2 改为“Intel 实机运行未纳入 CI，
+  严重缺陷走 PATCH”；README/Release 说明同步
+- Issue #13 以 universal2 方案关闭
+
 ## v0.15.4-m14
 
 - 新增 `COMPATIBILITY.md`：版本号规则、稳定面/实验面、废弃流程（≥1 个 MINOR）、支持窗口、
