@@ -1,5 +1,10 @@
 # polyno_err_ana
 
+[![ci](https://github.com/MarchBeta2087/polyno_err_ana/actions/workflows/ci.yml/badge.svg)](https://github.com/MarchBeta2087/polyno_err_ana/actions/workflows/ci.yml)
+[![pages](https://github.com/MarchBeta2087/polyno_err_ana/actions/workflows/pages.yml/badge.svg)](https://marchbeta2087.github.io/polyno_err_ana/)
+[![license: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg)](LICENSE.md)
+[![C++23](https://img.shields.io/badge/C%2B%2B-23-blue.svg)](CMakeLists.txt)
+
 多项式/有理式误差分析器：给定表达式 `f` 与各变量的误差量，输出符号一阶误差传播、精确误差边界
 （`R+` / `R-`），以及误差量在 `δv → ±0 / ±∞` 下的极限类型分类。
 
