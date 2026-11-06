@@ -33,3 +33,6 @@ CMakeUserPresets.json
 
 # 文档站产物
 site/_out/
+
+# 临时导出的 schema（--json-schema 输出）
+schema.json

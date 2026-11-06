@@ -55,6 +55,22 @@ bash tests/snapshot_test.sh ./build/polyno_err_ana.exe
 git config user.email "98508270+MarchBeta2087@users.noreply.github.com"
 ```
 
+## 分支模型与 PR 要求
+
+| 分支 | 用途 | 规则 |
+| --- | --- | --- |
+| `main` | 发布线：每个 tag 从这里打 | **禁止直接 push**，只能经 PR 合入；合并前必须 CI 全绿 |
+| `dev` | 集成分支：日常开发汇入此处 | **禁止直接 push**，只能经 PR 合入 |
+| `feat/*`、`fix/*`、`docs/*` | 具体改动 | 从 `dev` 切出，完成后 PR 到 `dev`；发版时 `dev → main` 再打 tag |
+
+PR 要求：
+
+1. 标题写清动作与范围（如 `fix: 修复 --lim 区间端点`），正文填 `.github/PULL_REQUEST_TEMPLATE.md`；
+2. CI 必须通过 `linux` / `windows` / `macos` 三个检查（Tier 1），否则不能合并；
+3. 输出格式变更必须重新生成 `tests/snapshots/expected.txt`，并在 PR 里说明；
+4. 涉及需求/兼容性的改动先改文档（`需求分析.md` / `COMPATIBILITY.md`）；
+5. 合并方式用 **Squash merge**，保持 `main`/`dev` 线性历史。
+
 ## 待办与里程碑
 
 待办只在 `TODO.md` 维护（P0/P1/P2，带验收方式）。完成一项就**从 TODO 删除**，并在
