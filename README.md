@@ -99,8 +99,8 @@ GCC 14+ 默认 C23 会让 GMP 的 long-long 探针失败，脚本已加 `-std=gn
 ./build/polyno_err_ana -R x 1e-4 --estimated x=0.6 -f '(1+x)^4' --vars --json | jq .
 ./build/polyno_err_ana --json-schema > schema.json
 
-# 英文消息
-./build/polyno_err_ana --lang en -R x 1e-4 -f '(1+x)^4' --vars
+# 消息语言：zh(默认)/en/ja/ko/es/pt
+./build/polyno_err_ana --lang ja -R x 1e-4 -f '(1+x)^4' --vars
 
 # 负实底数：默认复主值 vs --real-root 实根
 ./build/polyno_err_ana -R x 1e-4 --estimated x=0.5 -f 'x+(-8)^(1/3)' --vars

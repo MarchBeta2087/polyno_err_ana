@@ -21,7 +21,7 @@ using namespace pna;
 
 namespace {
 
-constexpr const char* kVersion = "0.13.4-m13";
+constexpr const char* kVersion = "0.14.0-m14";
 
 struct Var {
     std::string name;
@@ -206,8 +206,12 @@ Cplx parse_value(const std::string& s) {
     try {
         return const_value(parse(s));
     } catch (const ParseError& e) {
-        throw std::runtime_error(tr_message("命令行错误: --estimated 值非法（第 " + std::to_string(e.col) +
-                                                " 列）: " + e.what()));
+        char buf[512];
+        std::snprintf(buf, sizeof buf,
+                      tr("命令行错误: --estimated 值非法（列 %zu）: %s",
+                         "command line error: --estimated invalid value (column %zu): %s"),
+                      e.col, e.what());
+        throw std::runtime_error(buf);
     }
 }
 
@@ -319,9 +323,7 @@ Opts parse_args(int argc, char** argv) {
             o.real_root = true;
         } else if (a == "--lang") {
             std::string v = need(i, "--lang");
-            if (v == "zh") o.lang = pna::Lang::Zh;
-            else if (v == "en") o.lang = pna::Lang::En;
-            else usage_error("--lang 只支持 zh / en");
+            if (!parse_lang(v, o.lang)) usage_error("--lang 只支持 zh / en / ja / ko / es / pt");
         } else if (a == "--json-schema") {
             o.json_schema = true;
         } else if (a == "--json") {
@@ -366,7 +368,14 @@ Opts parse_args(int argc, char** argv) {
         } else if (a == "--kernel") {
             std::string k = need(i, "--kernel");
             if (k != kernel_name())
-                usage_error(tr_message(std::string("当前构建的内核是 ") + kernel_name() + "，不支持 --kernel " + k));
+            {
+                char buf[256];
+                std::snprintf(buf, sizeof buf,
+                              tr("当前构建的内核是 %s，不支持 --kernel %s",
+                                 "this build uses kernel %s, which does not support --kernel %s"),
+                              kernel_name(), k.c_str());
+                usage_error(buf);
+            }
         } else if (a == "-h" || a == "--help") {
             std::fputs(pna::help_text(), stdout);
             std::exit(0);
@@ -432,9 +441,11 @@ Cplx value_of(const Env& env, const std::string& name) {
 
 int main(int argc, char** argv) {
     try {
-        for (int i = 1; i + 1 < argc; ++i)
-            if (std::string(argv[i]) == "--lang" && std::string(argv[i + 1]) == "en")
-                set_lang(pna::Lang::En);
+        for (int i = 1; i + 1 < argc; ++i) {
+            if (std::string(argv[i]) != "--lang") continue;
+            Lang l;
+            if (parse_lang(argv[i + 1], l)) set_lang(l);
+        }
         Opts o = parse_args(argc, argv);
         set_lang(o.lang);
         if (o.json_schema) {

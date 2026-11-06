@@ -2,6 +2,13 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v0.14.0-m14
+
+- `--lang` 扩展到 **6 种语言**：`zh`（默认）/ `en` / `ja` / `ko` / `es` / `pt`
+- i18n 改为单表 `{zh,en,ja,ko,es,pt}`：错误消息、帮助（6 份全文）、输出块标题、N-5 提示
+- 中文模式下的解析/求值/数值错误也改为中文（此前恒为英文）
+- 快照扩到 45 条（新增 ja/ko/es/pt 输出与 es 的 JSON）；checks 增加 4 种语言的帮助/错误/标题断言
+
 ## v0.13.4-m13
 
 - 移除 `mpfr/` submodule：MPFR 只走官方 tarball 4.2.1（`scripts/fetch-mpfr.sh`）

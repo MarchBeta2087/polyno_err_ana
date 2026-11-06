@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "ast.hpp"
 
+#include "i18n.hpp"
+
 #include <cctype>
 #include <cmath>
 #include <cstdio>
@@ -81,7 +83,7 @@ std::vector<Tok> lex(const std::string& s) {
             case '(': t.k = Tok::LP; break;
             case ')': t.k = Tok::RP; break;
             default:
-                throw ParseError(std::string("unexpected character '") + c + "'", t.col);
+                throw ParseError(std::string(tr("意外字符 '", "unexpected character '")) + c + "'", t.col);
         }
         t.text = std::string(1, c);
         out.push_back(t);
@@ -158,10 +160,10 @@ Expr Parser::atom() {
             size_t col = cur().col;
             next();
             if (is_func(name))
-                throw ParseError("unsupported function: " + name, col);
+                throw ParseError(tr("不支持的函数: ", "unsupported function: ") + name, col);
             if (!name.empty() && name[0] == '_')
-                throw ParseError("illegal variable name: " + name, col);
-            if (cur().k == Tok::LP) throw ParseError("unsupported function: " + name, col);
+                throw ParseError(tr("非法变量名: ", "illegal variable name: ") + name, col);
+            if (cur().k == Tok::LP) throw ParseError(tr("不支持的函数: ", "unsupported function: ") + name, col);
             if (name == "i") {
                 auto n = std::make_shared<Node>();
                 n->k = NK::Num;
@@ -180,12 +182,12 @@ Expr Parser::atom() {
         case Tok::LP: {
             next();
             Expr e = expr();
-            if (cur().k != Tok::RP) fail("expected ')'");
+            if (cur().k != Tok::RP) fail(tr("缺少 ')'", "expected ')'"));
             next();
             return e;
         }
-        case Tok::End: fail("unexpected end of formula");
-        default: fail("unexpected token '" + cur().text + "'");
+        case Tok::End: fail(tr("公式意外结束", "unexpected end of formula"));
+        default: fail(std::string(tr("意外标记 '", "unexpected token '")) + cur().text + "'");
     }
 }
 
@@ -194,7 +196,7 @@ Expr Parser::power() {
     if (cur().k == Tok::Caret) {
         next();
         Expr e = unary();  // 右结合：2^-1、a^b^c 均由此递归
-        if (has_var(e)) throw ParseError("exponent must be a constant", e->col);
+        if (has_var(e)) throw ParseError(tr("指数必须是常数", "exponent must be a constant"), e->col);
         return fold(NK::Pow, base, e);
     }
     return base;
@@ -347,7 +349,7 @@ Expr parse(const std::string& src) {
     Parser ps{lex(src), 0};
     Expr e = ps.expr();
     if (ps.cur().k != Tok::End)
-        throw ParseError("unexpected trailing token '" + ps.cur().text + "'", ps.cur().col);
+        throw ParseError(std::string(tr("意外的尾部标记 '", "unexpected trailing token '")) + ps.cur().text + "'", ps.cur().col);
     return e;
 }
 
@@ -386,7 +388,7 @@ void collect_vars(const Expr& e, std::vector<std::string>& out) {
 }
 
 Cplx const_value(const Expr& e) {
-    if (has_var(e)) throw ParseError("exponent must be a constant", e->col);
+    if (has_var(e)) throw ParseError(tr("指数必须是常数", "exponent must be a constant"), e->col);
     return eval(e, {});
 }
 

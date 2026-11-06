@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "sym.hpp"
 
+#include "i18n.hpp"
+
 #include <algorithm>
 #include <cmath>
 #include <cstring>
@@ -14,7 +16,8 @@ bool atom_eq(const Expr& a, const Expr& b) { return same(a, b); }
 std::size_t g_max_terms = 200000;
 
 [[noreturn]] void too_many_terms() {
-    throw EvalError("符号展开项数超过上限（可用 --max-terms 调整）");
+    throw EvalError(tr("符号展开项数超过上限（可用 --max-terms 调整）",
+                       "symbolic expansion exceeded the term cap (use --max-terms)"));
 }
 
 void guard(std::size_t n) {
@@ -143,12 +146,13 @@ Sym to_sym(const Expr& e) {
         case NK::Div: return sym_mul(to_sym(e->a), reciprocal(e->b));
         case NK::Pow: {
             Cplx ex = eval(e->b, {});
-            if (!c_is_finite(ex)) throw EvalError("non-finite exponent: symbolic form unsupported");
+            if (!c_is_finite(ex)) throw EvalError(tr("非常数指数：不支持符号展开",
+                       "non-finite exponent: symbolic form unsupported"));
             if (c_is_zero(ex)) return sym_const(c_one());
             return single_factor(e->a, ex);  // 任意常指数：保留为原子幂，见 §4.1
         }
     }
-    throw EvalError("bad node");
+    throw EvalError(tr("坏节点", "bad node"));
 }
 
 void sym_set_max_terms(std::size_t n) { g_max_terms = n ? n : 1; }

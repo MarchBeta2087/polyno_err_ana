@@ -10,7 +10,6 @@
 
 ## P1 — 工程
 
-- [ ] `--lang` 扩展到更多语言（当前 zh/en），消息表在 `src/i18n.cpp`
 
 ## P2 — 发布/社区
 
@@ -22,6 +21,8 @@
   `docs/history/2026-11-07-license-decision.md`
 
 ## 已完成（移出，见 CHANGELOG）
+
+- m14：`--lang` 六语言（zh/en/ja/ko/es/pt），单表实现 + 6 份帮助文本
 
 - m13.4：移除 `mpfr/` submodule，迁移到官方 tarball 4.2.1（`docs/history/2026-11-07-mpfr-tarball-migration.md`）
 

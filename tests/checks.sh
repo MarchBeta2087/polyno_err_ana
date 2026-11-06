@@ -41,11 +41,11 @@ n=$(count_rows "$out")
 [ "$n" -eq 8 ] || { printf 'FAIL T-5 all 组数: %s != 8\n' "$n"; fail=$((fail+1)); }
 
 # ---- T-7 / T-8 解析错误 ----
-out=$(run --real x 1e-4 -f 'a^b'); rc=$?
+out=$(run --lang en --real x 1e-4 -f 'a^b'); rc=$?
 [ "$rc" -eq 1 ] || { printf 'FAIL T-7 退出码: %s\n' "$rc"; fail=$((fail+1)); }
 check_contains "T-7 消息" "$out" 'exponent must be a constant'
 
-out=$(run --real x 1e-4 -f 'sin(a)'); rc=$?
+out=$(run --lang en --real x 1e-4 -f 'sin(a)'); rc=$?
 [ "$rc" -eq 1 ] || { printf 'FAIL T-8 退出码: %s\n' "$rc"; fail=$((fail+1)); }
 check_contains "T-8 消息" "$out" 'unsupported function'
 
@@ -282,6 +282,27 @@ PY
 '; fail=$((fail+1)); }
 rm -f "$TMPJSON"
 fi
+
+# ---- 多语言（zh/en/ja/ko/es/pt） ----
+out=$(run -f 'a^b' -R x 1e-4)
+check_contains "zh 解析错误" "$out" '指数必须是常数'
+out=$(run --nope 2>/dev/null)
+check_contains "zh 命令行错误" "$out" '未知选项'
+
+while IFS='|' read -r lang help_line err_line title; do
+    [ -z "$lang" ] && continue
+    out=$(run --lang "$lang" -h)
+    check_contains "$lang 帮助" "$out" "$help_line"
+    out=$(run --lang "$lang" -f 'a^b' -R x 1e-4)
+    check_contains "$lang 解析错误" "$out" "$err_line"
+    out=$(run --lang "$lang" -R x 1e-4 -f '(1+x)^4')
+    check_contains "$lang 边界标题" "$out" "$title"
+done <<'LANGS'
+ja|使い方: polyno_err_ana|構文エラー|厳密な境界
+ko|사용법: polyno_err_ana|구문 오류|정확한 경계
+es|Uso: polyno_err_ana|error de sintaxis|Cota exacta
+pt|Uso: polyno_err_ana|erro de sintaxe|Limite exato
+LANGS
 
 # ---- --lang en ----
 out=$(run --lang en -h)

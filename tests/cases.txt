@@ -39,3 +39,8 @@
 --real --absolute x 1e-4 y 1e-4 -f '(1+x*y)^5' --json
 --real --absolute x 1e-4 --estimated x=0.6 -f '(1+x)^4' --vars --lang en
 --real --absolute x 1e-4 --lim x:p0 -f '(1+x)^4' --lang en
+--real --absolute x 1e-4 --estimated x=0.6 -f '(1+x)^4' --vars --lang ja
+--real --absolute x 1e-4 --estimated x=0.6 -f '(1+x)^4' --vars --lang ko
+--real --absolute x 1e-4 --estimated x=0.6 -f '(1+x)^4' --vars --lang es
+--real --absolute x 1e-4 --estimated x=0.6 -f '(1+x)^4' --vars --lang pt
+-C z 1e-4 1e-4 -f '(1+z)^(1+i)' -k 2 --json --lang es

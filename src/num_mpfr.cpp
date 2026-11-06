@@ -2,6 +2,8 @@
 // MPFR 后端：与 numextend 版实现同一组 Real 原语（见 num.hpp）。
 #include "num.hpp"
 
+#include "i18n.hpp"
+
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -20,7 +22,7 @@ void check(int rc, const char* what) {
 }  // namespace
 
 void set_precision(int bits) {
-    if (bits < 2) throw NumError("precision must be >= 2");
+    if (bits < 2) throw NumError(tr("精度必须 >= 2", "precision must be >= 2"));
     g_bits = bits;
 }
 
@@ -66,7 +68,7 @@ Real Real::from_double(double d) {
 Real Real::from_str(const char* s) {
     Real r;
     if (mpfr_set_str(r.v, s, 10, MPFR_RNDN) != 0)
-        throw NumError(std::string("cannot parse number: ") + s);
+        throw NumError(std::string(tr("无法解析数值: ", "cannot parse number: ")) + s);
     return r;
 }
 

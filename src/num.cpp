@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "num.hpp"
 
+#include "i18n.hpp"
+
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -14,7 +16,7 @@ bool g_ready = false;
 }  // namespace
 
 void set_precision(int bits) {
-    if (bits < 2) throw NumError("precision must be >= 2");
+    if (bits < 2) throw NumError(tr("精度必须 >= 2", "precision must be >= 2"));
     g_bits = bits;
     bigfloat_ctx_make(&g_ctx, static_cast<size_t>(bits), 20, BIGFLOAT_ROUND_NEAREST_EVEN_E);
     g_ready = true;
@@ -29,7 +31,7 @@ Real::Real() { bigfloat_init(&v); }
 
 Real::Real(const Real& o) {
     bigfloat_init(&v);
-    if (bigfloat_copy(&v, &o.v) != BIGFLOAT_OK_E) throw NumError("oom");
+    if (bigfloat_copy(&v, &o.v) != BIGFLOAT_OK_E) throw NumError(tr("内存不足", "out of memory"));
 }
 
 Real::Real(Real&& o) noexcept : v(o.v) { bigfloat_init(&o.v); }
@@ -37,7 +39,7 @@ Real::Real(Real&& o) noexcept : v(o.v) { bigfloat_init(&o.v); }
 Real::~Real() { bigfloat_free(&v); }
 
 Real& Real::operator=(const Real& o) {
-    if (this != &o && bigfloat_copy(&v, &o.v) != BIGFLOAT_OK_E) throw NumError("oom");
+    if (this != &o && bigfloat_copy(&v, &o.v) != BIGFLOAT_OK_E) throw NumError(tr("内存不足", "out of memory"));
     return *this;
 }
 
@@ -64,7 +66,7 @@ Real Real::from_double(double d) {
 Real Real::from_str(const char* s) {
     Real r;
     if (bigfloat_from_str(&r.v, s, &ctx(), nullptr) != BIGFLOAT_OK_E)
-        throw NumError(std::string("cannot parse number: ") + s);
+        throw NumError(std::string(tr("无法解析数值: ", "cannot parse number: ")) + s);
     return r;
 }
 
