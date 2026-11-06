@@ -8,9 +8,9 @@
 - 许可证：GPL-3.0-or-later（见 `LICENSE.md`；第三方组件见 `THIRD_PARTY.md`）
 - 贡献指南：`CONTRIBUTING.md`；常见问题（含许可边界）：`FAQ.md`；待办与路线图：`TODO.md`
 
-需求与验收：`需求分析.md`（v0.3）；实现说明与偏差：`设计.md`；版本记录：`CHANGELOG.md`。
+需求与验收：`需求分析.md`（v0.4）；实现说明与偏差：`设计.md`；版本记录：`CHANGELOG.md`。
 
-## 当前状态（里程碑 1）
+## 当前状态（v0.8）
 
 | 能力 | 状态 |
 | --- | --- |
@@ -22,7 +22,11 @@
 | 复数变量 `-C`、`i`、复数指数、`--estimated z=1+2i` | ✅ 里程碑 2 |
 | `-k` 分支号（`exp(w·(log z + 2πik))`） | ✅ 里程碑 2 |
 | `--real-root`（负实底数取实根，与 `-k` 互斥） | ✅ 里程碑 4 |
-| `--kernel mpfr` | ❌ 需先构建 GMP |
+| `--kernel mpfr` | ✅ 需以 `-DPOLYNO_ENABLE_MPFR=ON` 构建 |
+| `--lim` 分组/区间（`zeros` / `infs` / `A..B` / 逗号多规格） | ✅ |
+| `--max-terms` 爆项保护（默认 200000，超限退化数值探测） | ✅ |
+| `-p` 精度极值（`2` … `4096` bit） | ✅ |
+| `-G` 许可全文、`--version` 内核/精度 | ✅ |
 
 ## 构建
 
@@ -94,16 +98,19 @@ GCC 14+ 默认 C23 会让 GMP 的 long-long 探针失败，脚本已加 `-std=gn
 ## 目录
 
 ```text
-src/num.hpp|num.cpp    数值层（numextend bigfloat 的 RAII 包装）
-src/ast.hpp|ast.cpp    词法 / 语法 / AST / 求值
-src/sym.hpp|sym.cpp    符号层（原子因子 + 整数指数的 Laurent 多项式和）
-src/main.cpp           命令行与输出
+src/num.hpp            后端无关接口（Real/Cplx/格式化）
+src/num.cpp            numextend 后端
+src/num_mpfr.cpp       MPFR 后端（-DPOLYNO_ENABLE_MPFR=ON 时编译）
+src/num_common.cpp     共用：Cplx 运算、分支幂、pi()
+src/ast.hpp|ast.cpp    词法 / 语法 / AST / 结构哈希 / 求值
+src/sym.hpp|sym.cpp    符号层（原子因子 + 复指数 Laurent 多项式和、爆项保护）
+src/main.cpp           命令行、输出表格、极限分类
 tests/checks.sh        断言式回归（CTest: regression）
 tests/cases.txt        快照用例（CTest: snapshot）
 tests/snapshots/       期望输出（与内核无关）
 scripts/bench.sh       性能冒烟
-TODO.md                路线图（唯一待办来源）
 scripts/build-mpfr.sh  GMP/MPFR 构建脚本
+docs/history/          历史决策记录（需求修改建议 v0.1）
 mpfr/, numextend/      git submodule（上游依赖）
 ```
 
