@@ -1,0 +1,30 @@
+# 构建产物
+build/
+build-*/
+out/
+*.exe
+*.obj
+*.o
+*.a
+*.dll
+*.lib
+*.pdb
+*.ilk
+
+# 第三方依赖（子模块 / 本地解压源码，不入库）
+gmp-6.3.0/
+gmp-*/
+mpfr-build/
+*.tar.xz
+*.tar.gz
+
+# 编辑器 / 工具
+.vscode/
+.idea/
+.cache/
+compile_commands.json
+CMakeUserPresets.json
+
+# 运行时与临时文件
+*.log
+*.tmp

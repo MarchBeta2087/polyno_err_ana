@@ -1,0 +1,6 @@
+[submodule "mpfr"]
+	path = mpfr
+	url = https://github.com/aixoss/mpfr
+[submodule "numextend"]
+	path = numextend
+	url = https://github.com/marchBeta2087/numextend
