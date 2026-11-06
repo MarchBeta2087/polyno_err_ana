@@ -2,6 +2,11 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v0.11.2-m11
+
+- Release 的 macOS 作业改用 `macos-13`（Intel）并设为 `continue-on-error`：
+  `macos-latest` 曾两次排队 15 分钟后被取消；macOS 产物缺失时仍照常发布 linux/windows
+
 ## v0.11.1-m11
 
 - 修复 macOS 静态链接失败：`-static` 仅用于 Linux/MinGW（macOS 无静态 libSystem）

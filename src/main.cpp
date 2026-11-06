@@ -18,7 +18,7 @@ using namespace pna;
 
 namespace {
 
-constexpr const char* kVersion = "0.11.1-m11";
+constexpr const char* kVersion = "0.11.2-m11";
 
 struct Var {
     std::string name;

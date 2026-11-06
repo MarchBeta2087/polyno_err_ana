@@ -77,7 +77,9 @@ jobs:
           path: dist/*.zip
 
   macos:
-    runs-on: macos-latest
+    runs-on: macos-13            # Intel；macos-latest(arm64) 曾出现排队 15min 被取消
+    continue-on-error: true      # macOS 产物缺失时仍发布 linux/windows
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
         with:
@@ -104,6 +106,7 @@ jobs:
 
   publish:
     needs: [linux, windows, macos]
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4

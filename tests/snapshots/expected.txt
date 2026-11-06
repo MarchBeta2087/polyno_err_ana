@@ -1,5 +1,5 @@
 ### --real --absolute x 1e-4 -f '(1+x)^4' --vars --lim all
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = (1+x)^4
 x ≈ 0,  δx = 0.0001 (absolute)
@@ -28,7 +28,7 @@ x ≈ 0,  δx = 0.0001 (absolute)
   x       +inf  +inf   +inf
   x       -inf  -inf   -inf
 ### --real --absolute x 1e-4 --estimated x=0.6 -f '(1+x)^4' --vars
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = (1+x)^4
 x ≈ 0.6,  δx = 0.0001 (absolute)
@@ -57,7 +57,7 @@ x ≈ 0.6,  δx = 0.0001 (absolute)
   x       +inf  +inf   +inf
   x       -inf  -inf   -inf
 ### --real --relative x 1e-4 --estimated x=0.6 -f '(1+x)^4' --vars
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = (1+x)^4
 x ≈ 0.6,  δx = 6.0000e-05 (relative)
@@ -86,7 +86,7 @@ x ≈ 0.6,  δx = 6.0000e-05 (relative)
   x       +inf  +inf   +inf
   x       -inf  -inf   -inf
 ### --real --absolute x 1e-4 y 1e-4 --estimated x=0.5 --estimated y=0.5 -f '(1+x*y)^5' --lim all
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = (1+x*y)^5
 x ≈ 0.5,  δx = 0.0001 (absolute)
@@ -112,7 +112,7 @@ y ≈ 0.5,  δy = 0.0001 (absolute)
   y       +inf  +inf   +inf
   y       -inf  -inf   -inf
 ### --real --absolute x 1e-4 --estimated x=-1 -f '(1+x)^2' --lim all
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = (1+x)^2
 x ≈ -1,  δx = 0.0001 (absolute)
@@ -132,7 +132,7 @@ x ≈ -1,  δx = 0.0001 (absolute)
   x       +inf  +inf    fin
   x       -inf  +inf    fin
 ### --real --absolute x 1e-4 --estimated x=-1 -f '(1+x)^3' --lim all
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = (1+x)^3
 x ≈ -1,  δx = 0.0001 (absolute)
@@ -152,7 +152,7 @@ x ≈ -1,  δx = 0.0001 (absolute)
   x       +inf  +inf    fin
   x       -inf  -inf    fin
 ### --real --absolute x 1e-4 --estimated x=-1 -f '(1+x)^(1/2)' --lim all
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = (1+x)^(1/2)
 x ≈ -1,  δx = 0.0001 (absolute)
@@ -172,7 +172,7 @@ x ≈ -1,  δx = 0.0001 (absolute)
   x       +inf   +inf    fin
   x       -inf  undef    fin
 ### -C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+z)^(1+i)' -k 2 --vars
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 branch k = 2
 
 f    = (1+z)^(1+i)
@@ -200,7 +200,7 @@ z ≈ (1+0.5i),  δz = (0.0001+0.0001i) (absolute)
   z          0    c0     c0
   z        inf  cinf   cinf
 ### -C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+z)^2' --vars --lim all
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = (1+z)^2
 z ≈ (1+0.5i),  δz = (0.0001+0.0001i) (absolute)
@@ -227,7 +227,7 @@ z ≈ (1+0.5i),  δz = (0.0001+0.0001i) (absolute)
   z          0    c0     c0
   z        inf  cinf   cinf
 ### --real --absolute x 1e-4 --estimated x=0.5 -f 'x+(-8)^(1/3)' --vars --lim all
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = x+(-8)^(1/3)
 x ≈ 0.5,  δx = 0.0001 (absolute)
@@ -256,7 +256,7 @@ x ≈ 0.5,  δx = 0.0001 (absolute)
   x       +inf  cinf   cinf
   x       -inf  cinf   cinf
 ### --real --absolute x 1e-4 --estimated x=0.5 -f 'x+(-8)^(1/3)' --real-root --vars --lim all
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = x+(-8)^(1/3)
 x ≈ 0.5,  δx = 0.0001 (absolute)
@@ -285,7 +285,7 @@ x ≈ 0.5,  δx = 0.0001 (absolute)
   x       +inf  +inf   +inf
   x       -inf  -inf   -inf
 ### --real --absolute x 1e-4 --estimated x=0.5 -f 'x+(-8)^(1/2)' --real-root --vars --lim all
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = x+(-8)^(1/2)
 x ≈ 0.5,  δx = 0.0001 (absolute)
@@ -314,7 +314,7 @@ x ≈ 0.5,  δx = 0.0001 (absolute)
   x       +inf  undef  undef
   x       -inf  undef  undef
 ### --real --absolute x 1e-4 -f 'x+0^0' --vars --lim all
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = x+0^0
 x ≈ 0,  δx = 0.0001 (absolute)
@@ -343,7 +343,7 @@ x ≈ 0,  δx = 0.0001 (absolute)
   x       +inf  undef  undef
   x       -inf  undef  undef
 ### --real --absolute x 1e-4 -f '1/(x-x)' --lim all
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = 1/(x-x)
 x ≈ 0,  δx = 0.0001 (absolute)
@@ -363,7 +363,7 @@ x ≈ 0,  δx = 0.0001 (absolute)
   x       +inf  undef  undef
   x       -inf  undef  undef
 ### --real --absolute x 1e-4 y 1e-4 --estimated x=0.5 --estimated y=0.5 -f '(1+x*y)^5' --lim x:pinf
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = (1+x*y)^5
 x ≈ 0.5,  δx = 0.0001 (absolute)
@@ -385,7 +385,7 @@ y ≈ 0.5,  δy = 0.0001 (absolute)
 ### --real --relative x 1e-4 --estimated x=0 --vars --lim all
 命令行错误: 缺少 -f FORMULA
 ### --real --absolute x 1e-4 -f '(1+x)^4' --vars -p 64
-polyno_err_ana 0.11.1-m11  (KERNEL, 64 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 64 bit)
 
 f    = (1+x)^4
 x ≈ 0,  δx = 0.0001 (absolute)
@@ -414,7 +414,7 @@ x ≈ 0,  δx = 0.0001 (absolute)
   x       +inf  +inf   +inf
   x       -inf  -inf   -inf
 ### --real --absolute x 1e-4 -C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+x)^2+z' --vars
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = (1+x)^2+z
 x ≈ 0,  δx = 0.0001 (absolute)
@@ -448,7 +448,7 @@ z ≈ (1+0.5i),  δz = (0.0001+0.0001i) (absolute)
   z          0    c0     c0
   z        inf  cinf   cinf
 ### --real --absolute x 1e-4 --lim x:n0 -f '(1+x)^4' --vars
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = (1+x)^4
 x ≈ 0,  δx = 0.0001 (absolute)
@@ -474,7 +474,7 @@ x ≈ 0,  δx = 0.0001 (absolute)
   ---  -------  ---  -----
   x         -0   -0     -0
 ### --real --absolute x 1e-4 -f '(1+x)^4' --lim x:p0,x:ninf
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = (1+x)^4
 x ≈ 0,  δx = 0.0001 (absolute)
@@ -492,7 +492,7 @@ x ≈ 0,  δx = 0.0001 (absolute)
   x         +0    +0     +0
   x       -inf  -inf   -inf
 ### -C z 1e-4 1e-4 -f '(1+z)^2' --lim z:inf --vars
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = (1+z)^2
 z ≈ 0,  δz = (0.0001+0.0001i) (absolute)
@@ -518,7 +518,7 @@ z ≈ 0,  δz = (0.0001+0.0001i) (absolute)
   ---  -------  ----  -----
   z        inf  cinf   cinf
 ### --real --absolute a 1e-4 b 1e-4 c 1e-4 d 1e-4 --max-terms 4 -f '(a+b)*(c+d)' --vars
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = (a+b)*(c+d)
 a ≈ 0,  δa = 0.0001 (absolute)
@@ -551,7 +551,7 @@ d ≈ 0,  δd = 0.0001 (absolute)
   c         +0  undef  undef
   d         +0  undef  undef
 ### --real --absolute x 1e-4 --estimated x=0.6 -f '(1+x)^4' --vars -p 4096
-polyno_err_ana 0.11.1-m11  (KERNEL, 4096 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 4096 bit)
 
 f    = (1+x)^4
 x ≈ 0.6,  δx = 0.0001 (absolute)
@@ -580,7 +580,7 @@ x ≈ 0.6,  δx = 0.0001 (absolute)
   x       +inf  +inf   +inf
   x       -inf  -inf   -inf
 ### --real --absolute x 1e-4 -f '(1+x)^4' --vars -p 2
-polyno_err_ana 0.11.1-m11  (KERNEL, 2 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 2 bit)
 
 f    = (1+x)^4
 x ≈ 0,  δx = 9.1553e-05 (absolute)
@@ -609,7 +609,7 @@ x ≈ 0,  δx = 9.1553e-05 (absolute)
   x       +inf  +inf   +inf
   x       -inf  -inf   -inf
 ### --real --absolute x 1e-4 -f '(1+x)^4' --lim x:0..inf
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = (1+x)^4
 x ≈ 0,  δx = 0.0001 (absolute)
@@ -629,7 +629,7 @@ x ≈ 0,  δx = 0.0001 (absolute)
   x       +inf  +inf   +inf
   x       -inf  -inf   -inf
 ### --real --absolute x 1e-4 -f '(1+x)^4' --lim x:p0..pinf
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = (1+x)^4
 x ≈ 0,  δx = 0.0001 (absolute)
@@ -648,7 +648,7 @@ x ≈ 0,  δx = 0.0001 (absolute)
   x         -0    -0     -0
   x       +inf  +inf   +inf
 ### -C z 1e-4 1e-4 -f '(1+z)^2' --lim z:zeros --vars
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = (1+z)^2
 z ≈ 0,  δz = (0.0001+0.0001i) (absolute)
@@ -674,7 +674,7 @@ z ≈ 0,  δz = (0.0001+0.0001i) (absolute)
   ---  -------  ---  -----
   z          0   c0     c0
 ### -C z 1e-4 1e-4 --relative --estimated z=1+0.5i -f '(1+z)^2' --vars --lim all
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = (1+z)^2
 z ≈ (1+0.5i),  δz = (0.000111803+0.000111803i) (relative)
@@ -701,7 +701,7 @@ z ≈ (1+0.5i),  δz = (0.000111803+0.000111803i) (relative)
   z          0    c0     c0
   z        inf  cinf   cinf
 ### -C z 1e-4 1e-4 -f '(1+z)^(1+i)' -k 2 --lim all
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 branch k = 2
 
 f    = (1+z)^(1+i)
@@ -720,7 +720,7 @@ z ≈ 0,  δz = (0.0001+0.0001i) (absolute)
   z          0    c0     c0
   z        inf  cinf   cinf
 ### --real --absolute x 1e-4 -C z 1e-4 1e-4 --estimated z=1+1i --estimated x=0.5 -f 'z*(1+x)' --lim all
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = z*(1+x)
 x ≈ 0.5,  δx = 0.0001 (absolute)
@@ -744,7 +744,7 @@ z ≈ (1+1i),  δz = (0.0001+0.0001i) (absolute)
   z          0    c0     c0
   z        inf  cinf   cinf
 ### --real --absolute a 1e-4 b 1e-4 --max-terms 3 -f '(a+b)^2*(a+b)^2' --vars --lim all
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = (a+b)^2*(a+b)^2
 a ≈ 0,  δa = 0.0001 (absolute)
@@ -775,7 +775,7 @@ b ≈ 0,  δb = 0.0001 (absolute)
   b       +inf  +inf    fin
   b       -inf  +inf    fin
 ### --real --absolute x 1e-4 --estimated x=0.3 -f '(1+x)^4' --vars -p 8
-polyno_err_ana 0.11.1-m11  (KERNEL, 8 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 8 bit)
 
 f    = (1+x)^4
 x ≈ 0.300781,  δx = 0.000100136 (absolute)
@@ -804,7 +804,7 @@ x ≈ 0.300781,  δx = 0.000100136 (absolute)
   x       +inf  +inf   +inf
   x       -inf  -inf   -inf
 ### --real --absolute x 1e-4 --estimated x=0.3 -f '(1+x)^4' --vars -p 64
-polyno_err_ana 0.11.1-m11  (KERNEL, 64 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 64 bit)
 
 f    = (1+x)^4
 x ≈ 0.3,  δx = 0.0001 (absolute)
@@ -833,7 +833,7 @@ x ≈ 0.3,  δx = 0.0001 (absolute)
   x       +inf  +inf   +inf
   x       -inf  -inf   -inf
 ### --real --absolute x 1e-4 -f '(1+x)^4' --lim x:n0..ninf
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = (1+x)^4
 x ≈ 0,  δx = 0.0001 (absolute)
@@ -852,7 +852,7 @@ x ≈ 0,  δx = 0.0001 (absolute)
   x       +inf  +inf   +inf
   x       -inf  -inf   -inf
 ### --real --absolute a 1e-4 b 1e-4 c 1e-4 --estimated a=0.2 --estimated b=0.3 --estimated c=0.4 -f '(a+b*c)^3' --vars --lim all
-polyno_err_ana 0.11.1-m11  (KERNEL, 256 bit)
+polyno_err_ana 0.11.2-m11  (KERNEL, 256 bit)
 
 f    = (a+b*c)^3
 a ≈ 0.2,  δa = 0.0001 (absolute)
