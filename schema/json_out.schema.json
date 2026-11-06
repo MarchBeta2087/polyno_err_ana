@@ -2,82 +2,296 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/MarchBeta2087/polyno_err_ana/schema/json_out.schema.json",
   "title": "polyno_err_ana --json output",
-  "description": "需求分析.md §3.9：所有数值为字符串，保持 §3.7 的格式化。",
+  "description": "需求分析.md §3.9：所有数值为字符串，保持 §3.7 的格式化；字段名与结构视为稳定接口，新增字段走 minor 版本；available=false 时符号字段为空串、partials 为空数组（见 $defs/symbolic）。",
   "type": "object",
-  "required": ["version", "kernel", "precision", "branch", "formula", "mode", "vars", "symbolic",
-               "boundary", "limits"],
+  "required": [
+    "version",
+    "kernel",
+    "precision",
+    "branch",
+    "formula",
+    "mode",
+    "vars",
+    "symbolic",
+    "boundary",
+    "limits"
+  ],
   "additionalProperties": false,
   "properties": {
-    "version": { "type": "string", "description": "如 0.12.0-m12" },
-    "kernel": { "enum": ["numextend", "mpfr"] },
-    "precision": { "type": "integer", "minimum": 2, "description": "位（-p）" },
-    "branch": { "type": "integer", "description": "分支号（-k）" },
-    "formula": { "type": "string" },
-    "mode": { "enum": ["absolute", "relative"] },
-    "vars": { "type": "array", "items": { "$ref": "#/$defs/var" } },
-    "symbolic": { "$ref": "#/$defs/symbolic" },
-    "boundary": { "type": "array", "items": { "$ref": "#/$defs/boundary" } },
-    "limits": { "type": "array", "items": { "$ref": "#/$defs/limit" } }
+    "version": {
+      "type": "string",
+      "description": "如 0.12.0-m12"
+    },
+    "kernel": {
+      "enum": [
+        "numextend",
+        "mpfr"
+      ]
+    },
+    "precision": {
+      "type": "integer",
+      "minimum": 2,
+      "description": "位（-p）"
+    },
+    "branch": {
+      "type": "integer",
+      "description": "分支号（-k）"
+    },
+    "formula": {
+      "type": "string"
+    },
+    "mode": {
+      "enum": [
+        "absolute",
+        "relative"
+      ]
+    },
+    "vars": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/var"
+      }
+    },
+    "symbolic": {
+      "$ref": "#/$defs/symbolic"
+    },
+    "boundary": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/boundary"
+      }
+    },
+    "limits": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/limit"
+      }
+    }
   },
   "$defs": {
     "var": {
       "type": "object",
-      "required": ["name", "estimate", "delta", "mode"],
+      "required": [
+        "name",
+        "estimate",
+        "delta",
+        "mode"
+      ],
       "additionalProperties": false,
       "properties": {
-        "name": { "type": "string" },
-        "estimate": { "type": "string" },
-        "delta": { "type": "string" },
-        "mode": { "enum": ["absolute", "relative"] }
+        "name": {
+          "type": "string"
+        },
+        "estimate": {
+          "type": "string"
+        },
+        "delta": {
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "absolute",
+            "relative"
+          ]
+        }
       }
     },
     "partial": {
       "type": "object",
-      "required": ["var", "expr", "delta"],
+      "required": [
+        "var",
+        "expr",
+        "delta"
+      ],
       "additionalProperties": false,
       "properties": {
-        "var": { "type": "string" },
-        "expr": { "type": "string", "description": "∂f/∂v 的符号形式" },
-        "delta": { "type": "string" }
+        "var": {
+          "type": "string"
+        },
+        "expr": {
+          "type": "string",
+          "description": "∂f/∂v 的符号形式"
+        },
+        "delta": {
+          "type": "string"
+        }
       }
     },
     "symbolic": {
       "type": "object",
-      "required": ["available", "df", "df_value", "df_f", "df_f_value", "partials"],
+      "required": [
+        "available",
+        "df",
+        "df_value",
+        "df_f",
+        "df_f_value",
+        "partials"
+      ],
       "additionalProperties": false,
       "properties": {
-        "available": { "type": "boolean", "description": "false 时字符串为空、partials 为空数组" },
-        "df": { "type": "string" },
-        "df_value": { "type": "string" },
-        "df_f": { "type": "string" },
-        "df_f_value": { "type": "string" },
-        "partials": { "type": "array", "items": { "$ref": "#/$defs/partial" } }
-      }
+        "available": {
+          "type": "boolean",
+          "description": "false 时字符串为空、partials 为空数组"
+        },
+        "df": {
+          "type": "string",
+          "description": "δf 的符号形式（如 \"0.0004(1+x)^3\"）"
+        },
+        "df_value": {
+          "type": "string",
+          "description": "δf 在估计点的代入值（未给 --estimated 时按估计点 0）"
+        },
+        "df_f": {
+          "type": "string",
+          "description": "δf/f 的符号形式（分母为 f，对应需求 R-1）"
+        },
+        "df_f_value": {
+          "type": "string",
+          "description": "δf/f 的代入值"
+        },
+        "partials": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/partial"
+          },
+          "description": "逐变量偏导；available=false 时为空数组"
+        }
+      },
+      "description": "符号信息。available=false 表示符号展开不可用（非整数/复数指数或项数超限）：此时 df/df_value/df_f/df_f_value 均为空串、partials 为空数组；boundary 与 limits 仍有效（走数值探测）。",
+      "examples": [
+        {
+          "available": true,
+          "df": "0.0004(1+x)^3",
+          "df_value": "0.0016384",
+          "df_f": "0.0004/(1+x)",
+          "df_f_value": "0.00025",
+          "partials": [
+            {
+              "var": "x",
+              "expr": "4(1+x)^3",
+              "delta": "0.0001"
+            }
+          ]
+        },
+        {
+          "available": false,
+          "df": "",
+          "df_value": "",
+          "df_f": "",
+          "df_f_value": "",
+          "partials": []
+        }
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "available": {
+                "const": false
+              }
+            },
+            "required": [
+              "available"
+            ]
+          },
+          "then": {
+            "properties": {
+              "df": {
+                "maxLength": 0
+              },
+              "df_value": {
+                "maxLength": 0
+              },
+              "df_f": {
+                "maxLength": 0
+              },
+              "df_f_value": {
+                "maxLength": 0
+              },
+              "partials": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ]
     },
     "boundary": {
       "type": "object",
-      "required": ["var", "r_plus", "r_minus", "r_plus_rel", "r_minus_rel"],
+      "required": [
+        "var",
+        "r_plus",
+        "r_minus",
+        "r_plus_rel",
+        "r_minus_rel"
+      ],
       "additionalProperties": false,
       "properties": {
-        "var": { "type": "string" },
-        "r_plus": { "type": "string" },
-        "r_minus": { "type": "string" },
-        "r_plus_rel": { "type": "string" },
-        "r_minus_rel": { "type": "string" }
+        "var": {
+          "type": "string"
+        },
+        "r_plus": {
+          "type": "string"
+        },
+        "r_minus": {
+          "type": "string"
+        },
+        "r_plus_rel": {
+          "type": "string"
+        },
+        "r_minus_rel": {
+          "type": "string"
+        }
       }
     },
     "limit": {
       "type": "object",
-      "required": ["var", "state", "df", "df_f"],
+      "required": [
+        "var",
+        "state",
+        "df",
+        "df_f"
+      ],
       "additionalProperties": false,
       "properties": {
-        "var": { "type": "string" },
+        "var": {
+          "type": "string"
+        },
         "state": {
-          "enum": ["+0", "-0", "+inf", "-inf", "0", "inf"],
+          "enum": [
+            "+0",
+            "-0",
+            "+inf",
+            "-inf",
+            "0",
+            "inf"
+          ],
           "description": "LimState；复数变量只用 0 / inf"
         },
-        "df": { "enum": ["fin", "+0", "-0", "+inf", "-inf", "c0", "cinf", "undef"] },
-        "df_f": { "enum": ["fin", "+0", "-0", "+inf", "-inf", "c0", "cinf", "undef"] }
+        "df": {
+          "enum": [
+            "fin",
+            "+0",
+            "-0",
+            "+inf",
+            "-inf",
+            "c0",
+            "cinf",
+            "undef"
+          ]
+        },
+        "df_f": {
+          "enum": [
+            "fin",
+            "+0",
+            "-0",
+            "+inf",
+            "-inf",
+            "c0",
+            "cinf",
+            "undef"
+          ]
+        }
       }
     }
   }

@@ -7,10 +7,6 @@
 
 ## P1 — 工程
 
-- [ ] **JSON schema 细节**：`--json-schema` 已能输出，但尚未覆盖 `--vars` 关闭时的字段差异说明
-      验收：schema 中 `symbolic.available=false` 的分支有 `description` 或 `examples`
-- [ ] **性能回归门禁**：`scripts/bench.sh --save` 已记录历史，但 CI 未比较
-      验收：`bench_compare.sh` 在 CI 中对比最近一次 main 的耗时，超过阈值告警（非阻塞）
 
 ## P2 — 发布/社区
 
@@ -29,6 +25,9 @@
   历史草案/建议在 `docs/history/`
 
 ## 已完成（按里程碑，详见 CHANGELOG）
+
+- m14.7：JSON schema 细化（`if/then` + `examples` + 字段说明，校验器支持 `const/maxLength/maxItems`）；
+  `scripts/bench_gate.sh` 接入 CI（默认 1200 ms/次上限，`BENCH_CEIL_MS` 可调，`--warn-only` 可选）
 
 - m1 实数符号误差 + 边界 + 分类；m2 复数与 `-k`；m3 双内核与快照基线
 - m4 结构哈希、`--real-root`、`Undefined` 三态；m5 哈希分桶、CLI 错误路径

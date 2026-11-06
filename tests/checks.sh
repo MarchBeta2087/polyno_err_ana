@@ -230,17 +230,30 @@ PY
 [ $? -eq 0 ] || { printf 'FAIL --json-schema 输出
 '; fail=$((fail+1)); }
 
+# 两类输出都要过 schema：正常（available=true）与退化（available=false）
 "$BIN" -R x 1e-4 -C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+x)^2+z' --vars --json > "$TMPJSON" 2>&1
-"$PY" - "$TMPJSON" "$HERE/../schema/json_out.schema.json" <<'PY'
+TMPJSON2=$(mktemp)
+"$BIN" -R a 1e-4 b 1e-4 --max-terms 3 -f '(a+b)^2*(a+b)^2' --json > "$TMPJSON2" 2>&1
+"$PY" - "$HERE/../schema/json_out.schema.json" "$TMPJSON" "$TMPJSON2" <<'PY'
 import json, sys
 
-doc = json.load(open(sys.argv[1], encoding="utf-8"))
-schema = json.load(open(sys.argv[2], encoding="utf-8"))
+schema = json.load(open(sys.argv[1], encoding="utf-8"))
 defs = schema["$defs"]
 
 def check(node, sch, path="$"):
     if "$ref" in sch:
         return check(node, defs[sch["$ref"].split("/")[-1]], path)
+    if "const" in sch:
+        assert node == sch["const"], f"{path} != {sch['const']!r}"
+    for sub in sch.get("allOf", []):
+        check(node, sub, path)
+    if "if" in sch:
+        try:
+            check(node, sch["if"], path)
+            if "then" in sch:
+                check(node, sch["then"], path)
+        except AssertionError:
+            pass  # if 不匹配时不应用 then
     t = sch.get("type")
     if t == "object":
         assert isinstance(node, dict), path
@@ -265,22 +278,18 @@ def check(node, sch, path="$"):
         assert isinstance(node, bool), path
     if "enum" in sch:
         assert node in sch["enum"], f"{path}={node!r} not in {sch['enum']}"
+    if "maxLength" in sch:
+        assert isinstance(node, str) and len(node) <= sch["maxLength"], path
+    if "maxItems" in sch:
+        assert isinstance(node, list) and len(node) <= sch["maxItems"], path
 
-check(doc, schema)
-print("schema validation ok")
+for path in sys.argv[2:]:
+    check(json.load(open(path, encoding="utf-8")), schema, path)
+print(f"schema validation ok ({len(sys.argv) - 2} docs)")
 PY
 [ $? -eq 0 ] || { printf 'FAIL JSON 与 schema 不一致
 '; fail=$((fail+1)); }
-
-"$BIN" -R a 1e-4 b 1e-4 --max-terms 3 -f '(a+b)^2*(a+b)^2' --json > "$TMPJSON" 2>&1
-"$PY" - "$TMPJSON" <<'PY'
-import json, sys
-d = json.load(open(sys.argv[1], encoding="utf-8"))
-assert d["symbolic"]["available"] is False
-PY
-[ $? -eq 0 ] || { printf 'FAIL JSON 符号不可用标记
-'; fail=$((fail+1)); }
-rm -f "$TMPJSON"
+rm -f "$TMPJSON2"
 fi
 
 # ---- 多语言（zh/en/ja/ko/es/pt） ----

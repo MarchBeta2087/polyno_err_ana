@@ -2,7 +2,13 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
-## 未发布
+## v0.14.7-m14
+
+- JSON Schema 细化：`symbolic` 增加字段说明与两组 `examples`（可用 / 不可用），
+  并用 `allOf + if/then` 约束 `available=false` 时 `df*` 为空串、`partials` 为空数组；
+  测试校验器扩展支持 `const / maxLength / maxItems / allOf / if-then`，并同时校验两类输出
+- 性能门禁：新增 `scripts/bench_gate.sh`（默认 1200 ms/次上限，`BENCH_CEIL_MS` 可调、`--warn-only`），
+  CI linux 作业接入；`bench.sh` 支持 `BENCH_CSV` 指定 CSV 路径（CI 用临时文件，不污染仓库）
 
 - 修复 Release 竞态：`publish` 改为 `needs: [linux, windows, macos]`（私有仓库 macos 被 skip 时不影响发布，
   公开仓库会等 mac 包就绪），避免 macOS 产物偶尔漏传

@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # 性能冒烟：同一公式重复 N 次，报告总耗时（毫秒）。
 # 用法: scripts/bench.sh [BIN] [N] [--save]
-#   --save 追加一行到 bench/history.csv（含 git rev / UTC 时间 / 内核 / 精度）
+#   --save 追加一行到 bench/history.csv（可用 BENCH_CSV 改路径，CI 用临时文件）
 set -u
 BIN="${1:-./build/polyno_err_ana.exe}"
 N="${2:-20}"
 SAVE="${3:-}"
 HERE="$(cd "$(dirname "$0")" && pwd)"
-CSV="$HERE/../bench/history.csv"
+CSV="${BENCH_CSV:-$HERE/../bench/history.csv}"
 LAST_MS=0
 
 run() {

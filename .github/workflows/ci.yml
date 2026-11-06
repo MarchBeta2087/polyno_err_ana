@@ -31,6 +31,8 @@ jobs:
           cmake --build build -j"$(nproc)"
       - name: 回归
         run: ctest --test-dir build --output-on-failure
+      - name: 性能门禁（宽松阈值，拦灾难性回归）
+        run: bash scripts/bench_gate.sh ./build/polyno_err_ana 5
       - name: 构建（MPFR 内核）
         run: |
           cmake -S . -B build-mpfr -DCMAKE_BUILD_TYPE=Release -DPOLYNO_ENABLE_MPFR=ON
@@ -104,6 +106,8 @@ jobs:
           cmake --build build -j"$(sysctl -n hw.ncpu)"
       - name: 回归
         run: ctest --test-dir build --output-on-failure
+      - name: 性能门禁（宽松阈值，拦灾难性回归）
+        run: bash scripts/bench_gate.sh ./build/polyno_err_ana 5
       - name: 构建（MPFR 内核）
         run: |
           cmake -S . -B build-mpfr -DCMAKE_BUILD_TYPE=Release -DPOLYNO_ENABLE_MPFR=ON -DPNA_THIRD_PARTY="$(brew --prefix)"
