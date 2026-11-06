@@ -14,8 +14,11 @@
 - [x] JSON 输出 + schema（`--json-schema`，CI 校验两类输出）
 - [x] 平台分级文档（Tier 1 三平台 CI；Tier 2 Intel mac 异步）
 - [x] 性能门禁、安全策略、CoC、Issue/PR 模板、Pages 文档站
-- [ ] **兼容性承诺**：写清 CLI/JSON 的语义化版本与废弃流程（新增 `COMPATIBILITY.md`）
+- [x] **兼容性承诺**：`COMPATIBILITY.md`（稳定面/实验面、废弃流程、支持窗口、双内核一致性）
 - [ ] **一次无已知 P0/P1 的候选发布**：连续两个 tag 无回归后升 `v1.0.0`
+
+Intel mac 政策：Tier 2，runner 排队/失败/取消**不算回归**；若出现 Intel 专属严重缺陷 →
+按普通 bug 修复并发布 **PATCH**（见 `PLATFORMS.md` 与 `COMPATIBILITY.md`）。
 
 > 不在 v1.0 门槛内：i18n 母语审校（`OPEN_TASKS.md` 的 #9–#12，社区进度不影响发布）、
 > Tier 3 实测（`PLATFORMS.md` 已声明为“社区验证”，不阻塞）。

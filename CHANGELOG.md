@@ -2,6 +2,14 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v0.15.4-m14
+
+- 新增 `COMPATIBILITY.md`：版本号规则、稳定面/实验面、废弃流程（≥1 个 MINOR）、支持窗口、
+  双内核一致性、平台与 Tier 的关系、兼容性守护手段（checks/快照/schema）
+- `PLATFORMS.md` 增补 Intel mac 特别约定：runner 排队/失败/取消不视为回归、不阻塞发布；
+  Intel 专属严重缺陷 → 修 bug 并发 **PATCH**
+- README/文档站同步；v1.0 检查单中“兼容性承诺”勾掉，只剩“候选发布观察期”
+
 ## v0.15.3-m14
 
 - 开启 Discussions（已有 Q&A/Ideas/Show and tell 分类）并发布置顶欢迎帖（#18）：

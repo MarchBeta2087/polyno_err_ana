@@ -22,6 +22,7 @@ cat > "$OUT/_nav.html" <<'NAV'
   <a href="examples.html">示例</a>
   <a href="faq.html">FAQ</a>
   <a href="platforms.html">平台</a>
+  <a href="compatibility.html">兼容性</a>
   <a href="security.html">安全</a>
   <a href="third-party.html">第三方</a>
   <a href="contributing.html">贡献</a>
@@ -59,5 +60,6 @@ page "$ROOT/CHANGELOG.md"        changelog.html    "变更记录"
 page "$ROOT/TODO.md"             todo.html         "维护者待办"
 page "$ROOT/OPEN_TASKS.md"       open-tasks.html   "开放任务（欢迎认领）"
 page "$ROOT/PLATFORMS.md"        platforms.html    "平台支持等级"
+page "$ROOT/COMPATIBILITY.md"    compatibility.html "兼容性承诺"
 
 echo "完成: $OUT/index.html"

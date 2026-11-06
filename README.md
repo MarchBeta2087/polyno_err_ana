@@ -20,7 +20,8 @@
   `pages` 工作流部署；本地可生成到 `site/_out/`）
 - 决策/迁移记录：`docs/history/`
 
-需求与验收：`需求分析.md`（v0.5）；实现说明与偏差：`设计.md`；版本记录：`CHANGELOG.md`。
+需求与验收：`需求分析.md`（v0.5）；实现说明与偏差：`设计.md`；版本记录：`CHANGELOG.md`；
+兼容性承诺：`COMPATIBILITY.md`；平台等级：`PLATFORMS.md`。
 
 ## 当前状态（v0.14）
 
@@ -173,6 +174,7 @@ deps.lock              依赖锁定（numextend 提交 + GMP/MPFR URL/sha256）
 docs/history/          决策与迁移记录（许可、MPFR tarball、开放清单、需求修改建议）
 OPEN_TASKS.md          社区可认领的任务（母语审校、跨平台打包、大型特性）
 PLATFORMS.md           平台支持等级（Tier 1–4）与变更规则
+COMPATIBILITY.md       兼容性承诺（CLI/JSON/退出码/废弃流程/支持窗口）
 numextend/             git submodule（数值内核）
 mpfr-<version>/        MPFR 官方 tarball 解压目录（不入库）
 ```
