@@ -2,6 +2,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstring>
+#include <unordered_map>
 
 namespace pna {
 namespace {
@@ -38,20 +40,45 @@ bool same_factors(const std::vector<Factor>& a, const std::vector<Factor>& b) {
     return true;
 }
 
+std::uint64_t factor_key(const std::vector<Factor>& fac) {
+    std::uint64_t h = 0xcbf29ce484222325ULL;
+    for (const auto& f : fac) {
+        h ^= f.atom->hash;
+        h *= 1099511628211ULL;
+        const double d[2] = {to_double(f.exp.re), to_double(f.exp.im)};
+        for (double v : d) {
+            std::uint64_t u = 0;
+            std::memcpy(&u, &v, sizeof u);
+            h ^= u;
+            h *= 1099511628211ULL;
+        }
+    }
+    return h;
+}
+
+// 合并同因子组合的项：哈希分桶（平均 O(n)），桶内再做精确比较。
 void cleanup(Sym& s) {
     std::vector<Term> out;
+    std::unordered_map<std::uint64_t, std::vector<size_t>> bucket;
     for (auto& t : s.terms) {
         if (c_is_zero(t.coeff)) continue;
         normalize(t);
+        const std::uint64_t key = factor_key(t.fac);
         bool merged = false;
-        for (auto& u : out) {
-            if (same_factors(u.fac, t.fac)) {
-                u.coeff = u.coeff + t.coeff;
-                merged = true;
-                break;
+        auto it = bucket.find(key);
+        if (it != bucket.end()) {
+            for (size_t j : it->second) {
+                if (same_factors(out[j].fac, t.fac)) {
+                    out[j].coeff = out[j].coeff + t.coeff;
+                    merged = true;
+                    break;
+                }
             }
         }
-        if (!merged) out.push_back(std::move(t));
+        if (!merged) {
+            bucket[key].push_back(out.size());
+            out.push_back(std::move(t));
+        }
     }
     out.erase(std::remove_if(out.begin(), out.end(), [](const Term& t) { return c_is_zero(t.coeff); }),
               out.end());

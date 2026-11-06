@@ -99,6 +99,23 @@ b=$("$BIN" -R x 1e-4 -f '(1+x)^3' -k 2 --vars | grep '^δf    =')
 [ "$a" = "$b" ] || { printf 'FAIL 整数指数时 -k 影响了结果
 '; fail=$((fail+1)); }
 
+# --- CLI 错误路径（退出码 2） ---
+expect_rc2() {
+    "$BIN" "$@" > /dev/null 2>&1
+    local rc=$?
+    [ "$rc" -eq 2 ] || { printf 'FAIL 退出码应为 2（实际 %s）: %s
+' "$rc" "$*"; fail=$((fail+1)); }
+}
+expect_rc2 --nope -R x 1e-4 -f '(1+x)'
+expect_rc2 -R x 1e-4 -p 1 -f '(1+x)'
+expect_rc2 -R x 1e-4 -p abc -f '(1+x)'
+expect_rc2 -R x 1e-4 x 1e-4 -f '(1+x)'
+expect_rc2 -R x 1e-4 --lim z:p0 -f '(1+x)'
+expect_rc2 -R x 1e-4 --limit all -f '(1+x)'
+expect_rc2 --real x 1e-4 --kernel nope -f '(1+x)'
+"$BIN" > /dev/null 2>&1; [ $? -eq 2 ] || { printf 'FAIL 缺少 -f 应退出 2
+'; fail=$((fail+1)); }
+
 if [ "$fail" -eq 0 ]; then
     echo "ok: 全部回归用例通过"
     exit 0

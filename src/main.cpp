@@ -221,7 +221,12 @@ Opts parse_args(int argc, char** argv) {
         } else if (a == "--vars") {
             o.vars_out = true;
         } else if (a == "-p" || a == "--precision") {
-            o.precision = std::stoi(need(i, "-p"));
+            try {
+                o.precision = std::stoi(need(i, "-p"));
+            } catch (const std::exception&) {
+                usage_error("-p 需要整数");
+            }
+            if (o.precision < 2) usage_error("-p 必须 >= 2");
         } else if (a == "-k" || a == "--branch") {
             o.branch = std::stoi(need(i, "-k"));
         } else if (a == "--estimated") {
@@ -291,6 +296,11 @@ Opts parse_args(int argc, char** argv) {
             if (o.vars[i].name == o.vars[j].name) usage_error("变量重复声明: " + o.vars[i].name);
     if (o.lim_all && o.lim_spec) usage_error("--lim all 与 --lim VAR:STATE 冲突");
     if (o.real_root && o.branch != 0) usage_error("--real-root 与 -k 互斥");
+    if (o.lim_spec) {
+        bool found = false;
+        for (const auto& v : o.vars) found = found || v.name == o.lim_var;
+        if (!found) usage_error("--lim 引用了未声明的变量: " + o.lim_var);
+    }
     return o;
 }
 
@@ -414,7 +424,7 @@ int main(int argc, char** argv) {
             for (auto& kv : em)
                 if (kv.first == vv.decl->name) kv.second = kv.second - vv.dv;
             Real dp = c_abs(eval(f, ep) - f0), dm = c_abs(eval(f, em) - f0);
-            auto cell = [](const Real& x) { return is_finite(x) ? fmt(x) : std::string("Undefined"); };
+            auto cell = [](const Real& x) { return c_fmt(Cplx{x, Real::zero()}); };
             std::printf("%-10s %-10s ", cell(dp).c_str(), cell(dm).c_str());
             if (is_zero(f0abs))
                 std::printf("%-11s %-11s", "N/A", "N/A");
