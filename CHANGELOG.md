@@ -2,6 +2,14 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v0.15.1-m14
+
+- 修复 `fetch-gmp.sh`/`fetch-mpfr.sh` 在 GitHub runner 上 `gmplib.org` 不可达：
+  `deps.lock` 增加 `*_mirrors`（ftp.gnu.org / mirrors.kernel.org），脚本按主站→镜像依次尝试
+- 修复多值键解析：新增 `getlist()` 保留空格（此前 `tr -d ' '` 会把镜像 URL 拼在一起）
+- Release：macOS 拆为 `macos-arm64`（进 needs）与 `macos-x86`（`macos-13`，continue-on-error，
+  不阻塞发布）；新增 `attach-macos-x86` 在发布后补挂 Intel 包与独立校验和
+
 ## v0.15.0-m14
 
 - Release 增加 **MPFR 内核预编译包**（linux/windows，静态运行库；Linux 现场构建 GMP/MPFR，

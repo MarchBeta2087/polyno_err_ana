@@ -26,7 +26,10 @@ while [ $# -gt 0 ]; do
 done
 
 get() { sed -n "s/^$1 *= *//p" "$LOCK" | sed 's/ *#.*//' | tr -d ' '; }
+# 多值键（空格分隔）保留内部空格
+getlist() { sed -n "s/^$1 *= *//p" "$LOCK" | sed 's/ *#.*//'; }
 URL="$(get mpfr_url)"
+MIRRORS="$(getlist mpfr_mirrors)"
 WANT="$(get mpfr_sha256)"
 VER="$(get mpfr_version)"
 DIRNAME="mpfr-$VER"
@@ -39,8 +42,18 @@ else
     TARBALL="$DEST/$DIRNAME.tar.xz"
     if [ ! -f "$TARBALL" ]; then
         command -v curl >/dev/null || { echo "需要 curl"; exit 1; }
-        echo "==> 下载 $URL"
-        curl -fSL --retry 3 -o "$TARBALL" "$URL"
+        ok=0
+        for u in "$URL" $MIRRORS; do
+            echo "==> 下载 $u"
+            if curl -fSL --retry 2 --connect-timeout 20 -o "$TARBALL.part" "$u"; then
+                mv "$TARBALL.part" "$TARBALL"
+                ok=1
+                break
+            fi
+            echo "    失败，尝试下一个源"
+        done
+        rm -f "$TARBALL.part"
+        [ "$ok" -eq 1 ] || { echo "所有下载源均失败（可离线用 --tarball）"; exit 1; }
     fi
 fi
 

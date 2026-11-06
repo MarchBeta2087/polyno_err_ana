@@ -157,16 +157,10 @@ jobs:
           name: windows-mpfr
           path: dist/*.zip
 
-  macos:
+  macos-arm64:
     # 公开仓库的 macOS runner 免费；私有仓库排队不稳，故仅在公开时执行
     if: github.event.repository.private == false
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - runner: macos-latest   # arm64
-          - runner: macos-13       # x86_64
-    runs-on: ${{ matrix.runner }}
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v7
         with:
@@ -181,19 +175,48 @@ jobs:
           cmake --build build -j"$(sysctl -n hw.ncpu)"
       - name: 打包
         run: |
-          pkg="polyno_err_ana-${GITHUB_REF_NAME}-macos-$(uname -m)"
+          pkg="polyno_err_ana-${GITHUB_REF_NAME}-macos-arm64"
           mkdir -p "dist/$pkg"
           cp build/polyno_err_ana "dist/$pkg/"
           cp LICENSE.md README.md THIRD_PARTY.md FAQ.md "dist/$pkg/"
           tar -C dist -czf "dist/$pkg.tar.gz" "$pkg"
       - uses: actions/upload-artifact@v7
         with:
-          name: macos-${{ matrix.runner }}
+          name: macos-arm64
+          path: dist/*.tar.gz
+
+  macos-x86:
+    # Intel runner（macos-13）排队可能很久：不阻塞发布，完成后由 attach 作业补挂到 Release
+    if: github.event.repository.private == false
+    continue-on-error: true
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+      - name: 构建 numextend
+        run: |
+          cmake -S numextend -B numextend/build -DCMAKE_BUILD_TYPE=Release
+          cmake --build numextend/build -j"$(sysctl -n hw.ncpu)"
+      - name: 构建（静态运行库）
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DPOLYNO_STATIC_RUNTIME=ON
+          cmake --build build -j"$(sysctl -n hw.ncpu)"
+      - name: 打包
+        run: |
+          pkg="polyno_err_ana-${GITHUB_REF_NAME}-macos-x86_64"
+          mkdir -p "dist/$pkg"
+          cp build/polyno_err_ana "dist/$pkg/"
+          cp LICENSE.md README.md THIRD_PARTY.md FAQ.md "dist/$pkg/"
+          tar -C dist -czf "dist/$pkg.tar.gz" "$pkg"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: macos-x86
           path: dist/*.tar.gz
 
   publish:
     # 等所有平台完成再发布：macOS 作业在私有仓库会被 skip（needs 中的 skip 视作通过）
-    needs: [linux, linux-mpfr, windows, windows-mpfr, macos]
+    needs: [linux, linux-mpfr, windows, windows-mpfr, macos-arm64]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -225,3 +248,23 @@ jobs:
 
             校验和见 `SHA256SUMS.txt`；`-V` 可确认实际内核；用法见包内 `README.md` 与 `EXAMPLES.md`。
             静态链接的 MPFR/GMP 属 LGPL，义务说明见包内 `THIRD_PARTY.md`。
+
+  attach-macos-x86:
+    # 补挂 Intel 包（不阻塞发布；若 runner 最终没跑起来就跳过）
+    needs: [publish, macos-x86]
+    if: needs.publish.result == 'success' && needs.macos-x86.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: macos-x86
+          path: pkg
+      - name: 上传到 Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd pkg
+          sha256sum *.tar.gz > SHA256SUMS-macos-x86_64.txt
+          gh release upload "${GITHUB_REF_NAME}" *.tar.gz SHA256SUMS-macos-x86_64.txt              --repo "${GITHUB_REPOSITORY}" --clobber

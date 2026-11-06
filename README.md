@@ -129,7 +129,7 @@ GitHub Releases 提供三平台单文件包（静态运行库，`-DPOLYNO_STATIC
 | --- | --- | --- |
 | Linux x86_64 | `…-linux-x86_64.tar.gz` | `…-linux-x86_64-mpfr.tar.gz` |
 | Windows x86_64 | `…-windows-x86_64.zip` | `…-windows-x86_64-mpfr.zip` |
-| macOS arm64 / x86_64 | `…-macos-<arch>.tar.gz` | — |
+| macOS arm64 / x86_64 | `…-macos-arm64.tar.gz` / `…-macos-x86_64.tar.gz`（Intel runner 较慢，可能延后挂载） | — |
 | 校验 | `SHA256SUMS.txt` | |
 
 包内含可执行文件与 `README.md`/`LICENSE.md`/`THIRD_PARTY.md`/`FAQ.md`；`-mpfr` 包用 MPFR 内核
