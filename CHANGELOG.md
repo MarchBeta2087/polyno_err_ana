@@ -2,6 +2,16 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v1.0.0
+
+首个正式版。相对 0.15.x 没有行为变更，只做发布定版与文档/流程收口。
+
+- 版本号改为 `1.0.0`（遵循 `COMPATIBILITY.md` 的 SemVer 承诺：CLI/JSON/退出码为稳定面）
+- 文档统一到 v1.0：README 状态、`设计.md`、`SECURITY.md` 支持范围、`COMPATIBILITY.md` 版本规则
+- `EXAMPLES.md` 用 `scripts/gen-examples.sh` 重新生成（输出随二进制版本更新）
+- 分支模型：新增 `dev` 集成分支；`main` 与 `dev` 均**只接受 PR**（必需检查 linux/windows/macos）
+- CI 在 `dev` 分支同样触发；`pages` 仍只在 `main` 构建
+
 ## v0.15.5-m14
 
 - **取消 macOS x86 CI**：不再使用 `macos-13`（排队不可控）；改在 arm64 runner 构建

@@ -1,7 +1,7 @@
 # 示例与教程
 
 本页所有输出均由仓库当前版本实际运行得到（`--lang zh`，默认内核 `numextend`）。
-在 `mpfr` 内核下数值一致（回归与快照会校验）。
+在 `mpfr` 内核下数值一致（回归与快照会校验）。可用 `scripts/gen-examples.sh` 重新生成。
 
 ## 1. 最小例子：`(1+x)^4`
 
@@ -10,7 +10,7 @@
 ```
 
 ```text
-polyno_err_ana 0.14.7-m14  (numextend, 256 bit)
+polyno_err_ana 1.0.0  (numextend, 256 bit)
 
 f    = (1+x)^4
 x ≈ 0,  δx = 0.0001 (absolute)
@@ -53,7 +53,7 @@ x ≈ 0,  δx = 0.0001 (absolute)
 ```
 
 ```text
-polyno_err_ana 0.14.7-m14  (numextend, 256 bit)
+polyno_err_ana 1.0.0  (numextend, 256 bit)
 
 f    = (1+x)^4
 x ≈ 0.6,  δx = 0.0001 (absolute)
@@ -92,7 +92,7 @@ x ≈ 0.6,  δx = 0.0001 (absolute)
 ```
 
 ```text
-polyno_err_ana 0.14.7-m14  (numextend, 256 bit)
+polyno_err_ana 1.0.0  (numextend, 256 bit)
 
 f    = (1+x)^4
 x ≈ 0.6,  δx = 6.0000e-05 (relative)
@@ -132,7 +132,7 @@ x ≈ 0.6,  δx = 6.0000e-05 (relative)
 ```
 
 ```text
-polyno_err_ana 0.14.7-m14  (numextend, 256 bit)
+polyno_err_ana 1.0.0  (numextend, 256 bit)
 branch k = 2
 
 f    = (1+z)^(1+i)
@@ -172,7 +172,7 @@ z ≈ (1+0.5i),  δz = (0.0001+0.0001i) (absolute)
 ```
 
 ```text
-polyno_err_ana 0.14.7-m14  (numextend, 256 bit)
+polyno_err_ana 1.0.0  (numextend, 256 bit)
 
 f    = (1+x)^2
 x ≈ -1,  δx = 0.0001 (absolute)
@@ -200,7 +200,7 @@ x ≈ -1,  δx = 0.0001 (absolute)
 ```
 
 ```text
-polyno_err_ana 0.14.7-m14  (numextend, 256 bit)
+polyno_err_ana 1.0.0  (numextend, 256 bit)
 
 f    = (1+x)^(1/2)
 x ≈ -1,  δx = 0.0001 (absolute)
@@ -228,36 +228,36 @@ x ≈ -1,  δx = 0.0001 (absolute)
 ```
 
 ```json
-  {
-    "version": "0.14.7-m14",
-    "kernel": "numextend",
-    "precision": 256,
-    "branch": 0,
-    "formula": "(1+x)^4",
-    "mode": "absolute",
-    "vars": [
-      {"name": "x", "estimate": "0.6", "delta": "0.0001", "mode": "absolute"}
-    ],
-    "symbolic": {
-      "available": true,
-      "df": "0.0004(1+x)^3",
-      "df_value": "0.0016384",
-      "df_f": "0.0004/(1+x)",
-      "df_f_value": "0.00025",
-      "partials": [
-        {"var": "x", "expr": "4(1+x)^3", "delta": "0.0001"}
-      ]
-    },
-    "boundary": [
-      {"var": "x", "r_plus": "0.00163855", "r_minus": "0.00163825", "r_plus_rel": "0.000250023", "r_minus_rel": "0.000249977"}
-    ],
-    "limits": [
-      {"var": "x", "state": "+0", "df": "+0", "df_f": "+0"},
-      {"var": "x", "state": "-0", "df": "-0", "df_f": "-0"},
-      {"var": "x", "state": "+inf", "df": "+inf", "df_f": "+inf"},
-      {"var": "x", "state": "-inf", "df": "-inf", "df_f": "-inf"}
+{
+  "version": "1.0.0",
+  "kernel": "numextend",
+  "precision": 256,
+  "branch": 0,
+  "formula": "(1+x)^4",
+  "mode": "absolute",
+  "vars": [
+    {"name": "x", "estimate": "0.6", "delta": "0.0001", "mode": "absolute"}
+  ],
+  "symbolic": {
+    "available": true,
+    "df": "0.0004(1+x)^3",
+    "df_value": "0.0016384",
+    "df_f": "0.0004/(1+x)",
+    "df_f_value": "0.00025",
+    "partials": [
+      {"var": "x", "expr": "4(1+x)^3", "delta": "0.0001"}
     ]
-  }
+  },
+  "boundary": [
+    {"var": "x", "r_plus": "0.00163855", "r_minus": "0.00163825", "r_plus_rel": "0.000250023", "r_minus_rel": "0.000249977"}
+  ],
+  "limits": [
+    {"var": "x", "state": "+0", "df": "+0", "df_f": "+0"},
+    {"var": "x", "state": "-0", "df": "-0", "df_f": "-0"},
+    {"var": "x", "state": "+inf", "df": "+inf", "df_f": "+inf"},
+    {"var": "x", "state": "-inf", "df": "-inf", "df_f": "-inf"}
+  ]
+}
 ```
 
 schema 随二进制发布（`--json-schema`），可用任意 draft 2020-12 校验器检查：
@@ -301,7 +301,7 @@ schema 随二进制发布（`--json-schema`），可用任意 draft 2020-12 校�
 | 多变量多规格 | `--lim x:p0,y:ninf` 或重复 `--lim` |
 | 低/高精度 | `-p 2` … `-p 4096`（`-R`/`--estimated` 字面量同样按该精度解析） |
 | 机器可读 | `--json`；schema 用 `--json-schema` |
-| 消息语言 | `--lang ja\|ko\|es\|pt`（默认 zh） |
+| 消息语言 | `--lang ja|ko|es|pt`（默认 zh） |
 | 爆项保护 | `--max-terms N`（超限退化为数值探测，退出码仍为 0） |
 
 退出码：`0` 成功、`1` 解析错误（含列号）、`2` 命令行错误、`3` 数值异常。
