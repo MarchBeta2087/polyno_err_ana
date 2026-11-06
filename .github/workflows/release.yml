@@ -77,8 +77,7 @@ jobs:
           path: dist/*.zip
 
   publish:
-    # 不把 macOS 纳入 needs：该账号的 macOS runner 曾长时间排队，
-    # 有产物则一并发布（macos 作业 continue-on-error），没有也照常发 linux/windows。
+    # 仅发布 linux/windows：该账号的 macOS runner 排队不稳定（见 CHANGELOG v0.11.3）
     needs: [linux, windows]
     if: always()
     runs-on: ubuntu-latest
