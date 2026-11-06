@@ -40,6 +40,12 @@ bash tests/snapshot_dump.sh ./build/polyno_err_ana.exe > tests/snapshots/expecte
 bash tests/snapshot_test.sh ./build/polyno_err_ana.exe
 ```
 
+## 从哪里开始
+
+- `OPEN_TASKS.md`：社区可认领的任务（标注难度、所需技能、验收标准，均对应 GitHub Issue）
+- `TODO.md`：维护者自己的工程待办（通常不与外部 PR 冲突，避免重复投入）
+- `good first issue` 标签：低门槛任务（目前是四种语言的母语审校）
+
 ## 待办与里程碑
 
 待办只在 `TODO.md` 维护（P0/P1/P2，带验收方式）。完成一项就**从 TODO 删除**，并在

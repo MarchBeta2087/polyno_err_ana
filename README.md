@@ -13,7 +13,7 @@
 - 许可证：GPL-3.0-or-later（见 `LICENSE.md`；第三方组件见 `THIRD_PARTY.md`）
 - **不提供商业双许可**（决定记录：`docs/history/2026-11-07-license-decision.md`）
 - 贡献指南：`CONTRIBUTING.md`；行为准则：`CODE_OF_CONDUCT.md`；安全策略：`SECURITY.md`
-- 常见问题（含许可边界）：`FAQ.md`；待办与路线图：`TODO.md`
+- 常见问题（含许可边界）：`FAQ.md`；维护者待办：`TODO.md`；**开放任务（欢迎认领）**：`OPEN_TASKS.md`
 - 文档站：<https://marchbeta2087.github.io/polyno_err_ana/>（`scripts/build-docs.sh` 生成，
   `pages` 工作流部署；本地可生成到 `site/_out/`）
 - 决策/迁移记录：`docs/history/`
@@ -160,6 +160,7 @@ site/                  文档站源（style.css）与产物（_out/）
 scripts/               fetch-gmp/mpfr、build-mpfr、verify-deps、build-docs、bench*
 deps.lock              依赖锁定（numextend 提交 + GMP/MPFR URL/sha256）
 docs/history/          决策与迁移记录（许可、MPFR tarball、开放清单、需求修改建议）
+OPEN_TASKS.md          社区可认领的任务（母语审校、跨平台打包、大型特性）
 numextend/             git submodule（数值内核）
 mpfr-<version>/        MPFR 官方 tarball 解压目录（不入库）
 ```

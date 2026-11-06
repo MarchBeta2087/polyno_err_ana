@@ -2,6 +2,13 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v0.14.4-m14
+
+- 新增 `OPEN_TASKS.md`（开放任务清单）+ 8 个 GitHub Issue（4 个 i18n 母语审校、2 个打包、2 个大型特性）
+  并打上 `help wanted` / `good first issue` 等标签
+- `TODO.md` 去掉社区类任务，改为指向 `OPEN_TASKS.md`；`CONTRIBUTING.md` 增加“从哪里开始”
+- 文档站增补 `OPEN_TASKS.md` 页面
+
 ## v0.14.3-m14
 
 - 文档刷新：`README.md` 状态升到 v0.14（补 JSON/Schema/多语言/静态发布）、新增「下载」段与目录整理

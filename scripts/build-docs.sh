@@ -53,6 +53,7 @@ page "$ROOT/THIRD_PARTY.md"      third-party.html  "第三方组件与许可"
 page "$ROOT/CONTRIBUTING.md"     contributing.html "贡献指南"
 page "$ROOT/CODE_OF_CONDUCT.md"  coc.html          "行为准则"
 page "$ROOT/CHANGELOG.md"        changelog.html    "变更记录"
-page "$ROOT/TODO.md"             todo.html         "待办与路线图"
+page "$ROOT/TODO.md"             todo.html         "维护者待办"
+page "$ROOT/OPEN_TASKS.md"       open-tasks.html   "开放任务（欢迎认领）"
 
 echo "完成: $OUT/index.html"
