@@ -112,6 +112,14 @@ out=$(run -R x 1e-4 -C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+x)^2+z' --vars)
 check_contains "混合 -R/-C" "$out" '(0.0001+0.0001i)'
 check_contains "混合分类行数" "$out" '+0       c0'
 
+# --- 里程碑 6：爆项保护 ---
+out=$(run -R a 1e-4 b 1e-4 c 1e-4 d 1e-4 e 1e-4 f 1e-4 --max-terms 4 -f '(a+b)*(c+d)*(e+f)' --vars)
+check_contains "项数上限退化" "$out" '符号展开不可用'
+check_contains "退化后仍有分类" "$out" '极限分类'
+
+out=$(run -R a 1e-4 b 1e-4 -f '(a+b)*(a+b)' --max-terms 1)
+check_contains "上限 1 仍可算" "$out" '极限分类'
+
 # --- CLI 错误路径（退出码 2） ---
 expect_rc2() {
     "$BIN" "$@" > /dev/null 2>&1
@@ -126,6 +134,7 @@ expect_rc2 -R x 1e-4 x 1e-4 -f '(1+x)'
 expect_rc2 -R x 1e-4 --lim z:p0 -f '(1+x)'
 expect_rc2 -R x 1e-4 --limit all -f '(1+x)'
 expect_rc2 --real x 1e-4 --kernel nope -f '(1+x)'
+expect_rc2 -R x 1e-4 --max-terms 0 -f '(1+x)'
 "$BIN" > /dev/null 2>&1; [ $? -eq 2 ] || { printf 'FAIL 缺少 -f 应退出 2
 '; fail=$((fail+1)); }
 

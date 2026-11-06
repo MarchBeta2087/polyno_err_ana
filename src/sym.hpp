@@ -23,6 +23,10 @@ struct Sym {
     std::vector<Term> terms;
 };
 
+// 符号展开项数上限（爆项保护）；0 视为 1。超限时抛 EvalError，调用方可退化为数值探测。
+void sym_set_max_terms(std::size_t n);
+std::size_t sym_max_terms();
+
 Sym to_sym(const Expr& e);
 Sym sym_const(const Cplx& c);
 Sym sym_var(const std::string& name);

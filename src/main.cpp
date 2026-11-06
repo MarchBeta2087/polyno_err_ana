@@ -146,6 +146,7 @@ struct Opts {
     int precision = 256;
     int branch = 0;
     bool real_root = false;
+    std::size_t max_terms = 200000;
     bool lim_all = false;
     bool lim_spec = false;
     std::string lim_var;
@@ -216,6 +217,14 @@ Opts parse_args(int argc, char** argv) {
             o.mode = Mode::Absolute;
         } else if (a == "-r" || a == "--relative") {
             o.mode = Mode::Relative;
+        } else if (a == "--max-terms") {
+            try {
+                long v = std::stol(need(i, "--max-terms"));
+                if (v < 1) usage_error("--max-terms 必须 >= 1");
+                o.max_terms = static_cast<std::size_t>(v);
+            } catch (const std::exception&) {
+                usage_error("--max-terms 需要正整数");
+            }
         } else if (a == "--real-root") {
             o.real_root = true;
         } else if (a == "--vars") {
@@ -327,6 +336,7 @@ int main(int argc, char** argv) {
         set_precision(o.precision);
         set_branch(o.branch);
         set_real_root(o.real_root);
+        sym_set_max_terms(o.max_terms);
 
         Expr f = parse(o.formula);
         Env env = make_env(o);
@@ -385,7 +395,7 @@ int main(int argc, char** argv) {
 
         if (o.vars_out && !sym_ok) {
             std::printf("\n");
-            std::printf("%-9s= N/A（含非整数指数，符号展开不支持）\n", "δf");
+            std::printf("%-9s= N/A（符号展开不可用：非整数指数或项数超限）\n", "δf");
             std::printf("%-9s= N/A\n", "δf/f");
             for (const auto& vv : views)
                 std::printf("∂f/∂%s = N/A\n", vv.decl->name.c_str());

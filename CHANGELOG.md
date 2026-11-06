@@ -16,6 +16,14 @@
 - `NaN` 统一显示 `Undefined`，纯 `±Inf` 保留符号；边界块不再出现 `N/A`/`NaN` 混用
 - 负数作为右操作数时加括号（`x+(-2)` 而非 `x+-2`）
 
+**资源保护**
+- `sym_mul`/`sym_add` 增加项数上限 `--max-terms`（默认 200000），超限抛 `EvalError` 并退化为数值探测，不再长时间卡死
+- 符号展开不可用的提示统一为“非整数指数或项数超限”
+
+**CI**
+- numextend 构建缓存（按子模块源码哈希）
+- Windows 启用 MPFR 作业（MSYS2 UCRT64 的 `gmp`/`mpfr` 包）
+
 **测试**
 - 快照用例扩到 14 条（`tests/cases.txt`），覆盖单状态 `--lim`、相对模式估计点为 0、`-p 64`、`-R`/`-C` 混合、`0^0`、除零、real-root
 - `tests/checks.sh` 增加 CLI 错误路径断言（8 条），CTest 为 `regression` + `snapshot`

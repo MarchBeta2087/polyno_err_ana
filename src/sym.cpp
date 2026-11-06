@@ -10,6 +10,16 @@ namespace {
 
 bool atom_eq(const Expr& a, const Expr& b) { return same(a, b); }
 
+std::size_t g_max_terms = 200000;
+
+[[noreturn]] void too_many_terms() {
+    throw EvalError("符号展开项数超过上限（可用 --max-terms 调整）");
+}
+
+void guard(std::size_t n) {
+    if (n > g_max_terms) too_many_terms();
+}
+
 void normalize(Term& t) {
     std::vector<Factor> out;
     for (auto& f : t.fac) {
@@ -140,7 +150,11 @@ Sym to_sym(const Expr& e) {
     throw EvalError("bad node");
 }
 
+void sym_set_max_terms(std::size_t n) { g_max_terms = n ? n : 1; }
+std::size_t sym_max_terms() { return g_max_terms; }
+
 Sym sym_add(const Sym& a, const Sym& b) {
+    guard(a.terms.size() + b.terms.size());
     Sym s = a;
     s.terms.insert(s.terms.end(), b.terms.begin(), b.terms.end());
     cleanup(s);
@@ -159,6 +173,7 @@ Sym sym_scale(const Sym& a, const Cplx& c) {
 }
 
 Sym sym_mul(const Sym& a, const Sym& b) {
+    if (!a.terms.empty() && b.terms.size() > g_max_terms / a.terms.size()) too_many_terms();
     Sym s;
     for (const auto& x : a.terms) {
         for (const auto& y : b.terms) {

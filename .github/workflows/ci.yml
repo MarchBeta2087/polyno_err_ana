@@ -14,6 +14,11 @@ jobs:
           submodules: recursive
       - name: 依赖
         run: sudo apt-get update && sudo apt-get install -y build-essential cmake libgmp-dev libmpfr-dev
+      - name: 缓存 numextend 构建
+        uses: actions/cache@v4
+        with:
+          path: numextend/build
+          key: nex-${{ runner.os }}-${{ hashFiles('numextend/CMakeLists.txt', 'numextend/nex/**', 'numextend/cmake/**') }}
       - name: 构建 numextend
         run: |
           cmake -S numextend -B numextend/build -DCMAKE_BUILD_TYPE=Release
@@ -50,6 +55,13 @@ jobs:
             mingw-w64-ucrt-x86_64-gcc
             mingw-w64-ucrt-x86_64-cmake
             mingw-w64-ucrt-x86_64-make
+            mingw-w64-ucrt-x86_64-gmp
+            mingw-w64-ucrt-x86_64-mpfr
+      - name: 缓存 numextend 构建
+        uses: actions/cache@v4
+        with:
+          path: numextend/build
+          key: nex-${{ runner.os }}-${{ hashFiles('numextend/CMakeLists.txt', 'numextend/nex/**', 'numextend/cmake/**') }}
       - name: 构建 numextend
         run: |
           cmake -S numextend -B numextend/build -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
@@ -60,3 +72,9 @@ jobs:
           cmake --build build -j4
       - name: 回归
         run: ctest --test-dir build --output-on-failure
+      - name: 构建（MPFR 内核，ucrt64 包）
+        run: |
+          cmake -S . -B build-mpfr -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release                 -DPOLYNO_ENABLE_MPFR=ON -DPNA_THIRD_PARTY=/ucrt64
+          cmake --build build-mpfr -j4
+      - name: 回归（MPFR 内核）
+        run: ctest --test-dir build-mpfr --output-on-failure
