@@ -5,15 +5,15 @@
 - `TODO.md`：维护者自己的工程待办（有明确实现路径）；
 - `OPEN_TASKS.md`：需要外部帮助、或难度/资源门槛较高的任务（母语审校、跨平台打包、大型特性）。
 
-认领方式：在对应 Issue 下留言「我认领」，先描述计划再动手；改动请遵循
-`CONTRIBUTING.md`（入站=出站，GPL-3.0-or-later，无 CLA）。
+认领方式：在对应 **Discussion** 回复（或在 Issue 下留言），先描述计划再动手；
+代码改动请遵循 `CONTRIBUTING.md`：从 `dev` 切 `feat/*`/`fix/*`/`docs/*`，**PR 到 `dev`**
+（`main` 与 `dev` 均受保护，必须 PR；入站=出站，GPL-3.0-or-later，无 CLA）。
+社区笔记（平台实测、用法片段）也可直接写进 [Wiki](https://github.com/MarchBeta2087/polyno_err_ana/wiki)。
 
 | # | 任务 | 难度 | 需要的人 | Issue |
 | --- | --- | --- | --- | --- |
-| 1 | 日语（ja）文案母语审校 | 低 | 日语母语者 | [#9](https://github.com/MarchBeta2087/polyno_err_ana/issues/9) |
-| 2 | 韩语（ko）文案母语审校 | 低 | 韩语母语者 | [#10](https://github.com/MarchBeta2087/polyno_err_ana/issues/10) |
-| 3 | 西班牙语（es）文案母语审校 | 低 | 西语母语者 | [#11](https://github.com/MarchBeta2087/polyno_err_ana/issues/11) |
-| 4 | 葡萄牙语（pt）文案母语审校 | 低 | 葡语母语者 | [#12](https://github.com/MarchBeta2087/polyno_err_ana/issues/12) |
+| 1–4 | 母语审校（ja / ko / es / pt） | 低 | 对应语言母语者 | [#21 讨论](https://github.com/MarchBeta2087/polyno_err_ana/discussions/21) |
+| 4b | Tier 3 平台实测（FreeBSD / OpenBSD / NetBSD） | 低–中 | 有 BSD 机器或虚拟机 | [#22 讨论](https://github.com/MarchBeta2087/polyno_err_ana/discussions/22) |
 | 5 | ~~macOS x86_64 发布产物~~ | — | 已完成（#13）：改为 universal2，单一二进制覆盖 Intel | [#13](https://github.com/MarchBeta2087/polyno_err_ana/issues/13) |
 | 6 | ~~MPFR 内核预编译包~~ | — | 已完成（#14，v0.15.1：linux/windows 两个 `-mpfr` 包） | [#14](https://github.com/MarchBeta2087/polyno_err_ana/issues/14) |
 | 7 | 函数节点 `sin/exp/log` | 高 | C++23 + 符号计算经验 | [#15](https://github.com/MarchBeta2087/polyno_err_ana/issues/15) |
