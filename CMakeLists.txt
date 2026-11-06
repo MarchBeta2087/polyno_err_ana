@@ -60,7 +60,8 @@ if(POLYNO_ENABLE_MPFR)
 endif()
 target_link_libraries(polyno_err_ana PRIVATE ${NEX_LIB})
 
-if(POLYNO_STATIC_RUNTIME AND NOT MSVC)
+if(POLYNO_STATIC_RUNTIME AND NOT MSVC AND NOT APPLE)
+    # macOS 无静态 libSystem（-static 会报 crt0.o not found），该平台保持默认链接
     target_link_options(polyno_err_ana PRIVATE -static)
 endif()
 

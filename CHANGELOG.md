@@ -2,6 +2,10 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v0.11.1-m11
+
+- 修复 macOS 静态链接失败：`-static` 仅用于 Linux/MinGW（macOS 无静态 libSystem）
+
 ## v0.11.0-m11
 
 - `-DPOLYNO_STATIC_RUNTIME=ON`：静态链接运行库，产出可直接分发的单文件
