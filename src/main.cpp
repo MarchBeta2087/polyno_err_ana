@@ -16,7 +16,7 @@ using namespace pna;
 
 namespace {
 
-constexpr const char* kVersion = "0.4.0-m4";
+constexpr const char* kVersion = "0.5.0-m5";
 
 struct Var {
     std::string name;
@@ -451,6 +451,8 @@ int main(int argc, char** argv) {
             std::vector<State> states;
             if (cvar) {
                 states = {{true, true}, {false, true}};  // 复数：0 / ∞
+            } else if (o.lim_spec && o.lim_var == nm) {
+                states = {o.lim_state};   // --lim VAR:STATE 优先于默认 4 组
             } else if (views.size() == 1 || o.lim_all) {
                 states = {{true, true}, {true, false}, {false, true}, {false, false}};
             } else if (o.lim_spec && o.lim_var == nm) {

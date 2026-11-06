@@ -99,6 +99,19 @@ b=$("$BIN" -R x 1e-4 -f '(1+x)^3' -k 2 --vars | grep '^δf    =')
 [ "$a" = "$b" ] || { printf 'FAIL 整数指数时 -k 影响了结果
 '; fail=$((fail+1)); }
 
+# --- 里程碑 5：--lim 单状态 / N-5 / 混合 -R -C ---
+out=$(run -R x 1e-4 --lim x:n0 -f '(1+x)^4')
+n=$(printf '%s\n' "$out" | grep -cE '^  (\+0|-0|\+inf|-inf) ')
+[ "$n" -eq 1 ] || { printf 'FAIL --lim 单状态组数: %s != 1\n' "$n"; fail=$((fail+1)); }
+check_contains "--lim 单状态标签" "$out" "-0"
+
+out=$(run -R x 1e-4 --relative --estimated x=0 -f '(1+x)^4')
+check_contains "N-5 提示" "$out" '相对误差失效'
+
+out=$(run -R x 1e-4 -C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+x)^2+z' --vars)
+check_contains "混合 -R/-C" "$out" '(0.0001+0.0001i)'
+check_contains "混合分类行数" "$out" '+0       c0'
+
 # --- CLI 错误路径（退出码 2） ---
 expect_rc2() {
     "$BIN" "$@" > /dev/null 2>&1
