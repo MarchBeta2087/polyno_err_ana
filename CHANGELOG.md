@@ -2,6 +2,21 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v0.15.0-m14
+
+- Release 增加 **MPFR 内核预编译包**（linux/windows，静态运行库；Linux 现场构建 GMP/MPFR，
+  Windows 用 ucrt64 的 `.a` 显式链接）
+- Release 的 **macOS 改为矩阵**：`macos-latest`(arm64) + `macos-13`(x86_64)，产物按架构命名
+- `publish` 等待全部作业并统一生成 `SHA256SUMS.txt`；Release 说明改为平台×内核矩阵
+- 关闭 Issue #13（macOS x86_64）与 #14（MPFR 预编译包）
+
+## v0.14.8-m14
+
+- 新增 `EXAMPLES.md`（文档站“示例”页）：最小例子、估计点、相对模式、复数+分支号、
+  高阶消失、JSON/schema、负实底数实根、开关速查；输出由当前版本实际运行生成
+- `设计.md`：把“`--kernel` 二选一”从「已知偏差」移到「设计选择」——为轻量化（零运行期分派、
+  更小二进制），非缺陷
+
 ## v0.14.7-m14
 
 - JSON Schema 细化：`symbolic` 增加字段说明与两组 `examples`（可用 / 不可用），

@@ -10,7 +10,6 @@
 
 ## P2 — 发布/社区
 
-- [ ] **文档站内容**：当前是 Markdown 直出；可加“示例/教程”页与快照diff 展示
 
 ## P3 — 功能
 
@@ -26,6 +25,7 @@
 
 ## 已完成（按里程碑，详见 CHANGELOG）
 
+- m14.8：`EXAMPLES.md`（示例/教程页，含实际输出与 JSON）、`--kernel` 澄清为设计选择（非偏差）
 - m14.7：JSON schema 细化（`if/then` + `examples` + 字段说明，校验器支持 `const/maxLength/maxItems`）；
   `scripts/bench_gate.sh` 接入 CI（默认 1200 ms/次上限，`BENCH_CEIL_MS` 可调，`--warn-only` 可选）
 

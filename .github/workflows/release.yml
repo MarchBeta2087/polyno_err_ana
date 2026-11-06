@@ -36,6 +36,41 @@ jobs:
           name: linux
           path: dist/*.tar.gz
 
+  linux-mpfr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+      - name: 依赖
+        run: sudo apt-get update && sudo apt-get install -y build-essential cmake make m4 curl xz-utils
+      - name: 构建 numextend
+        run: |
+          cmake -S numextend -B numextend/build -DCMAKE_BUILD_TYPE=Release
+          cmake --build numextend/build -j"$(nproc)"
+      - name: 获取并构建 GMP/MPFR（静态）
+        run: |
+          scripts/fetch-gmp.sh
+          scripts/fetch-mpfr.sh
+          scripts/build-mpfr.sh "$PWD/third_party_prefix"
+      - name: 构建（MPFR 内核，静态运行库）
+        run: |
+          cmake -S . -B build-mpfr -DCMAKE_BUILD_TYPE=Release \
+                -DPOLYNO_ENABLE_MPFR=ON -DPOLYNO_STATIC_RUNTIME=ON \
+                -DPNA_THIRD_PARTY="$PWD/third_party_prefix"
+          cmake --build build-mpfr -j"$(nproc)"
+      - name: 打包
+        run: |
+          pkg="polyno_err_ana-${GITHUB_REF_NAME}-linux-x86_64-mpfr"
+          mkdir -p "dist/$pkg"
+          cp build-mpfr/polyno_err_ana "dist/$pkg/"
+          cp LICENSE.md README.md THIRD_PARTY.md FAQ.md "dist/$pkg/"
+          tar -C dist -czf "dist/$pkg.tar.gz" "$pkg"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: linux-mpfr
+          path: dist/*.tar.gz
+
   windows:
     runs-on: windows-latest
     defaults:
@@ -51,10 +86,11 @@ jobs:
           update: true
           install: >-
             git
+            diffutils
+            zip
             mingw-w64-ucrt-x86_64-gcc
             mingw-w64-ucrt-x86_64-cmake
             mingw-w64-ucrt-x86_64-make
-            zip
       - name: 构建 numextend
         run: |
           cmake -S numextend -B numextend/build -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
@@ -76,10 +112,61 @@ jobs:
           name: windows
           path: dist/*.zip
 
+  windows-mpfr:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            git
+            diffutils
+            zip
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-make
+            mingw-w64-ucrt-x86_64-gmp
+            mingw-w64-ucrt-x86_64-mpfr
+      - name: 构建 numextend
+        run: |
+          cmake -S numextend -B numextend/build -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+          cmake --build numextend/build -j4
+      - name: 构建（MPFR 内核，静态运行库，显式 .a）
+        run: |
+          cmake -S . -B build-mpfr -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release \
+                -DPOLYNO_ENABLE_MPFR=ON -DPOLYNO_STATIC_RUNTIME=ON \
+                -DPNA_THIRD_PARTY=/ucrt64 \
+                -DMPFR_LIBRARY=/ucrt64/lib/libmpfr.a -DGMP_LIBRARY=/ucrt64/lib/libgmp.a
+          cmake --build build-mpfr -j4
+      - name: 打包
+        run: |
+          pkg="polyno_err_ana-${GITHUB_REF_NAME}-windows-x86_64-mpfr"
+          mkdir -p "dist/$pkg"
+          cp build-mpfr/polyno_err_ana.exe "dist/$pkg/"
+          cp LICENSE.md README.md THIRD_PARTY.md FAQ.md "dist/$pkg/"
+          cd dist && zip -qr "$pkg.zip" "$pkg"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: windows-mpfr
+          path: dist/*.zip
+
   macos:
     # 公开仓库的 macOS runner 免费；私有仓库排队不稳，故仅在公开时执行
     if: github.event.repository.private == false
-    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-latest   # arm64
+          - runner: macos-13       # x86_64
+    runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -101,13 +188,12 @@ jobs:
           tar -C dist -czf "dist/$pkg.tar.gz" "$pkg"
       - uses: actions/upload-artifact@v7
         with:
-          name: macos
+          name: macos-${{ matrix.runner }}
           path: dist/*.tar.gz
 
   publish:
-    # 等三个平台都完成再发布：macOS 作业在私有仓库会被 skip（needs 中的 skip 视作通过），
-    # 公开仓库则会等待它，避免 publish 抢跑导致 mac 包漏传。
-    needs: [linux, windows, macos]
+    # 等所有平台完成再发布：macOS 作业在私有仓库会被 skip（needs 中的 skip 视作通过）
+    needs: [linux, linux-mpfr, windows, windows-mpfr, macos]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -119,6 +205,7 @@ jobs:
           cd artifacts
           find . -type f \( -name '*.tar.gz' -o -name '*.zip' \) -exec cp {} . \;
           sha256sum *.tar.gz *.zip > SHA256SUMS.txt
+          cat SHA256SUMS.txt
       - uses: softprops/action-gh-release@v2
         with:
           allow_empty: false
@@ -128,6 +215,13 @@ jobs:
             artifacts/SHA256SUMS.txt
           generate_release_notes: true
           body: |
-            构建：Linux(manylinux 兼容性不保证) / Windows(x86_64, UCRT64) / macOS(arm64)。
-            运行库已静态链接（`-DPOLYNO_STATIC_RUNTIME=ON`），单文件即可运行。
-            校验和见 `SHA256SUMS.txt`；用法见包内 `README.md`。
+            默认构建（`numextend` 内核）与可选 `-mpfr` 构建（MPFR 内核），均为静态运行库单文件。
+
+            | 平台 | 默认（numextend） | 可选（mpfr） |
+            | --- | --- | --- |
+            | Linux x86_64 | `...-linux-x86_64.tar.gz` | `...-linux-x86_64-mpfr.tar.gz` |
+            | Windows x86_64 | `...-windows-x86_64.zip` | `...-windows-x86_64-mpfr.zip` |
+            | macOS arm64 / x86_64 | `...-macos-<arch>.tar.gz` | — |
+
+            校验和见 `SHA256SUMS.txt`；`-V` 可确认实际内核；用法见包内 `README.md` 与 `EXAMPLES.md`。
+            静态链接的 MPFR/GMP 属 LGPL，义务说明见包内 `THIRD_PARTY.md`。

@@ -13,7 +13,7 @@
 - 许可证：GPL-3.0-or-later（见 `LICENSE.md`；第三方组件见 `THIRD_PARTY.md`）
 - **不提供商业双许可**（决定记录：`docs/history/2026-11-07-license-decision.md`）
 - 贡献指南：`CONTRIBUTING.md`；行为准则：`CODE_OF_CONDUCT.md`；安全策略：`SECURITY.md`
-- 常见问题（含许可边界）：`FAQ.md`；维护者待办：`TODO.md`；**开放任务（欢迎认领）**：`OPEN_TASKS.md`
+- 示例与教程：`EXAMPLES.md`；常见问题（含许可边界）：`FAQ.md`；维护者待办：`TODO.md`；**开放任务**：`OPEN_TASKS.md`
 - 文档站：<https://marchbeta2087.github.io/polyno_err_ana/>（`scripts/build-docs.sh` 生成，
   `pages` 工作流部署；本地可生成到 `site/_out/`）
 - 决策/迁移记录：`docs/history/`
@@ -125,15 +125,15 @@ GCC 14+ 默认 C23 会让 GMP 的 long-long 探针失败，脚本已加 `-std=gn
 
 GitHub Releases 提供三平台单文件包（静态运行库，`-DPOLYNO_STATIC_RUNTIME=ON`）：
 
-| 平台 | 产物 |
-| --- | --- |
-| Linux x86_64 | `polyno_err_ana-v0.14.2-m14-linux-x86_64.tar.gz` |
-| Windows x86_64 | `polyno_err_ana-v0.14.2-m14-windows-x86_64.zip` |
-| macOS arm64 | `polyno_err_ana-v0.14.2-m14-macos-arm64.tar.gz` |
-| 校验 | `SHA256SUMS.txt` |
+| 平台 | 默认（numextend） | 可选（mpfr） |
+| --- | --- | --- |
+| Linux x86_64 | `…-linux-x86_64.tar.gz` | `…-linux-x86_64-mpfr.tar.gz` |
+| Windows x86_64 | `…-windows-x86_64.zip` | `…-windows-x86_64-mpfr.zip` |
+| macOS arm64 / x86_64 | `…-macos-<arch>.tar.gz` | — |
+| 校验 | `SHA256SUMS.txt` | |
 
-包内含可执行文件与 `README.md`/`LICENSE.md`/`THIRD_PARTY.md`/`FAQ.md`。macOS 包仅在公开仓库构建
-（私有仓库的 macOS runner 排队不稳）。本地等价构建：
+包内含可执行文件与 `README.md`/`LICENSE.md`/`THIRD_PARTY.md`/`FAQ.md`；`-mpfr` 包用 MPFR 内核
+（`-V` 可见），静态链接的 LGPL 义务见 `THIRD_PARTY.md`。本地等价构建：
 
 ```sh
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DPOLYNO_STATIC_RUNTIME=ON

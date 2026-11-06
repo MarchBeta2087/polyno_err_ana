@@ -19,6 +19,7 @@ cat > "$OUT/_nav.html" <<'NAV'
   <a href="index.html">首页</a>
   <a href="requirements.html">需求</a>
   <a href="design.html">设计</a>
+  <a href="examples.html">示例</a>
   <a href="faq.html">FAQ</a>
   <a href="security.html">安全</a>
   <a href="third-party.html">第三方</a>
@@ -47,6 +48,7 @@ echo "生成到 $OUT"
 page "$ROOT/README.md"           index.html        "polyno_err_ana —— 多项式/有理式误差分析器"
 page "$ROOT/需求分析.md"         requirements.html "需求分析"
 page "$ROOT/设计.md"             design.html       "设计说明"
+page "$ROOT/EXAMPLES.md"         examples.html     "示例与教程"
 page "$ROOT/FAQ.md"              faq.html          "FAQ"
 page "$ROOT/SECURITY.md"         security.html     "安全策略"
 page "$ROOT/THIRD_PARTY.md"      third-party.html  "第三方组件与许可"

@@ -14,8 +14,8 @@
 | 2 | 韩语（ko）文案母语审校 | 低 | 韩语母语者 | [#10](https://github.com/MarchBeta2087/polyno_err_ana/issues/10) |
 | 3 | 西班牙语（es）文案母语审校 | 低 | 西语母语者 | [#11](https://github.com/MarchBeta2087/polyno_err_ana/issues/11) |
 | 4 | 葡萄牙语（pt）文案母语审校 | 低 | 葡语母语者 | [#12](https://github.com/MarchBeta2087/polyno_err_ana/issues/12) |
-| 5 | macOS x86_64 发布产物 | 低 | 熟悉 GitHub Actions | [#13](https://github.com/MarchBeta2087/polyno_err_ana/issues/13) |
-| 6 | MPFR 内核预编译包 | 中 | 熟悉 CI 与 MSYS2/apt | [#14](https://github.com/MarchBeta2087/polyno_err_ana/issues/14) |
+| 5 | ~~macOS x86_64 发布产物~~ | — | 已完成（#13，v0.15.0） | [#13](https://github.com/MarchBeta2087/polyno_err_ana/issues/13) |
+| 6 | ~~MPFR 内核预编译包~~ | — | 已完成（#14，v0.15.0） | [#14](https://github.com/MarchBeta2087/polyno_err_ana/issues/14) |
 | 7 | 函数节点 `sin/exp/log` | 高 | C++23 + 符号计算经验 | [#15](https://github.com/MarchBeta2087/polyno_err_ana/issues/15) |
 | 8 | 变量指数 `a^b` | 高 | 同上（依赖 #15） | [#16](https://github.com/MarchBeta2087/polyno_err_ana/issues/16) |
 | 9 | 多变量联合极限（需先定路径语义） | 高 | 数值分析 + 需求设计经验 | [#17](https://github.com/MarchBeta2087/polyno_err_ana/issues/17) |
