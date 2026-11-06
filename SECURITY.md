@@ -18,7 +18,11 @@
 1. 打开仓库 → **Security** → **Report a vulnerability**（GitHub Security Advisory）
 2. 或直接访问 `https://github.com/MarchBeta2087/polyno_err_ana/security/advisories/new`
 
-也可通过 GitHub 私信维护者 [@MarchBeta2087](https://github.com/MarchBeta2087)。
+这是本项目唯一的私有渠道；Advisory 内可私密讨论、邀请协作者、申请 CVE，且不会提前公开。
+
+GitHub **没有**私信（DM）功能：请不要把未修复漏洞发到公开 Issue、Discussion 或 PR 里。
+若 Security Advisory 入口不可用，可在任意 Issue 中**只写一句话**“需要私下渠道”，
+维护者会通过 Advisory 邀请你继续（不要在 Issue 里描述细节）。
 
 请在报告中尽量包含：
 

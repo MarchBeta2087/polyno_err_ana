@@ -35,12 +35,17 @@
 
 ## 举报
 
-如遇滥用、骚扰或其他不可接受的行为，请通过以下渠道私下联系维护者：
+如遇滥用、骚扰或其他不可接受的行为，请使用**私有渠道**联系维护者：
 
-- GitHub 私信：[@MarchBeta2087](https://github.com/MarchBeta2087)
-- 安全类问题请使用 GitHub Security Advisory（见 `SECURITY.md`）
+- GitHub Security Advisory（可私密讨论，见 `SECURITY.md`）：
+  `https://github.com/MarchBeta2087/polyno_err_ana/security/advisories/new`
+  —— 在标题里注明「行为举报」，内容按需要描述即可（该渠道不限于安全漏洞）。
+- 若你不要求保密，也可以开 Issue 并 `@MarchBeta2087`。
 
-所有投诉都会被及时、公平地审查与处理。维护者有义务尊重举报者的隐私与安全。
+> 说明：GitHub 没有私信（DM）功能，因此不提供“私信”渠道；本项目也未公开个人邮箱。
+
+所有投诉都会被及时、公平地审查与处理。维护者有义务尊重举报者的隐私与安全：
+除必要的处理人员外，不会公开举报者身份与举报内容。
 
 ## 执行指南
 

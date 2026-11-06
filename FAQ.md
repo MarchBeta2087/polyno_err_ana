@@ -54,6 +54,13 @@ LGPL-3.0 要求分发二进制时提供重新链接的手段。本项目提供�
 本项目采用「入站=出站」（贡献即按 GPL-3.0-or-later 授权），
 所以将来若要换许可，需要逐一取得外部贡献者许可（见 `CONTRIBUTING.md`）。
 
+### 5c. 怎么私下联系维护者？
+
+GitHub 没有私信功能。需要保密时请用 **Security Advisory**
+（`https://github.com/MarchBeta2087/polyno_err_ana/security/advisories/new`），
+它同样可用于行为准则类举报（标题注明即可）。不需要保密时直接开 Issue 并 `@MarchBeta2087`。
+本项目未公开个人邮箱（避免垃圾邮件与隐私暴露）。
+
 ## 功能与用法
 
 ### 7. `fin` / `undef` / `+0` / `cinf` 是什么？

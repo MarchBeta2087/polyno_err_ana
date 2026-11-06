@@ -46,6 +46,15 @@ bash tests/snapshot_test.sh ./build/polyno_err_ana.exe
 - `TODO.md`：维护者自己的工程待办（通常不与外部 PR 冲突，避免重复投入）
 - `good first issue` 标签：低门槛任务（目前是四种语言的母语审校）
 
+## 隐私
+
+提交请使用 GitHub 的 noreply 邮箱（`<id>+<login>@users.noreply.github.com`），
+避免把个人邮箱写进公开历史：
+
+```sh
+git config user.email "98508270+MarchBeta2087@users.noreply.github.com"
+```
+
 ## 待办与里程碑
 
 待办只在 `TODO.md` 维护（P0/P1/P2，带验收方式）。完成一项就**从 TODO 删除**，并在

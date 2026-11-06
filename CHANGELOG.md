@@ -2,6 +2,13 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v0.14.6-m14
+
+- 修正“GitHub 私信”说法（GitHub 没有 DM）：`SECURITY.md`/`CODE_OF_CONDUCT.md`/`FAQ.md`
+  统一改为 **Security Advisory** 作为唯一私有渠道，并说明其也可用于行为举报
+- `CONTRIBUTING.md` 增加隐私提示：提交使用 noreply 邮箱
+- 之后提交改用 `98508270+MarchBeta2087@users.noreply.github.com`（历史中的旧邮箱保留）
+
 ## v0.14.5-m14
 
 - `OPEN_TASKS.md` 增加“多变量联合极限”（#17）：说明难点在语义（路径/速率）而非编码，
