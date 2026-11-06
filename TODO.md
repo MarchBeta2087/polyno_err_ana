@@ -14,16 +14,16 @@
 - [ ] 输出渲染从 `src/main.cpp` 抽到 `src/render.{hpp,cpp}`（当前 `render_table` 与各区块仍在 main）
 - [ ] `sym_mul` 的项数预估更精确（按去重后的因子键估算，而非项数乘积）
 - [ ] 错误消息英文版（`--lang en`，需求 N-2 只要求列号，可选）
-- [ ] `scripts/bench.sh` 记录历史结果（CSV + 简单对比），避免性能回退无感知
 
 ## P2 — 发布/社区
 
-- [ ] 二进制发布（GitHub Release 附 Linux/macOS/Windows 构建产物与校验和）
 - [ ] 许可咨询：是否提供商业双许可（见 `FAQ.md` §5）
 - [ ] 把 `mpfr/` 从 `aixoss/mpfr` 镜像改为官方 tarball 校验（当前 base 3.1.2）
 - [ ] 文档站点化（`docs/` 静态页，含表格渲染示例）
 
 ## 已完成（移出，见 CHANGELOG）
+
+- m11：Release 工作流（三平台静态构建 + SHA256SUMS）、`bench/history.csv` 与 `bench_compare.sh`
 
 - m10：`render` 模块、`sym_mul` 增量合并（上限按结果项数判定）、快照 35 条、低精度字面量对齐
 

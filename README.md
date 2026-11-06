@@ -108,7 +108,8 @@ src/main.cpp           命令行、输出表格、极限分类
 tests/checks.sh        断言式回归（CTest: regression）
 tests/cases.txt        快照用例（CTest: snapshot）
 tests/snapshots/       期望输出（与内核无关）
-scripts/bench.sh       性能冒烟
+scripts/bench.sh       性能冒烟（--save 追加 bench/history.csv）
+scripts/bench_compare.sh 对比最近 N 次基准
 scripts/build-mpfr.sh  GMP/MPFR 构建脚本
 docs/history/          历史决策记录（需求修改建议 v0.1）
 mpfr/, numextend/      git submodule（上游依赖）

@@ -48,6 +48,8 @@ endif()
 file(READ ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md PNA_LICENSE_TEXT)
 configure_file(cmake/license_text.hpp.in ${CMAKE_BINARY_DIR}/generated/license_text.hpp @ONLY)
 
+option(POLYNO_STATIC_RUNTIME "静态链接运行库（发布用，便于分发单文件）" OFF)
+
 add_executable(polyno_err_ana ${PNA_SOURCES})
 target_compile_definitions(polyno_err_ana PRIVATE ${PNA_KERNEL_DEF})
 target_include_directories(polyno_err_ana PRIVATE ${NEX_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -57,6 +59,10 @@ if(POLYNO_ENABLE_MPFR)
     target_link_libraries(polyno_err_ana PRIVATE ${MPFR_LIBRARY} ${GMP_LIBRARY})
 endif()
 target_link_libraries(polyno_err_ana PRIVATE ${NEX_LIB})
+
+if(POLYNO_STATIC_RUNTIME AND NOT MSVC)
+    target_link_options(polyno_err_ana PRIVATE -static)
+endif()
 
 enable_testing()
 find_program(BASH_EXE bash)

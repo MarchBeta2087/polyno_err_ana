@@ -2,6 +2,14 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v0.11.0-m11
+
+- `-DPOLYNO_STATIC_RUNTIME=ON`：静态链接运行库，产出可直接分发的单文件
+- 新增 `.github/workflows/release.yml`：tag 触发，构建 linux/windows/macos 三平台产物、
+  生成 `SHA256SUMS.txt` 并发布 GitHub Release
+- `scripts/bench.sh --save` 追加 `bench/history.csv`；`scripts/bench_compare.sh` 对比最近 N 次
+- README 增加“下载”一节
+
 ## v0.10.0-m10
 
 - 输出渲染抽到 `src/render.{hpp,cpp}`（`render_table`），`main.cpp` 只组装行数据
