@@ -22,6 +22,13 @@ if [ -z "${MPFR_SRC:-}" ]; then
     MPFR_SRC="$ROOT/mpfr-$MPFR_VER"
 fi
 
+if [ "$DRY_RUN" -eq 1 ]; then
+    echo "GMP_SRC=$GMP_SRC $([ -d "$GMP_SRC" ] || echo '(缺失)')"
+    echo "MPFR_SRC=$MPFR_SRC $([ -d "$MPFR_SRC" ] || echo '(缺失)')"
+    echo "PREFIX=$PREFIX"
+    exit 0
+fi
+
 [ -d "$GMP_SRC" ] || {
     echo "找不到 GMP 源码：$GMP_SRC"
     echo "先执行 scripts/fetch-gmp.sh（会按 deps.lock 校验 sha256）"
@@ -32,12 +39,7 @@ fi
     echo "先执行 scripts/fetch-mpfr.sh（官方 tarball + sha256 校验）"
     exit 1
 }
-if [ "$DRY_RUN" -eq 1 ]; then
-    echo "GMP_SRC=$GMP_SRC"
-    echo "MPFR_SRC=$MPFR_SRC"
-    echo "PREFIX=$PREFIX"
-    exit 0
-fi
+
 
 command -v make >/dev/null || { echo "需要 make"; exit 1; }
 command -v m4 >/dev/null || { echo "需要 m4"; exit 1; }
