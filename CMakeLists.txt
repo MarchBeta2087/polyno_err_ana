@@ -25,7 +25,7 @@ endif()
 option(POLYNO_ENABLE_MPFR "使用 MPFR 内核（需 third_party_prefix 或系统 GMP/MPFR）" OFF)
 set(PNA_THIRD_PARTY "${CMAKE_CURRENT_SOURCE_DIR}/third_party_prefix" CACHE PATH "GMP/MPFR 安装前缀")
 
-set(PNA_SOURCES src/main.cpp src/ast.cpp src/sym.cpp src/num_common.cpp src/render.cpp)
+set(PNA_SOURCES src/main.cpp src/ast.cpp src/sym.cpp src/num_common.cpp src/render.cpp src/json_out.cpp)
 
 if(POLYNO_ENABLE_MPFR)
     find_path(MPFR_INCLUDE_DIR mpfr.h HINTS ${PNA_THIRD_PARTY}/include)

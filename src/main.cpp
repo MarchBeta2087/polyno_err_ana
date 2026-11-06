@@ -10,6 +10,7 @@
 
 #include "ast.hpp"
 #include "num.hpp"
+#include "json_out.hpp"
 #include "render.hpp"
 #include "license_text.hpp"
 #include "sym.hpp"
@@ -18,7 +19,7 @@ using namespace pna;
 
 namespace {
 
-constexpr const char* kVersion = "0.11.3-m11";
+constexpr const char* kVersion = "0.12.0-m12";
 
 struct Var {
     std::string name;
@@ -175,6 +176,7 @@ struct Opts {
     std::vector<std::pair<std::string, Cplx>> est;
     Mode mode = Mode::Absolute;
     bool vars_out = false;
+    bool json = false;
     int precision = 256;
     int branch = 0;
     bool real_root = false;
@@ -311,6 +313,8 @@ Opts parse_args(int argc, char** argv) {
             }
         } else if (a == "--real-root") {
             o.real_root = true;
+        } else if (a == "--json") {
+            o.json = true;
         } else if (a == "--vars") {
             o.vars_out = true;
         } else if (a == "-p" || a == "--precision") {
@@ -467,15 +471,15 @@ int main(int argc, char** argv) {
             views.push_back(vv);
         }
 
-        std::printf("polyno_err_ana %s  (%s, %d bit)\n", kVersion, kernel_name(), o.precision);
-        if (o.branch != 0) std::printf("branch k = %d\n", o.branch);
-        std::printf("\nf    = %s\n", o.formula.c_str());
+        std::vector<VarLine> var_lines;
         for (const auto& vv : views) {
-            Cplx est = value_of(env, vv.decl->name);
-            std::printf("%s ≈ %s,  δ%s = %s (%s)%s\n", vv.decl->name.c_str(), c_fmt(est).c_str(),
-                        vv.decl->name.c_str(), c_fmt(vv.dv).c_str(),
-                        o.mode == Mode::Absolute ? "absolute" : "relative",
-                        vv.degraded ? "  [δv = 0（估计点为 0，相对误差失效）]" : "");
+            VarLine vl;
+            vl.name = vv.decl->name;
+            vl.est = c_fmt(value_of(env, vv.decl->name));
+            vl.dv = c_fmt(vv.dv);
+            vl.mode = o.mode == Mode::Absolute ? "absolute" : "relative";
+            vl.note = vv.degraded ? "  [δv = 0（估计点为 0，相对误差失效）]" : "";
+            var_lines.push_back(std::move(vl));
         }
 
         std::vector<Sym> partials;
@@ -498,41 +502,28 @@ int main(int argc, char** argv) {
             }
         }
 
-        if (o.vars_out && !sym_ok) {
-            std::printf("\n");
-            std::printf("%-9s= N/A（符号展开不可用：非整数指数或项数超限）\n", "δf");
-            std::printf("%-9s= N/A\n", "δf/f");
-            for (const auto& vv : views)
-                std::printf("∂f/∂%s = N/A\n", vv.decl->name.c_str());
-            std::printf("\n");
-        }
+        std::vector<PartialLine> plines;
+        std::string df_text, df_value, rel_text, rel_value;
         if (o.vars_out && sym_ok) {
-            std::printf("\n");
-            std::printf("δf    = %s\n", sym_show(delta).c_str());
-            std::printf("      = %s\n", c_fmt(sym_value(delta, env)).c_str());
-            std::printf("δf/f  = %s\n", sym_show(rel).c_str());
-            std::printf("      = %s\n", c_fmt(sym_value(rel, env)).c_str());
-            std::printf("\n");
             for (size_t i = 0; i < views.size(); ++i) {
                 const auto& vv = views[i];
                 Cplx est = value_of(env, vv.decl->name);
-                std::printf("∂f/∂%s  = %s\n", vv.decl->name.c_str(), sym_show(partials[i]).c_str());
-                std::printf("δ%s     = %s\n", vv.decl->name.c_str(), c_fmt(vv.dv).c_str());
-                if (c_is_zero(est))
-                    std::printf("δ%s/%s   = N/A（估计点为 0）\n", vv.decl->name.c_str(),
-                                vv.decl->name.c_str());
-                else
-                    std::printf("δ%s/%s   = %s\n", vv.decl->name.c_str(), vv.decl->name.c_str(),
-                                c_fmt(vv.dv / est).c_str());
-                std::printf("\n");
+                PartialLine pl;
+                pl.name = vv.decl->name;
+                pl.expr = sym_show(partials[i]);
+                pl.dv = c_fmt(vv.dv);
+                pl.ratio = c_is_zero(est) ? std::string() : c_fmt(vv.dv / est);
+                plines.push_back(std::move(pl));
             }
+            df_text = sym_show(delta);
+            df_value = c_fmt(sym_value(delta, env));
+            rel_text = sym_show(rel);
+            rel_value = c_fmt(sym_value(rel, env));
         }
 
         // 精确边界（§3.4）
-        if (!o.vars_out) std::printf("\n");
         Cplx f0 = eval(f, env);
         Real f0abs = c_abs(f0);
-        std::printf("  精确边界（单变量变，其余固定在估计点）\n\n");
         std::vector<std::vector<std::string>> brow;
         for (const auto& vv : views) {
             Env ep = env, em = env;
@@ -549,11 +540,8 @@ int main(int argc, char** argv) {
             }
             brow.push_back({vv.decl->name, cell(dp), cell(dm), rp, rm});
         }
-        render_table({"var", "δ_{R+}f", "δ_{R-}f", "δ_{R+}f/f", "δ_{R-}f/f"}, brow,
-                     {false, true, true, true, true});
 
         // 极限分类（§3.6）
-        std::printf("\n  极限分类（单变量变，其余 δ=0）\n\n");
         std::vector<std::vector<std::string>> lrow;
         for (const auto& vv : views) {
             const std::string& nm = vv.decl->name;
@@ -632,7 +620,39 @@ int main(int argc, char** argv) {
                 lrow.push_back({nm, slabel, lim_label(tg), lim_label(tr)});
             }
         }
-        render_table({"var", "δv →", "δf", "δf/f"}, lrow, {false, true, true, true});
+        if (o.json) {
+            JsonDoc doc;
+            doc.version = kVersion;
+            doc.kernel = kernel_name();
+            doc.precision = o.precision;
+            doc.branch = o.branch;
+            doc.formula = o.formula;
+            doc.mode = o.mode == Mode::Absolute ? "absolute" : "relative";
+            doc.symbolic_available = sym_ok;
+            doc.df = df_text;
+            doc.df_value = df_value;
+            doc.df_f = rel_text;
+            doc.df_f_value = rel_value;
+            for (const auto& v : var_lines)
+                doc.vars.push_back({v.name, v.est, v.dv, v.mode});
+            for (const auto& p : plines) doc.partials.push_back({p.name, p.expr, p.dv});
+            for (const auto& r : brow)
+                doc.boundary.push_back({r[0], r[1], r[2], r[3], r[4]});
+            for (const auto& r : lrow) doc.limits.push_back({r[0], r[1], r[2], r[3]});
+            std::fputs(to_json(doc).c_str(), stdout);
+            return 0;
+        }
+
+        print_header(kVersion, kernel_name(), o.precision, o.branch, o.formula, var_lines);
+        if (o.vars_out && !sym_ok) {
+            std::vector<std::string> names;
+            for (const auto& vv : views) names.push_back(vv.decl->name);
+            print_symbolic_unavailable(names);
+        }
+        if (o.vars_out && sym_ok) print_symbolic(df_text, df_value, rel_text, rel_value, plines);
+        if (!o.vars_out) std::printf("\n");
+        print_boundary(brow);
+        print_limits(lrow);
         return 0;
     } catch (const ParseError& e) {
         std::fprintf(stderr, "解析错误（第 %zu 列）: %s\n", e.col, e.what());

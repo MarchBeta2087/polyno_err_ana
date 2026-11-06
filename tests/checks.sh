@@ -184,6 +184,51 @@ out=$(run -R x 1e-4 -f '(1+x)^4' --lim x:n0..ninf)
 [ "$(count_rows "$out")" -eq 3 ] || { printf 'FAIL x:n0..ninf 组数
 '; fail=$((fail+1)); }
 
+# ---- JSON 输出 ----
+PY=$(command -v python3 || command -v python || true)
+if [ -z "$PY" ]; then
+    echo "SKIP: 无 python，跳过 JSON 断言"
+else
+TMPJSON=$(mktemp)
+"$BIN" -R x 1e-4 --estimated x=0.6 -f '(1+x)^4' --vars --json > "$TMPJSON" 2>&1
+"$PY" - "$TMPJSON" <<'PY'
+import json, sys
+d = json.load(open(sys.argv[1], encoding="utf-8"))
+assert d["formula"] == "(1+x)^4"
+assert d["symbolic"]["available"] is True
+assert d["symbolic"]["df_value"] == "0.0016384"
+assert d["symbolic"]["df_f_value"] == "0.00025"
+assert d["vars"][0]["delta"] == "0.0001"
+assert len(d["boundary"]) == 1 and d["boundary"][0]["var"] == "x"
+assert len(d["limits"]) == 4
+codes = {r["state"]: (r["df"], r["df_f"]) for r in d["limits"]}
+assert codes["+0"] == ("+0", "+0") and codes["-inf"] == ("-inf", "-inf")
+PY
+[ $? -eq 0 ] || { printf 'FAIL JSON 结构/数值
+'; fail=$((fail+1)); }
+
+"$BIN" -C z 1e-4 1e-4 -f '(1+z)^(1+i)' -k 2 --json > "$TMPJSON" 2>&1
+"$PY" - "$TMPJSON" <<'PY'
+import json, sys
+d = json.load(open(sys.argv[1], encoding="utf-8"))
+assert d["branch"] == 2
+states = {r["state"]: r["df_f"] for r in d["limits"]}
+assert states == {"0": "c0", "inf": "cinf"}, states
+PY
+[ $? -eq 0 ] || { printf 'FAIL JSON 复数分类
+'; fail=$((fail+1)); }
+
+"$BIN" -R a 1e-4 b 1e-4 --max-terms 3 -f '(a+b)^2*(a+b)^2' --json > "$TMPJSON" 2>&1
+"$PY" - "$TMPJSON" <<'PY'
+import json, sys
+d = json.load(open(sys.argv[1], encoding="utf-8"))
+assert d["symbolic"]["available"] is False
+PY
+[ $? -eq 0 ] || { printf 'FAIL JSON 符号不可用标记
+'; fail=$((fail+1)); }
+rm -f "$TMPJSON"
+fi
+
 # ---- CLI 错误路径（退出码 2） ----
 expect_rc2() {
     "$BIN" "$@" > /dev/null 2>&1

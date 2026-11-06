@@ -88,6 +88,9 @@ GCC 14+ 默认 C23 会让 GMP 的 long-long 探针失败，脚本已加 `-std=gn
 # 复数 + 分支号（T-6）
 ./build/polyno_err_ana -C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+z)^(1+i)' -k 2 --vars
 
+# 机器可读输出（JSON）
+./build/polyno_err_ana -R x 1e-4 --estimated x=0.6 -f '(1+x)^4' --vars --json | jq .
+
 # 负实底数：默认复主值 vs --real-root 实根
 ./build/polyno_err_ana -R x 1e-4 --estimated x=0.5 -f 'x+(-8)^(1/3)' --vars
 ./build/polyno_err_ana -R x 1e-4 --estimated x=0.5 -f 'x+(-8)^(1/3)' --vars --real-root
@@ -108,6 +111,9 @@ src/main.cpp           命令行、输出表格、极限分类
 tests/checks.sh        断言式回归（CTest: regression）
 tests/cases.txt        快照用例（CTest: snapshot）
 tests/snapshots/       期望输出（与内核无关）
+src/json_out.hpp|cpp  JSON 输出（--json）
+src/render.hpp|cpp    表格渲染与输出块
+deps.lock             依赖版本锁定（scripts/verify-deps.sh 校验）
 scripts/bench.sh       性能冒烟（--save 追加 bench/history.csv）
 scripts/bench_compare.sh 对比最近 N 次基准
 scripts/build-mpfr.sh  GMP/MPFR 构建脚本

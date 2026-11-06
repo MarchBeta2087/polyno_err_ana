@@ -2,6 +2,14 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v0.12.0-m12
+
+- 新增 `--json`：一次输出 meta/`symbolic`/`boundary`/`limits`，数值保持字符串格式（字段见需求 §3.9）
+- 输出块抽到 `render`（表头/符号块/边界/分类），`main.cpp` 只组装数据、再选择表格或 JSON 输出
+- 新增 `deps.lock` + `scripts/verify-deps.sh`：校验 numextend/MPFR 提交与 GMP 版本
+  （本机访问 mpfr.org/gmplib.org 被 TLS 拦截，GMP tarball 的 sha256 待联网补录）
+- 快照扩到 38 条（含 3 条 JSON、版本号归一化）；checks.sh 增加 JSON 结构断言
+
 ## v0.11.3-m11
 
 - Release 的 `publish` 不再等待 macOS 作业（`needs: [linux, windows]`）

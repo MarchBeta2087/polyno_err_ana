@@ -13,7 +13,7 @@
 - [ ] 快照用例 30+（当前 27；补 `-p 8/64`、`--lim x:n0..ninf`、多变量三类混合）
 - [ ] 输出渲染从 `src/main.cpp` 抽到 `src/render.{hpp,cpp}`（当前 `render_table` 与各区块仍在 main）
 - [ ] `sym_mul` 的项数预估更精确（按去重后的因子键估算，而非项数乘积）
-- [ ] 错误消息英文版（`--lang en`，需求 N-2 只要求列号，可选）
+- [ ] 错误消息英文版（`--lang en`，需求 N-2 只要求列号，可选；优先级低）
 
 ## P2 — 发布/社区
 
@@ -23,7 +23,8 @@
 
 ## 已完成（移出，见 CHANGELOG）
 
-- m11：Release 工作流（三平台静态构建 + SHA256SUMS）、`bench/history.csv` 与 `bench_compare.sh`
+- m11：Release 工作流（linux/windows 静态构建 + SHA256SUMS）、`bench/history.csv` 与 `bench_compare.sh`
+- m12：`--json` 输出、`render` 输出块、`deps.lock` + `verify-deps.sh`
 
 - m10：`render` 模块、`sym_mul` 增量合并（上限按结果项数判定）、快照 35 条、低精度字面量对齐
 

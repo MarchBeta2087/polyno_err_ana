@@ -1,0 +1,10 @@
+# 依赖版本锁定（scripts/verify-deps.sh 校验）
+numextend_path = numextend
+numextend_tag = v1.8.1
+numextend_commit = d20b1ad97a31ced817a0ee5279cb86702619a3fe
+mpfr_path = mpfr
+mpfr_upstream = https://github.com/aixoss/mpfr
+mpfr_commit = 17fb82a9d35e6f8548b35028c46c7f547cff0e60
+gmp_version = 6.3.0
+gmp_source = gmp-6.3.0/          # 本地解压源码；不入库，构建时由 scripts/fetch-gmp.sh 获取
+gmp_sha256 = PENDING             # 首次联网获取后填入（本机 schannel/gmplib 均不可达）
