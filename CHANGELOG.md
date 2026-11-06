@@ -2,6 +2,14 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v0.13.4-m13
+
+- 移除 `mpfr/` submodule：MPFR 只走官方 tarball 4.2.1（`scripts/fetch-mpfr.sh`）
+- `build-mpfr.sh` 支持 `--dry-run`、参数解析更严格（未知参数退出 2）
+- `verify-deps.sh` 不再检查 MPFR 提交；迁移说明见
+  `docs/history/2026-11-07-mpfr-tarball-migration.md`
+- README/THIRD_PARTY 更新依赖获取方式与目录结构
+
 ## v0.13.3-m13
 
 - **许可政策定为单许可**：不提供商业双许可，只保留 GPL-3.0-or-later；

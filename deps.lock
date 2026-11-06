@@ -2,10 +2,7 @@
 numextend_path = numextend
 numextend_tag = v1.8.1
 numextend_commit = d20b1ad97a31ced817a0ee5279cb86702619a3fe
-mpfr_path = mpfr                      # 备选来源（git submodule）
-mpfr_upstream = https://github.com/aixoss/mpfr
-mpfr_commit = 17fb82a9d35e6f8548b35028c46c7f547cff0e60
-mpfr_version = 4.2.1                  # 首选来源：官方 tarball
+mpfr_version = 4.2.1                  # 唯一来源：官方 tarball（子模块已移除，见 docs/history）
 mpfr_url = https://www.mpfr.org/mpfr-4.2.1/mpfr-4.2.1.tar.xz
 mpfr_sha256 = 277807353a6726978996945af13e52829e3abd7a9a5b7fb2793894e18f1fcbb2
 mpfr_source = mpfr-4.2.1/             # 官方 tarball 解压目录（不入库）

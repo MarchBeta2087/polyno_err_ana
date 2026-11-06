@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # 校验子模块与依赖版本是否与 deps.lock 一致。
 # 用法: scripts/verify-deps.sh [--tarball FILE]
+#   （MPFR 子模块已移除：只校验 numextend 提交 + GMP/MPFR 源码目录与 tarball）
 #   --tarball  额外校验本地 GMP 压缩包的 sha256（离线也可用）
 set -u
 TARBALL=""
@@ -25,7 +26,6 @@ check_commit() {  # path expected label
 }
 
 check_commit "$(get numextend_path)" "$(get numextend_commit)" numextend
-check_commit "$(get mpfr_path)" "$(get mpfr_commit)" mpfr
 
 gmp_dir="$ROOT/$(get gmp_source)"
 if [ -d "$gmp_dir" ]; then
@@ -43,7 +43,8 @@ fi
 
 mpfr_ver_dir="$ROOT/$(get mpfr_source)"
 if [ -d "$mpfr_ver_dir" ]; then
-    ver=$(sed -n '1p' "$mpfr_ver_dir/VERSION" 2>/dev/null | tr -d ' ')
+    ver=$(sed -n '1p' "$mpfr_ver_dir/VERSION" 2>/dev/null | tr -d ' 
+')
     if [ "$ver" = "$(get mpfr_version)" ]; then
         printf 'ok   mpfr: %s（官方 tarball 目录）
 ' "$ver"

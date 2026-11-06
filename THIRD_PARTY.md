@@ -6,7 +6,7 @@
 | 组件 | 版本 | 用途 | 引入方式 | 许可 |
 | --- | --- | --- | --- | --- |
 | [numextend](https://github.com/MarchBeta2087/numextend) | v1.8.1 | 默认数值内核（bigfloat/bigcomplex 语义） | git submodule `numextend/` | MIT（见 `numextend/LICENSE`） |
-| [MPFR](https://www.mpfr.org/) | 4.2.1 | 可选数值内核 | 官方 tarball `mpfr-4.2.1.tar.xz`，由 `scripts/fetch-mpfr.sh` 下载并按 `deps.lock` 校验 sha256；`mpfr/` submodule 为离线备选 | LGPL-3.0-or-later |
+| [MPFR](https://www.mpfr.org/) | 4.2.1 | 可选数值内核 | 官方 tarball `mpfr-4.2.1.tar.xz`，由 `scripts/fetch-mpfr.sh` 下载并按 `deps.lock` 校验 sha256（submodule 已移除，迁移见 `docs/history/2026-11-07-mpfr-tarball-migration.md`） | LGPL-3.0-or-later |
 | [GMP](https://gmplib.org/) | 6.3.0 | MPFR 依赖 | 官方 tarball `gmp-6.3.0.tar.xz`，由 `scripts/fetch-gmp.sh` 下载并按 `deps.lock` 的 sha256 校验后解压（未入库） | LGPL-3.0-or-later / GPL-2.0-or-later（双许可） |
 
 ## 链接方式说明

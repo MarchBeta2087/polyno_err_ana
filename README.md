@@ -132,7 +132,9 @@ scripts/bench.sh       性能冒烟（--save 追加 bench/history.csv）
 scripts/bench_compare.sh 对比最近 N 次基准
 scripts/build-mpfr.sh  GMP/MPFR 构建脚本
 docs/history/          历史决策记录（需求修改建议 v0.1）
-mpfr/, numextend/      git submodule（上游依赖）
+numextend/             git submodule（数值内核）
+mpfr-<version>/        MPFR 官方 tarball 解压目录（不入库）
+docs/history/          决策与迁移记录
 ```
 
 ## 许可与使用边界

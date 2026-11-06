@@ -1,20 +1,25 @@
 #!/usr/bin/env bash
 # 构建 GMP + MPFR 静态库到 third_party_prefix（供 -DPOLYNO_ENABLE_MPFR=ON 使用）。
-# 用法: scripts/build-mpfr.sh [安装前缀]
+# 用法: scripts/build-mpfr.sh [安装前缀] [--dry-run]
 # 依赖: gcc / make / m4；Windows 建议在 MSYS2 MINGW64 shell 中运行。
 set -euo pipefail
+DRY_RUN=0
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-PREFIX="${1:-$ROOT/third_party_prefix}"
+PREFIX=""
+for a in "$@"; do
+    case "$a" in
+        --dry-run) DRY_RUN=1 ;;
+        -*) echo "未知参数: $a"; exit 2 ;;
+        *) PREFIX="$a" ;;
+    esac
+done
+PREFIX="${PREFIX:-$ROOT/third_party_prefix}"
 GMP_SRC="${GMP_SRC:-$ROOT/gmp-6.3.0}"
-# 首选官方 tarball 解压目录（scripts/fetch-mpfr.sh），否则回退 submodule
+# MPFR 唯一来源：官方 tarball 解压目录（scripts/fetch-mpfr.sh）
 MPFR_VER="$(sed -n 's/^mpfr_version *= *//p' "$ROOT/deps.lock" | sed 's/ *#.*//' | tr -d ' ')"
 if [ -z "${MPFR_SRC:-}" ]; then
-    if [ -n "$MPFR_VER" ] && [ -d "$ROOT/mpfr-$MPFR_VER" ]; then
-        MPFR_SRC="$ROOT/mpfr-$MPFR_VER"
-    else
-        MPFR_SRC="$ROOT/mpfr"
-    fi
+    MPFR_SRC="$ROOT/mpfr-$MPFR_VER"
 fi
 
 [ -d "$GMP_SRC" ] || {
@@ -24,9 +29,16 @@ fi
 }
 [ -d "$MPFR_SRC" ] || {
     echo "找不到 MPFR 源码：$MPFR_SRC"
-    echo "先执行 scripts/fetch-mpfr.sh（官方 tarball + 校验），或 git submodule update --init mpfr"
+    echo "先执行 scripts/fetch-mpfr.sh（官方 tarball + sha256 校验）"
     exit 1
 }
+if [ "$DRY_RUN" -eq 1 ]; then
+    echo "GMP_SRC=$GMP_SRC"
+    echo "MPFR_SRC=$MPFR_SRC"
+    echo "PREFIX=$PREFIX"
+    exit 0
+fi
+
 command -v make >/dev/null || { echo "需要 make"; exit 1; }
 command -v m4 >/dev/null || { echo "需要 m4"; exit 1; }
 

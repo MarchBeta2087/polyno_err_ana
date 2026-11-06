@@ -14,7 +14,6 @@
 
 ## P2 — 发布/社区
 
-- [ ] 移除 `mpfr/` submodule（官方 tarball 已接管），保留一次迁移说明
 - [ ] 文档站点化（`docs/` 静态页，含表格渲染示例）
 
 ## 已决策（不再是待办）
@@ -23,6 +22,8 @@
   `docs/history/2026-11-07-license-decision.md`
 
 ## 已完成（移出，见 CHANGELOG）
+
+- m13.4：移除 `mpfr/` submodule，迁移到官方 tarball 4.2.1（`docs/history/2026-11-07-mpfr-tarball-migration.md`）
 
 - m11：Release 工作流（linux/windows 静态构建 + SHA256SUMS）、`bench/history.csv` 与 `bench_compare.sh`
 - m12：`--json` 输出、`render` 输出块、`deps.lock` + `verify-deps.sh`
