@@ -14,14 +14,13 @@
 - **不提供商业双许可**（决定记录：`docs/history/2026-11-07-license-decision.md`）
 - 贡献指南：`CONTRIBUTING.md`；行为准则：`CODE_OF_CONDUCT.md`；安全策略：`SECURITY.md`
 - 常见问题（含许可边界）：`FAQ.md`；待办与路线图：`TODO.md`
-- 文档站：`scripts/build-docs.sh` 本地生成；CI 上传 `docs-site` artifact（开放仓库后见
-  `docs/history/2026-11-07-open-source-checklist.md` 的 Pages 启用步骤）。
-  仓库转公开后启用 Pages（Source = GitHub Actions）并把仓库变量 `ENABLE_PAGES` 设为 `true`，
-  即可发布到 `https://<owner>.github.io/polyno_err_ana/`（私有仓库免费计划不支持 Pages）
+- 文档站：<https://marchbeta2087.github.io/polyno_err_ana/>（`scripts/build-docs.sh` 生成，
+  `pages` 工作流部署；本地可生成到 `site/_out/`）
+- 决策/迁移记录：`docs/history/`
 
-需求与验收：`需求分析.md`（v0.4）；实现说明与偏差：`设计.md`；版本记录：`CHANGELOG.md`。
+需求与验收：`需求分析.md`（v0.5）；实现说明与偏差：`设计.md`；版本记录：`CHANGELOG.md`。
 
-## 当前状态（v0.8）
+## 当前状态（v0.14）
 
 | 能力 | 状态 |
 | --- | --- |
@@ -38,6 +37,9 @@
 | `--max-terms` 爆项保护（默认 200000，超限退化数值探测） | ✅ |
 | `-p` 精度极值（`2` … `4096` bit） | ✅ |
 | `-G` 许可全文、`--version` 内核/精度 | ✅ |
+| `--json` / `--json-schema`（draft 2020-12，构建时嵌入） | ✅ |
+| `--lang` 六语言：zh/en/ja/ko/es/pt | ✅ |
+| 静态运行库发布（`-DPOLYNO_STATIC_RUNTIME=ON`）+ 三平台 Release | ✅ |
 
 ## 构建
 
@@ -119,6 +121,24 @@ GCC 14+ 默认 C23 会让 GMP 的 long-long 探针失败，脚本已加 `-std=gn
 
 退出码：`0` 成功、`1` 公式解析错误（含列号）、`2` 命令行错误、`3` 数值异常。
 
+## 下载
+
+GitHub Releases 提供三平台单文件包（静态运行库，`-DPOLYNO_STATIC_RUNTIME=ON`）：
+
+| 平台 | 产物 |
+| --- | --- |
+| Linux x86_64 | `polyno_err_ana-v0.14.2-m14-linux-x86_64.tar.gz` |
+| Windows x86_64 | `polyno_err_ana-v0.14.2-m14-windows-x86_64.zip` |
+| macOS arm64 | `polyno_err_ana-v0.14.2-m14-macos-arm64.tar.gz` |
+| 校验 | `SHA256SUMS.txt` |
+
+包内含可执行文件与 `README.md`/`LICENSE.md`/`THIRD_PARTY.md`/`FAQ.md`。macOS 包仅在公开仓库构建
+（私有仓库的 macOS runner 排队不稳）。本地等价构建：
+
+```sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DPOLYNO_STATIC_RUNTIME=ON
+```
+
 ## 目录
 
 ```text
@@ -128,28 +148,20 @@ src/num_mpfr.cpp       MPFR 后端（-DPOLYNO_ENABLE_MPFR=ON 时编译）
 src/num_common.cpp     共用：Cplx 运算、分支幂、pi()
 src/ast.hpp|ast.cpp    词法 / 语法 / AST / 结构哈希 / 求值
 src/sym.hpp|sym.cpp    符号层（原子因子 + 复指数 Laurent 多项式和、爆项保护）
-src/main.cpp           命令行、输出表格、极限分类
+src/main.cpp           命令行、组装与输出调度
+src/render.hpp|cpp     表格渲染与输出块（表头/符号块/边界/分类）
+src/json_out.hpp|cpp   --json 输出（字段固定、数值保留字符串）
+src/i18n.hpp|cpp       --lang：6 语言消息表与 6 份帮助文本
 tests/checks.sh        断言式回归（CTest: regression）
 tests/cases.txt        快照用例（CTest: snapshot）
 tests/snapshots/       期望输出（与内核无关）
-src/json_out.hpp|cpp  JSON 输出（--json）
-src/render.hpp|cpp    表格渲染与输出块
-deps.lock             依赖锁定（提交号 + GMP URL/sha256；scripts/verify-deps.sh 校验）
-scripts/fetch-gmp.sh  GMP 源码获取与校验（--tarball 支持离线）
-scripts/fetch-mpfr.sh MPFR 源码获取与校验（--tarball / --record）
-schema/json_out.schema.json  --json 的 JSON Schema（--json-schema 输出）
+schema/                JSON Schema（--json-schema 输出，构建时嵌入）
 site/                  文档站源（style.css）与产物（_out/）
-CODE_OF_CONDUCT.md     行为准则（Contributor Covenant v2.1 摘要）
-SECURITY.md            安全策略与私有报告渠道
-.github/ISSUE_TEMPLATE Issue 表单（bug/feature）
-scripts/build-docs.sh  文档站生成（pandoc）
-scripts/bench.sh       性能冒烟（--save 追加 bench/history.csv）
-scripts/bench_compare.sh 对比最近 N 次基准
-scripts/build-mpfr.sh  GMP/MPFR 构建脚本
-docs/history/          历史决策记录（需求修改建议 v0.1）
+scripts/               fetch-gmp/mpfr、build-mpfr、verify-deps、build-docs、bench*
+deps.lock              依赖锁定（numextend 提交 + GMP/MPFR URL/sha256）
+docs/history/          决策与迁移记录（许可、MPFR tarball、开放清单、需求修改建议）
 numextend/             git submodule（数值内核）
 mpfr-<version>/        MPFR 官方 tarball 解压目录（不入库）
-docs/history/          决策与迁移记录
 ```
 
 ## 许可与使用边界

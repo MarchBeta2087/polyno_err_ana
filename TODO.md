@@ -1,43 +1,42 @@
 # TODO / 路线图
 
-唯一待办来源：`设计.md` 的「下一步」只指向本文件，避免两处漂移。
-规则：**只放未完成项**；完成后从本文件删除，并在 `CHANGELOG.md` 记一笔。
-每项标注关联需求（`需求分析.md` 章节/编号）与验收方式。
-
-## P0 — 需求缺口
-
-（暂无；m9 已闭合：探测路径的相对形式分类、复数相对模式语义、混合量纲分类）
+唯一待办来源。规则：**只放未完成项**；完成后从本文件删除，并在 `CHANGELOG.md` 记一笔。
+每项标注关联文件与验收方式。
 
 ## P1 — 工程
 
+- [ ] **i18n 母语审校**：ja / ko / es / pt 的文案由维护者撰写，尚未经母语者复核
+      改文案只动 `src/i18n.cpp` 的单表；验收：三种语言各跑一次 `--vars` 输出，人工确认术语一致
+- [ ] **JSON schema 细节**：`--json-schema` 已能输出，但尚未覆盖 `--vars` 关闭时的字段差异说明
+      验收：schema 中 `symbolic.available=false` 的分支有 `description` 或 `examples`
+- [ ] **性能回归门禁**：`scripts/bench.sh --save` 已记录历史，但 CI 未比较
+      验收：`bench_compare.sh` 在 CI 中对比最近一次 main 的耗时，超过阈值告警（非阻塞）
 
 ## P2 — 发布/社区
 
+- [ ] **macOS x86_64 产物**（当前仅 arm64）：`release.yml` 的 macos 作业可加 `macos-13` 矩阵项
+- [ ] **Windows MPFR 包**：Release 目前只出 numextend 内核；可选再加一份 `-DPOLYNO_ENABLE_MPFR=ON` 的包
+- [ ] **文档站内容**：当前是 Markdown 直出；可加“示例/教程”页与快照diff 展示
+
+## P3 — 功能（需求 §5 明确不支持，需先改需求文档）
+
+- [ ] 函数节点（`sin/exp/log`）与对应的泰勒规则
+- [ ] 变量指数 `a^b`（需符号指数与分支一致性设计）
+- [ ] 多变量联合极限（受“不同趋近速率”限制，可能永远不做）
 
 ## 已决策（不再是待办）
 
-- 商业双许可：**不做**。维持单许可 GPL-3.0-or-later，理由与影响见
+- 商业双许可：**不做**。维持单许可 GPL-3.0-or-later，见
   `docs/history/2026-11-07-license-decision.md`
+- 需求文档位置：`需求分析.md` 保留在仓库根目录作为**现行规格**（不是归档件）；
+  历史草案/建议在 `docs/history/`
 
-## 已完成（移出，见 CHANGELOG）
+## 已完成（按里程碑，详见 CHANGELOG）
 
-- m14.1：文档站（pandoc + Pages 工作流）、CoC、SECURITY、Issue/PR 模板
-
-## 待办补充
-
-- [ ] 仓库转公开后：启用 Pages（Source = GitHub Actions）+ 设置变量 `ENABLE_PAGES=true`
-
-- m14：`--lang` 六语言（zh/en/ja/ko/es/pt），单表实现 + 6 份帮助文本
-
-- m13.4：移除 `mpfr/` submodule，迁移到官方 tarball 4.2.1（`docs/history/2026-11-07-mpfr-tarball-migration.md`）
-
-- m11：Release 工作流（linux/windows 静态构建 + SHA256SUMS）、`bench/history.csv` 与 `bench_compare.sh`
-- m12：`--json` 输出、`render` 输出块、`deps.lock` + `verify-deps.sh`
-- m13：`--json-schema`、`--lang zh|en`、schema 自检、GMP/MPFR 官方 tarball 校验（`fetch-gmp.sh` / `fetch-mpfr.sh`）
-
-- m10：`render` 模块、`sym_mul` 增量合并（上限按结果项数判定）、快照 35 条、低精度字面量对齐
-
-- 结构哈希原子归并、`cleanup()` 哈希分桶、`--max-terms` 爆项保护（m4–m6）
-- `--real-root`、`Undefined` 三态呈现（m4）
-- 对齐表格输出、多规格 `--lim`、分组/区间语法（m7–m8）
-- `-p` 极值用例 T-14、CI 三平台（linux/windows/macos）+ numextend 构建缓存
+- m1 实数符号误差 + 边界 + 分类；m2 复数与 `-k`；m3 双内核与快照基线
+- m4 结构哈希、`--real-root`、`Undefined` 三态；m5 哈希分桶、CLI 错误路径
+- m6 爆项保护、CI 缓存、Windows MPFR 作业；m7 对齐表格、多规格 `--lim`
+- m8 `--lim` 分组/区间、精度极值、macOS CI；m9 P0 闭合（探测路径分类、混合量纲）
+- m10 `render` 模块、`sym_mul` 增量合并；m11 Release 工作流与基准历史
+- m12 `--json`、`deps.lock`；m13 `--json-schema`、`--lang` 六语言、GMP/MPFR 官方 tarball
+- m14 文档站、CoC/SECURITY、Issue/PR 模板、仓库公开与 Pages
