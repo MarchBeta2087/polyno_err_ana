@@ -54,6 +54,23 @@ out=$(run --real --absolute x 1e-4 --estimated x=-1 -f '(1+x)^(1/2)' --lim all)
 check_contains "T-9c p0" "$out" '+0       +0'
 check_contains "T-9c n0" "$out" '-0       undef'
 
+# --- 里程碑 2：复数与分支号 ---
+out=$(run -C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+z)^(1+i)' -k 2 --vars)
+check_contains "T-6 branch" "$out" 'branch k = 2'
+check_contains "T-6 复数输出" "$out" '(1+z)^(0+1i)'
+check_contains "T-6 δf/f 约分" "$out" '(0+0.0002i)/(1+z)'
+check_contains "T-6 分类 c0" "$out" '+0       c0'
+check_contains "T-6 分类 cinf" "$out" '+inf     cinf'
+
+out=$(run -C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+z)^2' --vars)
+check_contains "复数幂符号形式" "$out" '(0.0002+0.0002i)(1+z)'
+check_contains "复数 i 常量解析" "$out" '(0.0001+0.0001i)'
+
+b0=$("$BIN" -C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+z)^(1+i)' 2>&1 | grep -A1 'δ_{R+}f' | tail -1)
+b2=$("$BIN" -C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+z)^(1+i)' -k 2 2>&1 | grep -A1 'δ_{R+}f' | tail -1)
+[ "$b0" != "$b2" ] || { printf 'FAIL 分支号未影响求值
+'; fail=$((fail+1)); }
+
 if [ "$fail" -eq 0 ]; then
     echo "ok: 全部回归用例通过"
     exit 0

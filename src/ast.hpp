@@ -18,7 +18,7 @@ using Expr = std::shared_ptr<const Node>;
 
 struct Node {
     NK k{};
-    Real num{};
+    Cplx num{};
     std::string var;
     Expr a, b;      // Pow: a=底数, b=指数（常数子树）
     size_t col{};
@@ -42,11 +42,11 @@ Expr mk_var(std::string name);
 bool has_var(const Expr& e);
 void collect_vars(const Expr& e, std::vector<std::string>& out);
 // 无变量时求值；有变量抛 ParseError。
-double const_value(const Expr& e);
+Cplx const_value(const Expr& e);
 
-using Env = std::vector<std::pair<std::string, Real>>;
-const Real* lookup(const Env& env, const std::string& name);
-Real eval(const Expr& e, const Env& env);
+using Env = std::vector<std::pair<std::string, Cplx>>;
+const Cplx* lookup(const Env& env, const std::string& name);
+Cplx eval(const Expr& e, const Env& env);
 
 std::string to_string(const Expr& e);
 std::string fmt_num(double d);

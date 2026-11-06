@@ -17,9 +17,9 @@
 | `-R` 实数变量、`-a/-r`、`--estimated`、`-p` | ✅ |
 | 符号 `δf`、`δf/f`（原子级约分，R-1/R-2） | ✅ |
 | `δ_{R±}f`、`δ_{R±}f/f` | ✅ |
-| 极限分类（`--lim all` / `VAR:p0|n0|pinf|ninf`） | ✅ 实数 |
-| 复数变量 `-C`、`i` | ❌ 里程碑 2 |
-| `-k` 分支号 | ⚠️ 仅打印提示 |
+| 极限分类（`--lim all` / `VAR:p0|n0|pinf|ninf`） | ✅ 实数 + 复数（`c0/cinf`） |
+| 复数变量 `-C`、`i`、复数指数、`--estimated z=1+2i` | ✅ 里程碑 2 |
+| `-k` 分支号（`exp(w·(log z + 2πik))`） | ✅ 里程碑 2 |
 | `--kernel mpfr` | ❌ 需先构建 GMP |
 
 ## 构建
@@ -59,6 +59,9 @@ ctest --test-dir build --output-on-failure
 
 # 高精度
 ./build/polyno_err_ana --real --absolute x 1e-4 -f '(1+x)^4' -p 512
+
+# 复数 + 分支号（T-6）
+./build/polyno_err_ana -C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+z)^(1+i)' -k 2 --vars
 ```
 
 退出码：`0` 成功、`1` 公式解析错误（含列号）、`2` 命令行错误、`3` 数值异常。

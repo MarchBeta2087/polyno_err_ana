@@ -1,4 +1,4 @@
-// 数值层：numextend bigfloat 的 RAII 包装（内核抽象的最小实现）。
+// 数值层：numextend bigfloat 的 RAII 包装 + 复数运算（含分支幂）。
 #pragma once
 
 extern "C" {
@@ -19,6 +19,10 @@ struct NumError : std::runtime_error {
 void set_precision(int bits);
 const bigfloat_ctx_ty& ctx();
 
+// 复数幂的分支号（§3.5），全局唯一，求值/符号/边界共用。
+void set_branch(int k);
+int branch_k();
+
 struct Real {
     bigfloat_ty v;
 
@@ -32,6 +36,7 @@ struct Real {
     static Real from_double(double d);
     static Real from_str(const char* s);
     static Real nan();
+    static Real inf(int sign);
     static Real one();
     static Real zero();
 };
@@ -42,17 +47,51 @@ Real operator*(const Real& a, const Real& b);
 Real operator/(const Real& a, const Real& b);
 Real neg(const Real& a);
 Real abs(const Real& a);
-// 幂：整数指数走平方乘（支持负底数）；否则 exp(e·log b)，b ≤ 0 得 NaN。
+// 实幂：整数指数走平方乘（支持负底数）；否则 exp(e·log b)，b < 0 得 NaN。
 Real pow(const Real& base, const Real& e);
 
 bool is_zero(const Real& a);
 bool is_finite(const Real& a);
 bool is_neg(const Real& a);
+bool is_integer(const Real& a);
 int sign(const Real& a);          // -1/0/+1，NaN 得 0
 double to_double(const Real& a);
-std::string to_str(const Real& a, int digits = 6);   // 有效数字位数
+std::string to_str(const Real& a, int digits = 6);
 
-// 数值格式化：|x| ∈ [1e-4, 1e6) 用 %g，否则 %e；精确 0 输出 "0"（§3.7）。
+// 数值格式化：|x| ∈ [1e-3, 1e6) 用 %g，否则 %e；精确 0 输出 "0"（§3.7）。
 std::string fmt(const Real& a);
+
+// ------------------------------------------------------------------ //
+// 复数：re + im·i，分量均为任意精度 Real。
+// ------------------------------------------------------------------ //
+struct Cplx {
+    Real re, im;
+};
+
+Cplx c_from_double(double re, double im = 0.0);
+Cplx c_from_str(const char* s);
+Cplx c_nan();
+Cplx c_zero();
+Cplx c_one();
+Cplx c_i();
+
+Cplx operator+(const Cplx& a, const Cplx& b);
+Cplx operator-(const Cplx& a, const Cplx& b);
+Cplx operator*(const Cplx& a, const Cplx& b);
+Cplx operator/(const Cplx& a, const Cplx& b);
+Cplx c_neg(const Cplx& a);
+Real c_abs(const Cplx& a);        // |z|
+Real c_arg(const Cplx& a);        // atan2(im, re) ∈ (−π, π]
+Cplx c_pow(const Cplx& base, const Cplx& e);   // 尊重 branch_k()
+Cplx c_exp(const Cplx& a);
+Cplx c_log(const Cplx& a);
+Cplx c_scale(const Cplx& a, const Real& k);
+
+bool c_is_zero(const Cplx& a);
+bool c_is_real(const Cplx& a);    // im == 0（含 −0）
+bool c_is_finite(const Cplx& a);
+std::string c_fmt(const Cplx& a);     // 实数则同 fmt；否则 "(a+bi)"
+
+Real pi();
 
 }  // namespace pna

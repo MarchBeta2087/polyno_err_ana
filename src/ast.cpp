@@ -13,6 +13,7 @@ struct Tok {
     enum K { End, Num, Ident, Plus, Minus, Star, Slash, Caret, LP, RP } k{End};
     std::string text;
     double num{};
+    bool text_back_i{false};
     size_t col{};
 };
 
@@ -52,6 +53,12 @@ std::vector<Tok> lex(const std::string& s) {
             t.k = Tok::Num;
             t.text = s.substr(b, i - b);
             t.num = std::strtod(t.text.c_str(), nullptr);
+            t.text_back_i = false;
+            if (i < s.size() && s[i] == 'i' &&
+                (i + 1 == s.size() || (!std::isalnum(static_cast<unsigned char>(s[i + 1])) && s[i + 1] != '_'))) {
+                ++i;
+                t.text_back_i = true;  // 2i、0.5i
+            }
             out.push_back(t);
             continue;
         }
@@ -111,13 +118,13 @@ Expr mk(NK k, Expr a, Expr b = nullptr) {
 
 Expr fold(NK k, const Expr& a, const Expr& b) {
     if (a->k == NK::Num && b->k == NK::Num) {
-        Real r;
+        Cplx r;
         switch (k) {
             case NK::Add: r = a->num + b->num; break;
             case NK::Sub: r = a->num - b->num; break;
             case NK::Mul: r = a->num * b->num; break;
             case NK::Div: r = a->num / b->num; break;
-            case NK::Pow: r = pow(a->num, b->num); break;
+            case NK::Pow: r = c_pow(a->num, b->num); break;
             default: break;
         }
         auto n = std::make_shared<Node>();
@@ -134,7 +141,7 @@ Expr Parser::atom() {
         case Tok::Num: {
             auto n = std::make_shared<Node>();
             n->k = NK::Num;
-            n->num = Real::from_double(cur().num);
+            n->num = cur().text_back_i ? c_from_double(0.0, cur().num) : c_from_double(cur().num);
             n->col = cur().col;
             next();
             return n;
@@ -148,6 +155,13 @@ Expr Parser::atom() {
             if (!name.empty() && name[0] == '_')
                 throw ParseError("illegal variable name: " + name, col);
             if (cur().k == Tok::LP) throw ParseError("unsupported function: " + name, col);
+            if (name == "i") {
+                auto n = std::make_shared<Node>();
+                n->k = NK::Num;
+                n->num = c_i();
+                n->col = col;
+                return n;
+            }
             auto n = std::make_shared<Node>();
             n->k = NK::Var;
             n->var = name;
@@ -185,7 +199,7 @@ Expr Parser::unary() {
         if (inner->k == NK::Num) {
             auto n = std::make_shared<Node>();
             n->k = NK::Num;
-            n->num = neg(inner->num);
+            n->num = c_neg(inner->num);
             n->col = col;
             return n;
         }
@@ -252,7 +266,7 @@ void print(const Expr& e, std::string& out, int parent_prec, bool right_side) {
     (void)parent_prec;
     (void)right_side;
     switch (e->k) {
-        case NK::Num: out += fmt_num(to_double(e->num)); return;
+        case NK::Num: out += c_fmt(e->num); return;
         case NK::Var: out += e->var; return;
         case NK::Add:
             print_child(e->a, out, 1, false);
@@ -295,7 +309,7 @@ Expr parse(const std::string& src) {
 Expr mk_num(double d) {
     auto n = std::make_shared<Node>();
     n->k = NK::Num;
-    n->num = Real::from_double(d);
+    n->num = c_from_double(d);
     return n;
 }
 
@@ -324,22 +338,22 @@ void collect_vars(const Expr& e, std::vector<std::string>& out) {
     collect_vars(e->b, out);
 }
 
-double const_value(const Expr& e) {
+Cplx const_value(const Expr& e) {
     if (has_var(e)) throw ParseError("exponent must be a constant", e->col);
-    return to_double(eval(e, {}));
+    return eval(e, {});
 }
 
-const Real* lookup(const Env& env, const std::string& name) {
+const Cplx* lookup(const Env& env, const std::string& name) {
     for (const auto& kv : env)
         if (kv.first == name) return &kv.second;
     return nullptr;
 }
 
-Real eval(const Expr& e, const Env& env) {
+Cplx eval(const Expr& e, const Env& env) {
     switch (e->k) {
         case NK::Num: return e->num;
         case NK::Var: {
-            const Real* v = lookup(env, e->var);
+            const Cplx* v = lookup(env, e->var);
             if (!v) throw EvalError("unbound variable: " + e->var);
             return *v;
         }
@@ -347,7 +361,7 @@ Real eval(const Expr& e, const Env& env) {
         case NK::Sub: return eval(e->a, env) - eval(e->b, env);
         case NK::Mul: return eval(e->a, env) * eval(e->b, env);
         case NK::Div: return eval(e->a, env) / eval(e->b, env);
-        case NK::Pow: return pow(eval(e->a, env), eval(e->b, env));
+        case NK::Pow: return c_pow(eval(e->a, env), eval(e->b, env));
     }
     throw EvalError("bad node");
 }
