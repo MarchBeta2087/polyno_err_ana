@@ -2,6 +2,14 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v0.14.2-m14
+
+- 仓库转为公开；启用 Pages（workflow 模式）、私有漏洞报告、Dependabot 告警与自动安全更新、
+  `main` 分支保护（必需检查：linux / windows / macos）
+- Actions 版本统一升级：checkout v7、cache v6、upload-artifact v7、download-artifact v8、
+  configure-pages v6、upload-pages-artifact v5、deploy-pages v5
+- 脚本补可执行位；Pages 工作流改用 `bash scripts/build-docs.sh`
+
 ## v0.14.1-m14
 
 - 文档站：`scripts/build-docs.sh`（pandoc → `site/_out/`）+ `.github/workflows/pages.yml`

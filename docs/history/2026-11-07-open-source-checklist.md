@@ -1,7 +1,7 @@
 # 开放仓库检查清单
 
 - 日期：2026-11-07
-- 状态：**准备就绪，等待维护者把仓库设为 public**
+- 状态：**仓库已于 2026-11-07 转为公开，清单已全部执行**
 
 转公开后执行（需要 admin 权限，`gh` 已登录账号 `MarchBeta2087`）：
 
@@ -68,8 +68,10 @@ gh api -X PUT repos/$R/branches/main/protection \
 - [x] 文档站源与生成脚本：`site/style.css`、`scripts/build-docs.sh`
 - [x] 依赖可复现：`deps.lock` + `fetch-gmp.sh` / `fetch-mpfr.sh`（sha256）
 - [x] CI：linux/windows/macos 三平台 + 双内核 + 快照（45 条）
-- [ ] 仓库体积：`.git` 约 8.5 MB（曾误提交的 `mpfr-4.2.1/` 已被 force-push 移除；
-      如需彻底回收，可在本地 `git gc --prune=now` 后强推，或联系 GitHub 支持）
+- [x] 仓库体积：`.git` 约 8.5 MB（曾误提交的 `mpfr-4.2.1/` 已被 force-push 移除；
+      需要彻底回收可联系 GitHub 支持做 GC）
+- [x] Actions 版本升级（Dependabot 提出的 7 个 PR 已合并为一次提交）
+- [x] 脚本可执行位（`scripts/*.sh`、`tests/*.sh`）
 
 公开后自动生效的变化：
 
