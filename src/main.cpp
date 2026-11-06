@@ -10,6 +10,7 @@
 
 #include "ast.hpp"
 #include "num.hpp"
+#include "render.hpp"
 #include "license_text.hpp"
 #include "sym.hpp"
 
@@ -17,7 +18,7 @@ using namespace pna;
 
 namespace {
 
-constexpr const char* kVersion = "0.9.0-m9";
+constexpr const char* kVersion = "0.10.0-m10";
 
 struct Var {
     std::string name;
@@ -421,33 +422,6 @@ Cplx value_of(const Env& env, const std::string& name) {
     return p ? *p : c_zero();
 }
 
-// 列宽对齐的小表：值均为单宽字符（含 δ），right[i] 控制右对齐。
-void render_table(const std::vector<std::string>& head,
-                  const std::vector<std::vector<std::string>>& rows,
-                  const std::vector<bool>& right) {
-    const std::size_t n = head.size();
-    std::vector<std::size_t> w(n);
-    for (std::size_t i = 0; i < n; ++i) w[i] = head[i].size();
-    for (const auto& r : rows)
-        for (std::size_t i = 0; i < n && i < r.size(); ++i) w[i] = std::max(w[i], r[i].size());
-
-    auto emit = [&](const std::vector<std::string>& cells, char fill) {
-        std::string line = "  ";
-        for (std::size_t i = 0; i < n; ++i) {
-            const std::string c = i < cells.size() ? cells[i] : std::string();
-            const std::size_t pad = w[i] - c.size();
-            line += fill == ' ' ? (right[i] ? std::string(pad, ' ') + c : c + std::string(pad, ' '))
-                                : std::string(w[i], '-');
-            if (i + 1 < n) line += "  ";
-        }
-        while (!line.empty() && line.back() == ' ') line.pop_back();
-        std::printf("%s\n", line.c_str());
-    };
-    emit(head, ' ');
-    emit(std::vector<std::string>(n, ""), '-');
-    for (const auto& r : rows) emit(r, ' ');
-}
-
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -506,12 +480,23 @@ int main(int argc, char** argv) {
 
         std::vector<Sym> partials;
         Sym delta = sym_const(c_zero());
-        for (const auto& vv : views) {
-            Sym p = sym_ok ? diff(fsym, vv.decl->name) : Sym{};
-            partials.push_back(p);
-            if (sym_ok) delta = sym_add(delta, sym_scale(p, vv.dv));
+        Sym rel;
+        if (sym_ok) {
+            try {
+                for (const auto& vv : views) {
+                    Sym p = diff(fsym, vv.decl->name);
+                    partials.push_back(p);
+                    delta = sym_add(delta, sym_scale(p, vv.dv));
+                }
+                rel = sym_div_by(delta, f);
+            } catch (const EvalError&) {
+                // 求导/相乘阶段也可能触发项数上限：整体退化为数值探测
+                sym_ok = false;
+                partials.clear();
+                delta = sym_const(c_zero());
+                rel = Sym{};
+            }
         }
-        Sym rel = sym_ok ? sym_div_by(delta, f) : Sym{};
 
         if (o.vars_out && !sym_ok) {
             std::printf("\n");

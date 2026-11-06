@@ -155,10 +155,12 @@ void sym_set_max_terms(std::size_t n) { g_max_terms = n ? n : 1; }
 std::size_t sym_max_terms() { return g_max_terms; }
 
 Sym sym_add(const Sym& a, const Sym& b) {
-    guard(a.terms.size() + b.terms.size());
+    // 先容许合并前的临时膨胀，合并后再按上限判定
+    guard((a.terms.size() + b.terms.size()) * 2);
     Sym s = a;
     s.terms.insert(s.terms.end(), b.terms.begin(), b.terms.end());
     cleanup(s);
+    guard(s.terms.size());
     return s;
 }
 
@@ -174,18 +176,40 @@ Sym sym_scale(const Sym& a, const Cplx& c) {
 }
 
 Sym sym_mul(const Sym& a, const Sym& b) {
-    if (!a.terms.empty() && b.terms.size() > g_max_terms / a.terms.size()) too_many_terms();
-    Sym s;
+    // 逐对相乘时立即合并同类项：项数上限按“结果项数”判定，
+    // 而不是 a.size()*b.size() 的悲观上界（大量可约分/可合并时不再误报）。
+    std::vector<Term> out;
+    std::unordered_map<std::uint64_t, std::vector<std::size_t>> bucket;
     for (const auto& x : a.terms) {
         for (const auto& y : b.terms) {
             Term t;
             t.coeff = x.coeff * y.coeff;
+            if (c_is_zero(t.coeff)) continue;
             t.fac = x.fac;
             t.fac.insert(t.fac.end(), y.fac.begin(), y.fac.end());
-            s.terms.push_back(std::move(t));
+            normalize(t);
+            const std::uint64_t key = factor_key(t.fac);
+            bool merged = false;
+            auto it = bucket.find(key);
+            if (it != bucket.end()) {
+                for (std::size_t j : it->second) {
+                    if (same_factors(out[j].fac, t.fac)) {
+                        out[j].coeff = out[j].coeff + t.coeff;
+                        merged = true;
+                        break;
+                    }
+                }
+            }
+            if (!merged) {
+                if (out.size() >= g_max_terms) too_many_terms();
+                bucket[key].push_back(out.size());
+                out.push_back(std::move(t));
+            }
         }
     }
-    cleanup(s);
+    Sym s;
+    s.terms = std::move(out);
+    cleanup(s);   // 清掉合并后系数为 0 的项
     return s;
 }
 

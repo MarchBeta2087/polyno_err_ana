@@ -29,3 +29,8 @@
 -C z 1e-4 1e-4 --relative --estimated z=1+0.5i -f '(1+z)^2' --vars --lim all
 -C z 1e-4 1e-4 -f '(1+z)^(1+i)' -k 2 --lim all
 --real --absolute x 1e-4 -C z 1e-4 1e-4 --estimated z=1+1i --estimated x=0.5 -f 'z*(1+x)' --lim all
+--real --absolute a 1e-4 b 1e-4 --max-terms 3 -f '(a+b)^2*(a+b)^2' --vars --lim all
+--real --absolute x 1e-4 --estimated x=0.3 -f '(1+x)^4' --vars -p 8
+--real --absolute x 1e-4 --estimated x=0.3 -f '(1+x)^4' --vars -p 64
+--real --absolute x 1e-4 -f '(1+x)^4' --lim x:n0..ninf
+--real --absolute a 1e-4 b 1e-4 c 1e-4 --estimated a=0.2 --estimated b=0.3 --estimated c=0.4 -f '(a+b*c)^3' --vars --lim all

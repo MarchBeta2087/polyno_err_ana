@@ -171,6 +171,19 @@ out=$(run -C z 1e-4 1e-4 -f '(1+z)^2' --lim z:zeros)
 [ "$(count_rows "$out")" -eq 1 ] || { printf 'FAIL 复数 zeros 组数
 '; fail=$((fail+1)); }
 
+# ---- 求导阶段触发项数上限：同样退化为数值探测且退出码 0 ----
+out=$(run -R a 1e-4 b 1e-4 --max-terms 3 -f '(a+b)^2*(a+b)^2' --vars --lim all)
+rc=$?
+[ "$rc" -eq 0 ] || { printf 'FAIL 求导阶段爆项应退出 0（实际 %s）
+' "$rc"; fail=$((fail+1)); }
+check_contains "求导阶段爆项退化" "$out" '符号展开不可用'
+check_contains "求导阶段仍出分类" "$out" '极限分类'
+
+# ---- 区间 n0..ninf ----
+out=$(run -R x 1e-4 -f '(1+x)^4' --lim x:n0..ninf)
+[ "$(count_rows "$out")" -eq 3 ] || { printf 'FAIL x:n0..ninf 组数
+'; fail=$((fail+1)); }
+
 # ---- CLI 错误路径（退出码 2） ----
 expect_rc2() {
     "$BIN" "$@" > /dev/null 2>&1

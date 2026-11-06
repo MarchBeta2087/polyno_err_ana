@@ -51,8 +51,13 @@ Real& Real::operator=(Real&& o) noexcept {
 }
 
 Real Real::from_double(double d) {
+    // bigfloat_from_f64 不带 ctx（按 binary64 精度构造），这里改走十进制字符串，
+    // 保证与 MPFR 后端一样按目标精度（-p）舍入。
+    char buf[40];
+    std::snprintf(buf, sizeof buf, "%.17g", d);
     Real r;
-    bigfloat_from_f64(&r.v, d);
+    if (bigfloat_from_str(&r.v, buf, &ctx(), nullptr) != BIGFLOAT_OK_E)
+        bigfloat_from_f64(&r.v, d);
     return r;
 }
 
