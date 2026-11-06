@@ -17,7 +17,7 @@ using namespace pna;
 
 namespace {
 
-constexpr const char* kVersion = "0.8.0-m8";
+constexpr const char* kVersion = "0.9.0-m9";
 
 struct Var {
     std::string name;
@@ -136,6 +136,31 @@ struct LimSpec {
     std::string var;
     std::string text;   // zeros / infs / all / p0 / 0..inf / A..B ...
 };
+
+// 探测 f 自身在 δ→0/∞ 时的幂律阶（用于 |f(v)|=0 时的相对形式 K = k_g − k_f）。
+Probe probe_magnitude(const Expr& f, const Env& env, const std::string& nm, const State& st) {
+    const double h1 = st.to_zero ? 1e-2 : 1e2;
+    const double h2 = st.to_zero ? 1e-4 : 1e4;
+    auto val = [&](double h) -> Cplx {
+        Env e = env;
+        for (auto& kv : e)
+            if (kv.first == nm)
+                kv.second = kv.second + Cplx{Real::from_double(st.plus ? h : -h), Real::zero()};
+        return eval(f, e);
+    };
+    Cplx a = val(h1), b = val(h2);
+    if (!c_is_finite(a) || !c_is_finite(b) || c_is_zero(a) || c_is_zero(b)) return {};
+    const double da = to_double(c_abs(a)), db = to_double(c_abs(b));
+    if (!(da > 0) || !(db > 0)) return {};
+    Probe p;
+    p.k = std::log(da / db) / std::log(h1 / h2);
+    if (!std::isfinite(p.k)) return {};
+    if (std::fabs(p.k) < 1e-3) p.k = 0.0;
+    if (std::fabs(p.k) >= 1e-9) p.k = std::round(p.k * 2.0) / 2.0;
+    p.sgn = c_is_real(b) ? sign(b.re) : 1;
+    p.ok = true;
+    return p;
+}
 
 struct VarView {
     const Var* decl;
@@ -576,31 +601,46 @@ int main(int argc, char** argv) {
 
             for (const auto& st : states) {
                 LimType tg, tr;
+                // 复变量或复值系数（如 f 含 z，对实数变量求偏导仍为复）→ 按模分类
+                const bool mod_class = cvar || !c_is_real(f0);
+                auto classify = [&](const Cplx& a, double k) -> LimType {
+                    if (mod_class || !c_is_real(a)) return power_limit_c(k, st);
+                    return power_limit(sign(a.re), k, st);
+                };
                 if (!sym_ok || t.nonfinite) {
-                    Probe p = probe_power(f, env, nm, st);
-                    if (!p.ok) {
+                    Probe pg = probe_power(f, env, nm, st);
+                    if (!pg.ok) {
                         tg = tr = LimType::Undefined;
                     } else {
-                        tg = cvar ? power_limit_c(p.k, st) : power_limit(p.sgn, p.k, st);
-                        tr = LimType::Undefined;
+                        const Cplx ag{Real::from_double(static_cast<double>(pg.sgn)), Real::zero()};
+                        tg = classify(ag, pg.k);
+                        if (!c_is_zero(f0)) {
+                            tr = classify(ag, pg.k);
+                        } else {
+                            Probe pf = probe_magnitude(f, env, nm, st);
+                            if (!pf.ok) {
+                                tr = LimType::Undefined;
+                            } else {
+                                const double K = pg.k - pf.k;
+                                const Cplx ar{Real::from_double(static_cast<double>(pg.sgn * pf.sgn)),
+                                              Real::zero()};
+                                tr = classify(ar, K);
+                            }
+                        }
                     }
                 } else if (kg < 0) {
                     tg = tr = LimType::Finite;
                 } else {
                     const Cplx ag = t.c[static_cast<size_t>(kg)];
-                    if (cvar) {
-                        tg = power_limit_c(kg, st);
-                    } else {
-                        tg = power_limit(sign(ag.re), kg, st);
-                    }
+                    tg = classify(ag, kg);
                     if (kf < 0) {
                         tr = LimType::Undefined;
                     } else if (c_is_zero(t.c[0])) {
                         const double K = static_cast<double>(kg) - static_cast<double>(kf);
                         const Cplx ar = t.c[static_cast<size_t>(kg)] / t.c[static_cast<size_t>(kf)];
-                        tr = cvar ? power_limit_c(K, st) : power_limit(sign(ar.re), K, st);
+                        tr = classify(ar, K);
                     } else {
-                        tr = cvar ? power_limit_c(kg, st) : power_limit(sign(ag.re), kg, st);
+                        tr = classify(ag, kg);
                     }
                 }
                 const char* slabel = cvar ? (st.to_zero ? "0" : "inf") : state_label(st);

@@ -131,6 +131,21 @@ check_contains "退化后仍有分类" "$out" '极限分类'
 out=$(run -R a 1e-4 b 1e-4 -f '(a+b)*(a+b)' --max-terms 1)
 check_contains "上限 1 仍可算" "$out" '极限分类'
 
+# ---- 里程碑 9：探测路径相对分类 / 复数相对模式 / 混合量纲 ----
+out=$(run -C z 1e-4 1e-4 -f '(1+z)^(1+i)' -k 2 --lim all)
+[ "$(field_of "$out" "0" 4)" = "c0" ] || { printf 'FAIL T-6 δf/f c0
+'; fail=$((fail+1)); }
+[ "$(field_of "$out" "inf" 4)" = "cinf" ] || { printf 'FAIL T-6 δf/f cinf
+'; fail=$((fail+1)); }
+
+out=$(run -C z 1e-4 1e-4 --relative --estimated z=1+0.5i -f '(1+z)^2' --vars)
+check_contains "复数相对模式 δz" "$out" '(0.000111803+0.000111803i)'
+
+out=$(run -R x 1e-4 -C z 1e-4 1e-4 -f 'z*(1+x)' --estimated z=1+1i --estimated x=0.5 --lim all)
+nmix=$(limit_rows "$out" | awk '$3 ~ /^c/ && $4 ~ /^c/' | wc -l)
+[ "$nmix" -eq 6 ] || { printf 'FAIL 混合量纲模分类: %s != 6
+' "$nmix"; fail=$((fail+1)); }
+
 # ---- 精度极值 ----
 out=$(run -R x 1e-4 -f '(1+x)^4' --vars -p 2)
 check_contains "p=2 报告精度" "$out" '2 bit'

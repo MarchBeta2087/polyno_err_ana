@@ -26,3 +26,6 @@
 --real --absolute x 1e-4 -f '(1+x)^4' --lim x:0..inf
 --real --absolute x 1e-4 -f '(1+x)^4' --lim x:p0..pinf
 -C z 1e-4 1e-4 -f '(1+z)^2' --lim z:zeros --vars
+-C z 1e-4 1e-4 --relative --estimated z=1+0.5i -f '(1+z)^2' --vars --lim all
+-C z 1e-4 1e-4 -f '(1+z)^(1+i)' -k 2 --lim all
+--real --absolute x 1e-4 -C z 1e-4 1e-4 --estimated z=1+1i --estimated x=0.5 -f 'z*(1+x)' --lim all
