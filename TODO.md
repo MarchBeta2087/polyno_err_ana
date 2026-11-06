@@ -3,7 +3,21 @@
 唯一待办来源。规则：**只放未完成项**；完成后从本文件删除，并在 `CHANGELOG.md` 记一笔。
 每项标注关联文件与验收方式。
 
-需要社区帮助的任务（母语审校、跨平台打包、大型特性）见 **`OPEN_TASKS.md`**，本文件只维护维护者自己的工程项。
+需要社区帮助的任务（母语审校、跨平台打包、大型特性）见 **`OPEN_TASKS.md`**，
+平台等级（Tier 1–4）与升级规则见 **`PLATFORMS.md`**。
+
+## v1.0 检查单
+
+- [x] 需求 `T-1 … T-17` 全部有对应回归/快照（`tests/checks.sh` + `tests/cases.txt`）
+- [x] 双内核（numextend / mpfr）回归一致；发布包含 `-mpfr` 变体
+- [x] 依赖固定并可校验（`deps.lock` + `fetch-*.sh` 的 sha256）
+- [x] JSON 输出 + schema（`--json-schema`，CI 校验两类输出）
+- [x] 平台分级文档（Tier 1 三平台 CI；Tier 2 Intel mac 异步）
+- [x] 性能门禁、安全策略、CoC、Issue/PR 模板、Pages 文档站
+- [ ] **兼容性承诺**：写清 CLI/JSON 的语义化版本与废弃流程（新增 `COMPATIBILITY.md`）
+- [ ] **i18n 质量**：母语审校完成，或在发布说明中明确“社区审校中”并豁免
+- [ ] **一次无已知 P0/P1 的候选发布**：连续两个 tag 无回归后升 `v1.0.0`
+- [ ] Tier 3 至少一个 BSD 的社区实测记录（可在 Issue 里征集）
 
 ## P1 — 工程
 

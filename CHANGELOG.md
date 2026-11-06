@@ -2,6 +2,13 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v0.15.2-m14
+
+- 新增 `PLATFORMS.md`：Tier 1（Linux x86_64 / Windows UCRT64 / macOS arm64）、
+  Tier 2（macOS Intel，异步补包不阻塞）、Tier 3（FreeBSD/OpenBSD/NetBSD 源码构建）、
+  Tier 4（其余，不保证），含升级/降级规则
+- README/文档站/Release 说明同步平台分级
+
 ## v0.15.1-m14
 
 - 修复 `fetch-gmp.sh`/`fetch-mpfr.sh` 在 GitHub runner 上 `gmplib.org` 不可达：

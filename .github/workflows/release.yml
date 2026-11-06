@@ -246,7 +246,10 @@ jobs:
             | Windows x86_64 | `...-windows-x86_64.zip` | `...-windows-x86_64-mpfr.zip` |
             | macOS arm64 / x86_64 | `...-macos-<arch>.tar.gz` | — |
 
-            校验和见 `SHA256SUMS.txt`；`-V` 可确认实际内核；用法见包内 `README.md` 与 `EXAMPLES.md`。
+            校验和见 `SHA256SUMS.txt`（Intel mac 包单独提供 `SHA256SUMS-macos-x86_64.txt`）；
+            `-V` 可确认实际内核；用法见包内 `README.md` 与 `EXAMPLES.md`。
+            平台支持等级见 `PLATFORMS.md`（Tier 1：Linux/Windows/macOS arm64；Tier 2：macOS Intel；
+            Tier 3：BSD 源码构建；Tier 4：其余）。
             静态链接的 MPFR/GMP 属 LGPL，义务说明见包内 `THIRD_PARTY.md`。
 
   attach-macos-x86:

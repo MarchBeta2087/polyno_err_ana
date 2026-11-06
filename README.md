@@ -132,6 +132,15 @@ GitHub Releases 提供三平台单文件包（静态运行库，`-DPOLYNO_STATIC
 | macOS arm64 / x86_64 | `…-macos-arm64.tar.gz` / `…-macos-x86_64.tar.gz`（Intel runner 较慢，可能延后挂载） | — |
 | 校验 | `SHA256SUMS.txt` | |
 
+平台支持等级见 **`PLATFORMS.md`**：
+
+| Tier | 平台 | 承诺 |
+| --- | --- | --- |
+| 1 | Linux x86_64 / Windows x86_64(UCRT64) / macOS arm64 | 每次 CI 验证 + 每 tag 出包（含 `-mpfr`） |
+| 2 | macOS x86_64（Intel） | 尽力支持：`macos-13` 排队不稳，包异步补挂、不阻塞发布 |
+| 3 | FreeBSD / OpenBSD / NetBSD | 源码可构建，无 CI/无包，欢迎 PR 修正可移植性 |
+| 4 | 其余（arm64 Linux、musl、MSVC、32 位…） | 不保证 |
+
 包内含可执行文件与 `README.md`/`LICENSE.md`/`THIRD_PARTY.md`/`FAQ.md`；`-mpfr` 包用 MPFR 内核
 （`-V` 可见），静态链接的 LGPL 义务见 `THIRD_PARTY.md`。本地等价构建：
 
@@ -161,6 +170,7 @@ scripts/               fetch-gmp/mpfr、build-mpfr、verify-deps、build-docs、
 deps.lock              依赖锁定（numextend 提交 + GMP/MPFR URL/sha256）
 docs/history/          决策与迁移记录（许可、MPFR tarball、开放清单、需求修改建议）
 OPEN_TASKS.md          社区可认领的任务（母语审校、跨平台打包、大型特性）
+PLATFORMS.md           平台支持等级（Tier 1–4）与变更规则
 numextend/             git submodule（数值内核）
 mpfr-<version>/        MPFR 官方 tarball 解压目录（不入库）
 ```
