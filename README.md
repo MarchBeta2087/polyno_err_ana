@@ -53,16 +53,14 @@ cmake --build build-mpfr -j
 ./build-mpfr/polyno_err_ana -V        # kernel: mpfr
 ```
 
-GMP/MPFR 需自建为静态库（本项目只链接 `.a`）。Windows 下用 MSYS2 工具链：
+GMP/MPFR 需自建为静态库（本项目只链接 `.a`）。用脚本一键构建：
 
 ```sh
-# 1) MSYS2 MINGW64 环境
-pacman -S --needed mingw-w64-x86_64-gcc make
-# 2) GMP（注意 GCC 15 需要 -std=gnu17）
-./configure --prefix=$PWD/../third_party_prefix --enable-static --disable-shared             CFLAGS="-O2 -std=gnu17" && make -j && make install
-# 3) MPFR
-./configure --prefix=$PWD/../third_party_prefix             --with-gmp=$PWD/../third_party_prefix --enable-static --disable-shared   && make -j && make install
+scripts/build-mpfr.sh            # 输出到 third_party_prefix/
 ```
+
+Windows 需在 MSYS2 MINGW64 环境（`pacman -S --needed mingw-w64-x86_64-gcc make m4`）；
+GCC 14+ 默认 C23 会让 GMP 的 long-long 探针失败，脚本已加 `-std=gnu17`。
 
 两个内核共用同一套 `src/num.hpp` 接口，`ast/sym/main` 不改；回归用例对两者一致。
 
@@ -95,6 +93,9 @@ src/ast.hpp|ast.cpp    词法 / 语法 / AST / 求值
 src/sym.hpp|sym.cpp    符号层（原子因子 + 整数指数的 Laurent 多项式和）
 src/main.cpp           命令行与输出
 tests/checks.sh        断言式回归（CTest: regression）
+tests/cases.txt        快照用例（CTest: snapshot）
+tests/snapshots/       期望输出（与内核无关）
+scripts/build-mpfr.sh  GMP/MPFR 构建脚本
 mpfr/, numextend/      git submodule（上游依赖）
 ```
 

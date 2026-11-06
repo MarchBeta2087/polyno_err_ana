@@ -1,0 +1,10 @@
+# 每行一条命令（公式加单引号）
+--real --absolute x 1e-4 -f '(1+x)^4' --vars --lim all
+--real --absolute x 1e-4 --estimated x=0.6 -f '(1+x)^4' --vars
+--real --relative x 1e-4 --estimated x=0.6 -f '(1+x)^4' --vars
+--real --absolute x 1e-4 y 1e-4 --estimated x=0.5 --estimated y=0.5 -f '(1+x*y)^5' --lim all
+--real --absolute x 1e-4 --estimated x=-1 -f '(1+x)^2' --lim all
+--real --absolute x 1e-4 --estimated x=-1 -f '(1+x)^3' --lim all
+--real --absolute x 1e-4 --estimated x=-1 -f '(1+x)^(1/2)' --lim all
+-C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+z)^(1+i)' -k 2 --vars
+-C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+z)^2' --vars --lim all

@@ -43,9 +43,14 @@ else()
     message(STATUS "内核: numextend")
 endif()
 
+# -G 用：把 LICENSE.md 转成常量字符串头
+file(READ ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md PNA_LICENSE_TEXT)
+configure_file(cmake/license_text.hpp.in ${CMAKE_BINARY_DIR}/generated/license_text.hpp @ONLY)
+
 add_executable(polyno_err_ana ${PNA_SOURCES})
 target_compile_definitions(polyno_err_ana PRIVATE ${PNA_KERNEL_DEF})
-target_include_directories(polyno_err_ana PRIVATE ${NEX_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_include_directories(polyno_err_ana PRIVATE ${NEX_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_BINARY_DIR}/generated)
 if(POLYNO_ENABLE_MPFR)
     target_include_directories(polyno_err_ana PRIVATE ${MPFR_INCLUDE_DIR} ${GMP_INCLUDE_DIR})
     target_link_libraries(polyno_err_ana PRIVATE ${MPFR_LIBRARY} ${GMP_LIBRARY})
@@ -57,4 +62,6 @@ find_program(BASH_EXE bash)
 if(BASH_EXE)
     add_test(NAME regression
              COMMAND ${BASH_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/checks.sh $<TARGET_FILE:polyno_err_ana>)
+    add_test(NAME snapshot
+             COMMAND ${BASH_EXE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/snapshot_test.sh $<TARGET_FILE:polyno_err_ana>)
 endif()

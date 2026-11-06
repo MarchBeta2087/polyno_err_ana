@@ -9,6 +9,7 @@
 
 #include "ast.hpp"
 #include "num.hpp"
+#include "license_text.hpp"
 #include "sym.hpp"
 
 using namespace pna;
@@ -257,7 +258,8 @@ Opts parse_args(int argc, char** argv) {
             std::printf("polyno_err_ana %s (kernel: %s, %d bit)\n", kVersion, kernel_name(), o.precision);
             std::exit(0);
         } else if (a == "-G" || a == "--gpl") {
-            std::printf("GPL-3.0-or-later: <https://www.gnu.org/licenses/gpl-3.0.txt>\n");
+            std::fputs(pna::kLicenseText, stdout);
+            std::fputs("\n", stdout);
             std::exit(0);
         } else {
             usage_error("未知选项: " + a);

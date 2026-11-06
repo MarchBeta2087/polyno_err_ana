@@ -1,0 +1,179 @@
+### --real --absolute x 1e-4 -f '(1+x)^4' --vars --lim all
+polyno_err_ana 0.2.0-m2  (KERNEL, 256 bit)
+
+f    = (1+x)^4
+x ≈ 0,  δx = 0.0001 (absolute)
+
+δf    = 0.0004(1+x)^3
+      = 0.0004
+δf/f  = 0.0004/(1+x)
+      = 0.0004
+
+∂f/∂x  = 4(1+x)^3
+δx     = 0.0001
+δx/x   = N/A（估计点为 0）
+
+δ_{R+}f   δ_{R-}f   δ_{R+}f/f   δ_{R-}f/f
+0.00040006 0.00039994 0.00040006  0.00039994  (x)
+
+  极限分类（单变量变，其余 δ=0）
+  δv →  δf          δf/f       
+  +0       +0           +0           (x)
+  -0       -0           -0           (x)
+  +inf     +inf         +inf         (x)
+  -inf     -inf         -inf         (x)
+### --real --absolute x 1e-4 --estimated x=0.6 -f '(1+x)^4' --vars
+polyno_err_ana 0.2.0-m2  (KERNEL, 256 bit)
+
+f    = (1+x)^4
+x ≈ 0.6,  δx = 0.0001 (absolute)
+
+δf    = 0.0004(1+x)^3
+      = 0.0016384
+δf/f  = 0.0004/(1+x)
+      = 0.00025
+
+∂f/∂x  = 4(1+x)^3
+δx     = 0.0001
+δx/x   = 0.000166667
+
+δ_{R+}f   δ_{R-}f   δ_{R+}f/f   δ_{R-}f/f
+0.00163855 0.00163825 0.000250023 0.000249977 (x)
+
+  极限分类（单变量变，其余 δ=0）
+  δv →  δf          δf/f       
+  +0       +0           +0           (x)
+  -0       -0           -0           (x)
+  +inf     +inf         +inf         (x)
+  -inf     -inf         -inf         (x)
+### --real --relative x 1e-4 --estimated x=0.6 -f '(1+x)^4' --vars
+polyno_err_ana 0.2.0-m2  (KERNEL, 256 bit)
+
+f    = (1+x)^4
+x ≈ 0.6,  δx = 6.0000e-05 (relative)
+
+δf    = 0.00024(1+x)^3
+      = 0.00098304
+δf/f  = 0.00024/(1+x)
+      = 0.00015
+
+∂f/∂x  = 4(1+x)^3
+δx     = 6.0000e-05
+δx/x   = 0.0001
+
+δ_{R+}f   δ_{R-}f   δ_{R+}f/f   δ_{R-}f/f
+0.000983095 0.000982985 0.000150008 0.000149992 (x)
+
+  极限分类（单变量变，其余 δ=0）
+  δv →  δf          δf/f       
+  +0       +0           +0           (x)
+  -0       -0           -0           (x)
+  +inf     +inf         +inf         (x)
+  -inf     -inf         -inf         (x)
+### --real --absolute x 1e-4 y 1e-4 --estimated x=0.5 --estimated y=0.5 -f '(1+x*y)^5' --lim all
+polyno_err_ana 0.2.0-m2  (KERNEL, 256 bit)
+
+f    = (1+x*y)^5
+x ≈ 0.5,  δx = 0.0001 (absolute)
+y ≈ 0.5,  δy = 0.0001 (absolute)
+δ_{R+}f   δ_{R-}f   δ_{R+}f/f   δ_{R-}f/f
+0.0006104  0.000610303 0.000200016 0.000199984 (x)
+0.0006104  0.000610303 0.000200016 0.000199984 (y)
+
+  极限分类（单变量变，其余 δ=0）
+  δv →  δf          δf/f       
+  +0       +0           +0           (x)
+  -0       -0           -0           (x)
+  +inf     +inf         +inf         (x)
+  -inf     -inf         -inf         (x)
+  +0       +0           +0           (y)
+  -0       -0           -0           (y)
+  +inf     +inf         +inf         (y)
+  -inf     -inf         -inf         (y)
+### --real --absolute x 1e-4 --estimated x=-1 -f '(1+x)^2' --lim all
+polyno_err_ana 0.2.0-m2  (KERNEL, 256 bit)
+
+f    = (1+x)^2
+x ≈ -1,  δx = 0.0001 (absolute)
+δ_{R+}f   δ_{R-}f   δ_{R+}f/f   δ_{R-}f/f
+1.0000e-08 1.0000e-08 N/A         N/A         (x)
+
+  极限分类（单变量变，其余 δ=0）
+  δv →  δf          δf/f       
+  +0       +0           fin          (x)
+  -0       +0           fin          (x)
+  +inf     +inf         fin          (x)
+  -inf     +inf         fin          (x)
+### --real --absolute x 1e-4 --estimated x=-1 -f '(1+x)^3' --lim all
+polyno_err_ana 0.2.0-m2  (KERNEL, 256 bit)
+
+f    = (1+x)^3
+x ≈ -1,  δx = 0.0001 (absolute)
+δ_{R+}f   δ_{R-}f   δ_{R+}f/f   δ_{R-}f/f
+1.0000e-12 1.0000e-12 N/A         N/A         (x)
+
+  极限分类（单变量变，其余 δ=0）
+  δv →  δf          δf/f       
+  +0       +0           fin          (x)
+  -0       -0           fin          (x)
+  +inf     +inf         fin          (x)
+  -inf     -inf         fin          (x)
+### --real --absolute x 1e-4 --estimated x=-1 -f '(1+x)^(1/2)' --lim all
+polyno_err_ana 0.2.0-m2  (KERNEL, 256 bit)
+
+f    = (1+x)^(1/2)
+x ≈ -1,  δx = 0.0001 (absolute)
+δ_{R+}f   δ_{R-}f   δ_{R+}f/f   δ_{R-}f/f
+0.01       0.01       N/A         N/A         (x)
+
+  极限分类（单变量变，其余 δ=0）
+  δv →  δf          δf/f       
+  +0       +0           undef        (x)
+  -0       undef        undef        (x)
+  +inf     +inf         undef        (x)
+  -inf     undef        undef        (x)
+### -C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+z)^(1+i)' -k 2 --vars
+polyno_err_ana 0.2.0-m2  (KERNEL, 256 bit)
+branch k = 2
+
+f    = (1+z)^(1+i)
+z ≈ (1+0.5i),  δz = (0.0001+0.0001i) (absolute)
+
+δf    = (0+0.0002i)(1+z)^(0+1i)
+      = (-3.6139e-10+4.0918e-10i)
+δf/f  = (0+0.0002i)/(1+z)
+      = (2.3529e-05+9.4118e-05i)
+
+∂f/∂z  = (1+1i)(1+z)^(0+1i)
+δz     = (0.0001+0.0001i)
+δz/z   = (0.00012+4.0000e-05i)
+
+δ_{R+}f   δ_{R-}f   δ_{R+}f/f   δ_{R-}f/f
+5.4591e-10 5.4593e-10 9.7013e-05  9.7016e-05  (z)
+
+  极限分类（单变量变，其余 δ=0）
+  δv →  δf          δf/f       
+  +0       c0           c0           (z)
+  +inf     cinf         cinf         (z)
+### -C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+z)^2' --vars --lim all
+polyno_err_ana 0.2.0-m2  (KERNEL, 256 bit)
+
+f    = (1+z)^2
+z ≈ (1+0.5i),  δz = (0.0001+0.0001i) (absolute)
+
+δf    = (0.0002+0.0002i)(1+z)
+      = (0.0003+0.0005i)
+δf/f  = (0.0002+0.0002i)/(1+z)
+      = (0.000117647+7.0588e-05i)
+
+∂f/∂z  = 2(1+z)
+δz     = (0.0001+0.0001i)
+δz/z   = (0.00012+4.0000e-05i)
+
+δ_{R+}f   δ_{R-}f   δ_{R+}f/f   δ_{R-}f/f
+0.000583112 0.000583078 0.000137203 0.000137195 (z)
+
+  极限分类（单变量变，其余 δ=0）
+  δv →  δf          δf/f       
+  +0       c0           c0           (z)
+  +inf     cinf         cinf         (z)
