@@ -6,7 +6,7 @@
 - 语言：C++23
 - 数值内核：numextend（默认）或 MPFR（`-DPOLYNO_ENABLE_MPFR=ON`）
 - 许可证：GPL-3.0-or-later（见 `LICENSE.md`；第三方组件见 `THIRD_PARTY.md`）
-- 贡献指南：`CONTRIBUTING.md`
+- 贡献指南：`CONTRIBUTING.md`；常见问题（含许可边界）：`FAQ.md`
 
 需求与验收：`需求分析.md`（v0.3）；实现说明与偏差：`设计.md`；版本记录：`CHANGELOG.md`。
 
@@ -18,7 +18,7 @@
 | `-R` 实数变量、`-a/-r`、`--estimated`、`-p` | ✅ |
 | 符号 `δf`、`δf/f`（原子级约分，R-1/R-2） | ✅ |
 | `δ_{R±}f`、`δ_{R±}f/f` | ✅ |
-| 极限分类（`--lim all` / `VAR:p0|n0|pinf|ninf`） | ✅ 实数 + 复数（`c0/cinf`） |
+| 极限分类（`--lim all` / `VAR:p0\|n0\|pinf\|ninf`） | ✅ 实数 + 复数（`c0/cinf`） |
 | 复数变量 `-C`、`i`、复数指数、`--estimated z=1+2i` | ✅ 里程碑 2 |
 | `-k` 分支号（`exp(w·(log z + 2πik))`） | ✅ 里程碑 2 |
 | `--real-root`（负实底数取实根，与 `-k` 互斥） | ✅ 里程碑 4 |

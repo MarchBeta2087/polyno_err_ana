@@ -35,6 +35,7 @@
 **开源准备**
 - 所有源文件与 `CMakeLists.txt` 加 `SPDX-License-Identifier: GPL-3.0-or-later`
 - 新增 `CONTRIBUTING.md`、`THIRD_PARTY.md`（numextend MIT / MPFR·GMP LGPL 与静态链接说明）
+- 新增 `FAQ.md`（11 条：GPL「传染性」边界、组合作品、结果归属、商用、静态链接 LGPL、功能取舍等），README 增「许可与使用边界」
 
 **测试**
 - 快照用例扩到 14 条（`tests/cases.txt`），覆盖单状态 `--lim`、相对模式估计点为 0、`-p 64`、`-R`/`-C` 混合、`0^0`、除零、real-root
