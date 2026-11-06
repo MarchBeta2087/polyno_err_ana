@@ -7,5 +7,5 @@ while IFS= read -r line; do
     case "$line" in ''|'#'*) continue ;; esac
     printf '### %s\n' "$line"
     # shellcheck disable=SC2086
-    eval "\"\$BIN\" $line" 2>&1 | sed -E '1s/(numextend|mpfr)(, [0-9]+ bit)/KERNEL\2/'
+    eval "\"\$BIN\" $line" 2>&1 | sed -E 's/(numextend|mpfr)(, [0-9]+ bit)/KERNEL\2/'
 done < "$HERE/cases.txt"

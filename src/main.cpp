@@ -131,6 +131,11 @@ Probe probe_power(const Expr& f, const Env& env, const std::string& nm, const St
     return p;
 }
 
+struct LimSpec {
+    std::string var;
+    State state{true, true};
+};
+
 struct VarView {
     const Var* decl;
     Cplx dv;
@@ -148,9 +153,7 @@ struct Opts {
     bool real_root = false;
     std::size_t max_terms = 200000;
     bool lim_all = false;
-    bool lim_spec = false;
-    std::string lim_var;
-    State lim_state{true, true};
+    std::vector<LimSpec> lim_specs;   // --lim VAR:STATE（可多次，同一变量可多状态）
 };
 
 [[noreturn]] void usage_error(const std::string& m) {
@@ -248,11 +251,20 @@ Opts parse_args(int argc, char** argv) {
             if (v == "all") {
                 o.lim_all = true;
             } else {
-                auto c = v.find(':');
-                if (c == std::string::npos) usage_error("--lim 需要 all 或 VAR:STATE");
-                o.lim_var = v.substr(0, c);
-                parse_lim_state(v.substr(c + 1), o.lim_state);
-                o.lim_spec = true;
+                // 允许 "x:p0,y:ninf" 或多次 --lim
+                std::string rest = v;
+                while (!rest.empty()) {
+                    auto comma = rest.find(',');
+                    std::string item = rest.substr(0, comma);
+                    rest = comma == std::string::npos ? std::string() : rest.substr(comma + 1);
+                    if (item.empty()) continue;
+                    auto c = item.find(':');
+                    if (c == std::string::npos) usage_error("--lim 需要 all 或 VAR:STATE");
+                    LimSpec sp;
+                    sp.var = item.substr(0, c);
+                    parse_lim_state(item.substr(c + 1), sp.state);
+                    o.lim_specs.push_back(sp);
+                }
             }
         } else if (a == "--kernel") {
             std::string k = need(i, "--kernel");
@@ -303,12 +315,12 @@ Opts parse_args(int argc, char** argv) {
     for (size_t i = 0; i < o.vars.size(); ++i)
         for (size_t j = i + 1; j < o.vars.size(); ++j)
             if (o.vars[i].name == o.vars[j].name) usage_error("变量重复声明: " + o.vars[i].name);
-    if (o.lim_all && o.lim_spec) usage_error("--lim all 与 --lim VAR:STATE 冲突");
+    if (o.lim_all && !o.lim_specs.empty()) usage_error("--lim all 与 --lim VAR:STATE 冲突");
     if (o.real_root && o.branch != 0) usage_error("--real-root 与 -k 互斥");
-    if (o.lim_spec) {
+    for (const auto& sp : o.lim_specs) {
         bool found = false;
-        for (const auto& v : o.vars) found = found || v.name == o.lim_var;
-        if (!found) usage_error("--lim 引用了未声明的变量: " + o.lim_var);
+        for (const auto& v : o.vars) found = found || v.name == sp.var;
+        if (!found) usage_error("--lim 引用了未声明的变量: " + sp.var);
     }
     return o;
 }
@@ -326,6 +338,33 @@ Env make_env(const Opts& o) {
 Cplx value_of(const Env& env, const std::string& name) {
     const Cplx* p = lookup(env, name);
     return p ? *p : c_zero();
+}
+
+// 列宽对齐的小表：值均为单宽字符（含 δ），right[i] 控制右对齐。
+void render_table(const std::vector<std::string>& head,
+                  const std::vector<std::vector<std::string>>& rows,
+                  const std::vector<bool>& right) {
+    const std::size_t n = head.size();
+    std::vector<std::size_t> w(n);
+    for (std::size_t i = 0; i < n; ++i) w[i] = head[i].size();
+    for (const auto& r : rows)
+        for (std::size_t i = 0; i < n && i < r.size(); ++i) w[i] = std::max(w[i], r[i].size());
+
+    auto emit = [&](const std::vector<std::string>& cells, char fill) {
+        std::string line = "  ";
+        for (std::size_t i = 0; i < n; ++i) {
+            const std::string c = i < cells.size() ? cells[i] : std::string();
+            const std::size_t pad = w[i] - c.size();
+            line += fill == ' ' ? (right[i] ? std::string(pad, ' ') + c : c + std::string(pad, ' '))
+                                : std::string(w[i], '-');
+            if (i + 1 < n) line += "  ";
+        }
+        while (!line.empty() && line.back() == ' ') line.pop_back();
+        std::printf("%s\n", line.c_str());
+    };
+    emit(head, ' ');
+    emit(std::vector<std::string>(n, ""), '-');
+    for (const auto& r : rows) emit(r, ' ');
 }
 
 }  // namespace
@@ -426,7 +465,8 @@ int main(int argc, char** argv) {
         // 精确边界（§3.4）
         Cplx f0 = eval(f, env);
         Real f0abs = c_abs(f0);
-        std::printf("δ_{R+}f   δ_{R-}f   δ_{R+}f/f   δ_{R-}f/f\n");
+        std::printf("\n  精确边界（单变量变，其余固定在估计点）\n\n");
+        std::vector<std::vector<std::string>> brow;
         for (const auto& vv : views) {
             Env ep = env, em = env;
             for (auto& kv : ep)
@@ -435,17 +475,19 @@ int main(int argc, char** argv) {
                 if (kv.first == vv.decl->name) kv.second = kv.second - vv.dv;
             Real dp = c_abs(eval(f, ep) - f0), dm = c_abs(eval(f, em) - f0);
             auto cell = [](const Real& x) { return c_fmt(Cplx{x, Real::zero()}); };
-            std::printf("%-10s %-10s ", cell(dp).c_str(), cell(dm).c_str());
-            if (is_zero(f0abs))
-                std::printf("%-11s %-11s", "N/A", "N/A");
-            else
-                std::printf("%-11s %-11s", cell(dp / f0abs).c_str(), cell(dm / f0abs).c_str());
-            std::printf(" (%s)\n", vv.decl->name.c_str());
+            std::string rp = "N/A", rm = "N/A";
+            if (!is_zero(f0abs)) {
+                rp = cell(dp / f0abs);
+                rm = cell(dm / f0abs);
+            }
+            brow.push_back({vv.decl->name, cell(dp), cell(dm), rp, rm});
         }
+        render_table({"var", "δ_{R+}f", "δ_{R-}f", "δ_{R+}f/f", "δ_{R-}f/f"}, brow,
+                     {false, true, true, true, true});
 
         // 极限分类（§3.6）
-        std::printf("\n  极限分类（单变量变，其余 δ=0）\n");
-        std::printf("  %-8s %-12s %-12s\n", "δv →", "δf", "δf/f");
+        std::printf("\n  极限分类（单变量变，其余 δ=0）\n\n");
+        std::vector<std::vector<std::string>> lrow;
         for (const auto& vv : views) {
             const std::string& nm = vv.decl->name;
             const bool cvar = vv.decl->complex_var;
@@ -459,16 +501,13 @@ int main(int argc, char** argv) {
             }
 
             std::vector<State> states;
-            if (cvar) {
-                states = {{true, true}, {false, true}};  // 复数：0 / ∞
-            } else if (o.lim_spec && o.lim_var == nm) {
-                states = {o.lim_state};   // --lim VAR:STATE 优先于默认 4 组
-            } else if (views.size() == 1 || o.lim_all) {
-                states = {{true, true}, {true, false}, {false, true}, {false, false}};
-            } else if (o.lim_spec && o.lim_var == nm) {
-                states = {o.lim_state};
-            } else {
-                states = {{true, true}};
+            for (const auto& sp : o.lim_specs)
+                if (sp.var == nm) states.push_back(sp.state);
+            if (states.empty()) {
+                if (cvar) states = {{true, true}, {false, true}};   // 复数：0 / ∞
+                else if (views.size() == 1 || o.lim_all)
+                    states = {{true, true}, {true, false}, {false, true}, {false, false}};
+                else states = {{true, true}};
             }
 
             for (const auto& st : states) {
@@ -500,10 +539,11 @@ int main(int argc, char** argv) {
                         tr = cvar ? power_limit_c(kg, st) : power_limit(sign(ag.re), kg, st);
                     }
                 }
-                std::printf("  %-8s %-12s %-12s (%s)\n", state_label(st), lim_label(tg), lim_label(tr),
-                            nm.c_str());
+                const char* slabel = cvar ? (st.to_zero ? "0" : "inf") : state_label(st);
+                lrow.push_back({nm, slabel, lim_label(tg), lim_label(tr)});
             }
         }
+        render_table({"var", "δv →", "δf", "δf/f"}, lrow, {false, true, true, true});
         return 0;
     } catch (const ParseError& e) {
         std::fprintf(stderr, "解析错误（第 %zu 列）: %s\n", e.col, e.what());
