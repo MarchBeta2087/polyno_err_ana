@@ -4,7 +4,7 @@
 （`R+` / `R-`），以及误差量在 `δv → ±0 / ±∞` 下的极限类型分类。
 
 - 语言：C++23
-- 数值内核：numextend（bigfloat）；MPFR 内核待接入
+- 数值内核：numextend（默认）或 MPFR（`-DPOLYNO_ENABLE_MPFR=ON`）
 - 许可证：GPL-3.0-or-later（见 `LICENSE.md`）
 
 需求与验收：`需求分析.md`（v0.2）；实现说明与偏差：`设计.md`。
@@ -45,6 +45,27 @@ ctest --test-dir build --output-on-failure
 若 `numextend/build/libnex.a` 不存在，根 `CMakeLists.txt` 会退化为 `add_subdirectory(numextend)`
 （同时会构建 numextend 自带的测试，耗时更长）。
 
+### MPFR 内核
+
+```sh
+cmake -S . -B build-mpfr -DCMAKE_BUILD_TYPE=Release -DPOLYNO_ENABLE_MPFR=ON -DPNA_THIRD_PARTY=/path/to/prefix
+cmake --build build-mpfr -j
+./build-mpfr/polyno_err_ana -V        # kernel: mpfr
+```
+
+GMP/MPFR 需自建为静态库（本项目只链接 `.a`）。Windows 下用 MSYS2 工具链：
+
+```sh
+# 1) MSYS2 MINGW64 环境
+pacman -S --needed mingw-w64-x86_64-gcc make
+# 2) GMP（注意 GCC 15 需要 -std=gnu17）
+./configure --prefix=$PWD/../third_party_prefix --enable-static --disable-shared             CFLAGS="-O2 -std=gnu17" && make -j && make install
+# 3) MPFR
+./configure --prefix=$PWD/../third_party_prefix             --with-gmp=$PWD/../third_party_prefix --enable-static --disable-shared   && make -j && make install
+```
+
+两个内核共用同一套 `src/num.hpp` 接口，`ast/sym/main` 不改；回归用例对两者一致。
+
 ## 用法
 
 ```sh
@@ -82,5 +103,5 @@ mpfr/, numextend/      git submodule（上游依赖）
 | 依赖 | 用途 | 许可 |
 | --- | --- | --- |
 | [numextend](https://github.com/MarchBeta2087/numextend) | 当前数值内核 | 见子模块 `LICENSE` |
-| [MPFR](https://www.mpfr.org/)（`aixoss/mpfr` 镜像） | 计划中的内核 | LGPL-3.0-or-later |
-| [GMP](https://gmplib.org/) | MPFR 依赖，构建时获取（未入库） | LGPL-3.0-or-later / GPL-2.0+ |
+| [MPFR](https://www.mpfr.org/)（`aixoss/mpfr` 镜像） | 可选内核（`-DPOLYNO_ENABLE_MPFR=ON`） | LGPL-3.0-or-later |
+| [GMP](https://gmplib.org/) | MPFR 依赖（需自建，未入库） | LGPL-3.0-or-later / GPL-2.0+ |

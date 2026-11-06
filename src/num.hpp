@@ -1,10 +1,15 @@
 // 数值层：numextend bigfloat 的 RAII 包装 + 复数运算（含分支幂）。
 #pragma once
 
+#ifdef POLYNO_KERNEL_MPFR
+#include <gmp.h>
+#include <mpfr.h>
+#else
 extern "C" {
 #include "nex/bigfloat/nex_bigfloat.h"
 #include "nex/transcend/nex_transcend.h"
 }
+#endif
 
 #include <stdexcept>
 #include <string>
@@ -17,14 +22,21 @@ struct NumError : std::runtime_error {
 
 // 全局精度（bit）；默认 256，见 §3.1 -p。
 void set_precision(int bits);
+
+#ifndef POLYNO_KERNEL_MPFR
 const bigfloat_ctx_ty& ctx();
+#endif
 
 // 复数幂的分支号（§3.5），全局唯一，求值/符号/边界共用。
 void set_branch(int k);
 int branch_k();
 
 struct Real {
+#ifdef POLYNO_KERNEL_MPFR
+    mpfr_t v;
+#else
     bigfloat_ty v;
+#endif
 
     Real();
     Real(const Real& o);
@@ -40,6 +52,15 @@ struct Real {
     static Real one();
     static Real zero();
 };
+
+// 后端名（"numextend" / "mpfr"）与后端原语。
+const char* kernel_name();
+Real r_exp(const Real& a);
+Real r_log(const Real& a);
+Real r_sqrt(const Real& a);
+Real r_sin(const Real& a);
+Real r_cos(const Real& a);
+Real r_atan2(const Real& y, const Real& x);
 
 Real operator+(const Real& a, const Real& b);
 Real operator-(const Real& a, const Real& b);

@@ -24,6 +24,12 @@ jobs:
           cmake --build build -j"$(nproc)"
       - name: 回归
         run: ctest --test-dir build --output-on-failure
+      - name: 构建（MPFR 内核）
+        run: |
+          cmake -S . -B build-mpfr -DCMAKE_BUILD_TYPE=Release -DPOLYNO_ENABLE_MPFR=ON
+          cmake --build build-mpfr -j"$(nproc)"
+      - name: 回归（MPFR 内核）
+        run: ctest --test-dir build-mpfr --output-on-failure
 
   windows:
     runs-on: windows-latest

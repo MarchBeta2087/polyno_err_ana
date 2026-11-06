@@ -1,6 +1,7 @@
 # 构建产物
 build/
 build-*/
+third_party_prefix/
 out/
 *.exe
 *.obj

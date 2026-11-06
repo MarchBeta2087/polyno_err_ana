@@ -238,7 +238,8 @@ Opts parse_args(int argc, char** argv) {
             }
         } else if (a == "--kernel") {
             std::string k = need(i, "--kernel");
-            if (k != "numextend") usage_error("当前构建仅支持 --kernel numextend");
+            if (k != kernel_name())
+                usage_error(std::string("当前构建的内核是 ") + kernel_name() + "，不支持 --kernel " + k);
         } else if (a == "-h" || a == "--help") {
             std::printf(
                 "用法: polyno_err_ana [OPTIONS] -f FORMULA\n"
@@ -253,7 +254,7 @@ Opts parse_args(int argc, char** argv) {
                 "  -V, --version   -G, --gpl   -h, --help\n");
             std::exit(0);
         } else if (a == "-V" || a == "--version") {
-            std::printf("polyno_err_ana %s (kernel: numextend, %d bit)\n", kVersion, o.precision);
+            std::printf("polyno_err_ana %s (kernel: %s, %d bit)\n", kVersion, kernel_name(), o.precision);
             std::exit(0);
         } else if (a == "-G" || a == "--gpl") {
             std::printf("GPL-3.0-or-later: <https://www.gnu.org/licenses/gpl-3.0.txt>\n");
@@ -345,7 +346,7 @@ int main(int argc, char** argv) {
             views.push_back(vv);
         }
 
-        std::printf("polyno_err_ana %s  (numextend, %d bit)\n", kVersion, o.precision);
+        std::printf("polyno_err_ana %s  (%s, %d bit)\n", kVersion, kernel_name(), o.precision);
         if (o.branch != 0) std::printf("branch k = %d\n", o.branch);
         std::printf("\nf    = %s\n", o.formula.c_str());
         for (const auto& vv : views) {
