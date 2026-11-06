@@ -16,7 +16,7 @@ using namespace pna;
 
 namespace {
 
-constexpr const char* kVersion = "0.2.0-m2";
+constexpr const char* kVersion = "0.4.0-m4";
 
 struct Var {
     std::string name;
@@ -145,6 +145,7 @@ struct Opts {
     bool vars_out = false;
     int precision = 256;
     int branch = 0;
+    bool real_root = false;
     bool lim_all = false;
     bool lim_spec = false;
     std::string lim_var;
@@ -215,6 +216,8 @@ Opts parse_args(int argc, char** argv) {
             o.mode = Mode::Absolute;
         } else if (a == "-r" || a == "--relative") {
             o.mode = Mode::Relative;
+        } else if (a == "--real-root") {
+            o.real_root = true;
         } else if (a == "--vars") {
             o.vars_out = true;
         } else if (a == "-p" || a == "--precision") {
@@ -287,6 +290,7 @@ Opts parse_args(int argc, char** argv) {
         for (size_t j = i + 1; j < o.vars.size(); ++j)
             if (o.vars[i].name == o.vars[j].name) usage_error("变量重复声明: " + o.vars[i].name);
     if (o.lim_all && o.lim_spec) usage_error("--lim all 与 --lim VAR:STATE 冲突");
+    if (o.real_root && o.branch != 0) usage_error("--real-root 与 -k 互斥");
     return o;
 }
 
@@ -312,6 +316,7 @@ int main(int argc, char** argv) {
         Opts o = parse_args(argc, argv);
         set_precision(o.precision);
         set_branch(o.branch);
+        set_real_root(o.real_root);
 
         Expr f = parse(o.formula);
         Env env = make_env(o);
@@ -409,7 +414,7 @@ int main(int argc, char** argv) {
             for (auto& kv : em)
                 if (kv.first == vv.decl->name) kv.second = kv.second - vv.dv;
             Real dp = c_abs(eval(f, ep) - f0), dm = c_abs(eval(f, em) - f0);
-            auto cell = [](const Real& x) { return is_finite(x) ? fmt(x) : std::string("N/A"); };
+            auto cell = [](const Real& x) { return is_finite(x) ? fmt(x) : std::string("Undefined"); };
             std::printf("%-10s %-10s ", cell(dp).c_str(), cell(dm).c_str());
             if (is_zero(f0abs))
                 std::printf("%-11s %-11s", "N/A", "N/A");

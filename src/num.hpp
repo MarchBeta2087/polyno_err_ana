@@ -31,6 +31,10 @@ const bigfloat_ctx_ty& ctx();
 void set_branch(int k);
 int branch_k();
 
+// --real-root：负实底数 + 非整数有理指数时取实根（§3.2）。
+void set_real_root(bool on);
+bool real_root_enabled();
+
 struct Real {
 #ifdef POLYNO_KERNEL_MPFR
     mpfr_t v;
@@ -71,8 +75,10 @@ Real abs(const Real& a);
 // 实幂：整数指数走平方乘（支持负底数）；否则 exp(e·log b)，b < 0 得 NaN。
 Real pow(const Real& base, const Real& e);
 
+bool re_eq(const Real& a, const Real& b);   // 精确相等（用于符号层原子比较）
 bool is_zero(const Real& a);
 bool is_finite(const Real& a);
+bool is_nan(const Real& a);
 bool is_neg(const Real& a);
 bool is_integer(const Real& a);
 int sign(const Real& a);          // -1/0/+1，NaN 得 0

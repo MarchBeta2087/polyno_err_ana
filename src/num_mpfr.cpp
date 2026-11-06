@@ -117,8 +117,10 @@ Real pow(const Real& base, const Real& e) {
     return r;
 }
 
+bool re_eq(const Real& a, const Real& b) { return mpfr_equal_p(a.v, b.v) != 0; }
 bool is_zero(const Real& a) { return mpfr_zero_p(a.v) != 0; }
 bool is_finite(const Real& a) { return mpfr_number_p(a.v) != 0; }
+bool is_nan(const Real& a) { return mpfr_nan_p(a.v) != 0; }
 bool is_neg(const Real& a) { return mpfr_signbit(a.v) != 0; }
 
 int sign(const Real& a) {

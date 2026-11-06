@@ -71,6 +71,34 @@ b2=$("$BIN" -C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+z)^(1+i)' -k 2 2>&1 | gre
 [ "$b0" != "$b2" ] || { printf 'FAIL 分支号未影响求值
 '; fail=$((fail+1)); }
 
+# --- 里程碑 4：real-root / NaN / Inf 呈现 ---
+out=$(run -R x 1e-4 --estimated x=0.5 -f 'x+(-8)^(1/3)' --vars)
+check_contains "复主值" "$out" '(1+1.73205i)'
+
+out=$(run -R x 1e-4 --estimated x=0.5 -f 'x+(-8)^(1/3)' --real-root --vars)
+check_contains "real-root 实根" "$out" '(x+(-2))'
+check_contains "real-root 数值" "$out" '-6.6667e-05'
+
+out=$(run -R x 1e-4 --estimated x=0.5 -f 'x+(-8)^(1/2)' --real-root --vars)
+check_contains "偶分母 → Undefined" "$out" 'Undefined'
+
+out=$(run -R x 1e-4 -f 'x+0^0' --lim all)
+check_contains "0^0 边界 Undefined" "$out" 'Undefined  Undefined'
+check_contains "0^0 分类 undef" "$out" 'undef'
+
+out=$(run -R x 1e-4 -f '1/(x-x)' --lim all)
+check_contains "除零 Undefined" "$out" 'Undefined'
+
+"$BIN" -R x 1e-4 -f '(-8)^(1/3)' --real-root -k 2 > /dev/null 2>&1
+[ $? -eq 2 ] || { printf 'FAIL --real-root 与 -k 未互斥
+'; fail=$((fail+1)); }
+
+# 整数指数时 -k 不改变 δf 行（只多一行 banner）
+a=$("$BIN" -R x 1e-4 -f '(1+x)^3' --vars | grep '^δf    =')
+b=$("$BIN" -R x 1e-4 -f '(1+x)^3' -k 2 --vars | grep '^δf    =')
+[ "$a" = "$b" ] || { printf 'FAIL 整数指数时 -k 影响了结果
+'; fail=$((fail+1)); }
+
 if [ "$fail" -eq 0 ]; then
     echo "ok: 全部回归用例通过"
     exit 0

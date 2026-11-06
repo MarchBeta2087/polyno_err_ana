@@ -1,6 +1,7 @@
 // 词法 / 语法 / AST / 数值求值。
 #pragma once
 
+#include <cstdint>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -22,6 +23,7 @@ struct Node {
     std::string var;
     Expr a, b;      // Pow: a=底数, b=指数（常数子树）
     size_t col{};
+    std::uint64_t hash{0};   // 结构哈希，符号层原子归并用（见 设计.md §3.2）
 };
 
 struct ParseError : std::runtime_error {

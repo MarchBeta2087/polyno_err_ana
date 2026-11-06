@@ -1,14 +1,42 @@
 #include "num.hpp"
 
+#include <algorithm>
 #include <cmath>
 
 namespace pna {
 namespace {
 int g_branch = 0;
+bool g_real_root = false;
+
+// 连续分数逼近：x ≈ p/q（q ≤ 1e6，误差 ≤ 1e-12·max(1,|x|)）。
+bool rational_of(double x, long& p, long& q) {
+    if (!std::isfinite(x)) return false;
+    const double tol = 1e-12 * std::max(1.0, std::fabs(x));
+    double v = x;
+    long h0 = 0, h1 = 1, k0 = 1, k1 = 0;
+    for (int i = 0; i < 64; ++i) {
+        const double a = std::floor(v);
+        if (!std::isfinite(a) || std::fabs(a) > 1e15) return false;
+        const long ai = static_cast<long>(a);
+        const long h2 = ai * h1 + h0;
+        const long k2 = ai * k1 + k0;
+        if (k2 > 1000000 || k2 <= 0) return false;
+        h0 = h1; h1 = h2; k0 = k1; k1 = k2;
+        if (k1 == 0) return false;
+        const double appr = static_cast<double>(h1) / static_cast<double>(k1);
+        if (std::fabs(appr - x) <= tol) { p = h1; q = k1; return true; }
+        const double frac = v - a;
+        if (frac == 0.0) return false;
+        v = 1.0 / frac;
+    }
+    return false;
+}
 }  // namespace
 
 void set_branch(int k) { g_branch = k; }
 int branch_k() { return g_branch; }
+void set_real_root(bool on) { g_real_root = on; }
+bool real_root_enabled() { return g_real_root; }
 
 Real pi() {
     static const Real p = r_atan2(Real::zero(), Real::from_double(-1.0));
@@ -75,6 +103,14 @@ Cplx c_pow(const Cplx& base, const Cplx& e) {
         }
         return inv ? c_one() / acc : acc;
     }
+    // --real-root：负实底数 + 有理指数（分母为奇数）取实根
+    if (g_real_root && c_is_real(e) && c_is_real(base) && sign(base.re) < 0) {
+        long p = 0, q = 1;
+        if (!rational_of(to_double(e.re), p, q) || q % 2 == 0) return c_nan();
+        Real m = pow(abs(base.re), e.re);
+        const int sg = (p % 2 == 0) ? 1 : -1;
+        return Cplx{sg > 0 ? m : neg(m), Real::zero()};
+    }
     if (c_is_zero(base)) {
         if (c_is_real(e) && sign(e.re) > 0) return c_zero();
         return c_nan();
@@ -93,9 +129,16 @@ bool c_is_real(const Cplx& a) { return is_zero(a.im); }
 bool c_is_finite(const Cplx& a) { return is_finite(a.re) && is_finite(a.im); }
 
 std::string c_fmt(const Cplx& a) {
-    if (c_is_real(a)) return fmt(a.re);
-    std::string im = fmt(abs(a.im));
-    return "(" + fmt(a.re) + (is_neg(a.im) ? "-" : "+") + im + "i)";
+    if (is_finite(a.re) && is_finite(a.im)) {
+        if (c_is_real(a)) return fmt(a.re);
+        std::string im = fmt(abs(a.im));
+        return "(" + fmt(a.re) + (is_neg(a.im) ? "-" : "+") + im + "i)";
+    }
+    // N-3：NaN 一律 Undefined；纯 ±Inf 显示 ±Inf
+    if (is_nan(a.re) || is_nan(a.im)) return "Undefined";
+    if (!is_finite(a.re) && is_finite(a.im)) return c_is_real(a) ? (is_neg(a.re) ? "-Inf" : "Inf") : "Undefined";
+    if (is_finite(a.re) && !is_finite(a.im)) return "Undefined";
+    return is_neg(a.re) ? "-Inf" : "Inf";
 }
 
 bool is_integer(const Real& a) {

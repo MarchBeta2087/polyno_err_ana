@@ -107,12 +107,16 @@ struct Parser {
     [[noreturn]] void fail(const std::string& m) { throw ParseError(m, cur().col); }
 };
 
+Cplx canon(const Cplx& v);   // -0 虚部归一化，见下方定义
+void finish(Node& n);        // 结构哈希，见下方定义
+
 Expr mk(NK k, Expr a, Expr b = nullptr) {
     auto n = std::make_shared<Node>();
     n->k = k;
     n->a = std::move(a);
     n->b = std::move(b);
     n->col = n->a ? n->a->col : 0;
+    finish(*n);
     return n;
 }
 
@@ -121,7 +125,7 @@ Expr fold(NK k, const Expr& a, const Expr& b) {
         Cplx r;
         switch (k) {
             case NK::Add: r = a->num + b->num; break;
-            case NK::Sub: r = a->num - b->num; break;
+            case NK::Sub: r = canon(a->num - b->num); break;
             case NK::Mul: r = a->num * b->num; break;
             case NK::Div: r = a->num / b->num; break;
             case NK::Pow: r = c_pow(a->num, b->num); break;
@@ -131,6 +135,7 @@ Expr fold(NK k, const Expr& a, const Expr& b) {
         n->k = NK::Num;
         n->num = r;
         n->col = a->col;
+        finish(*n);
         return n;
     }
     return mk(k, a, b);
@@ -143,6 +148,7 @@ Expr Parser::atom() {
             n->k = NK::Num;
             n->num = cur().text_back_i ? c_from_double(0.0, cur().num) : c_from_double(cur().num);
             n->col = cur().col;
+            finish(*n);
             next();
             return n;
         }
@@ -160,12 +166,14 @@ Expr Parser::atom() {
                 n->k = NK::Num;
                 n->num = c_i();
                 n->col = col;
+                finish(*n);
                 return n;
             }
             auto n = std::make_shared<Node>();
             n->k = NK::Var;
             n->var = name;
             n->col = col;
+            finish(*n);
             return n;
         }
         case Tok::LP: {
@@ -199,8 +207,9 @@ Expr Parser::unary() {
         if (inner->k == NK::Num) {
             auto n = std::make_shared<Node>();
             n->k = NK::Num;
-            n->num = c_neg(inner->num);
+            n->num = canon(c_neg(inner->num));
             n->col = col;
+            finish(*n);
             return n;
         }
         return mk(NK::Sub, mk_num(0.0), inner);
@@ -242,6 +251,40 @@ Expr Parser::expr() {
     }
 }
 
+// ---- 结构哈希（FNV-1a）：用于符号层原子归并，避免反复 to_string ----
+inline std::uint64_t fnv(std::uint64_t h, std::uint64_t v) {
+    h ^= v;
+    h *= 1099511628211ULL;
+    return h;
+}
+
+std::uint64_t dbits(double d) {
+    std::uint64_t u = 0;
+    std::memcpy(&u, &d, sizeof u);
+    return u;
+}
+
+// 归一化 -0 虚部：避免 atan2(±0, x) 导致主值角度符号不同（不同后端会分叉）
+Cplx canon(const Cplx& v) {
+    Cplx r = v;
+    if (is_zero(r.im) && is_neg(r.im)) r.im = Real::zero();
+    return r;
+}
+
+void finish(Node& n) {
+    std::uint64_t h = 1469598103934665603ULL;
+    h = fnv(h, static_cast<std::uint64_t>(n.k));
+    if (n.k == NK::Num) {
+        h = fnv(h, dbits(to_double(n.num.re)));
+        h = fnv(h, dbits(to_double(n.num.im)));
+    } else if (n.k == NK::Var) {
+        for (unsigned char c : n.var) h = fnv(h, c);
+    }
+    if (n.a) h = fnv(h, n.a->hash);
+    if (n.b) h = fnv(h, n.b->hash);
+    n.hash = h;
+}
+
 int prec(const Expr& e) {
     switch (e->k) {
         case NK::Add:
@@ -256,7 +299,8 @@ int prec(const Expr& e) {
 void print(const Expr& e, std::string& out, int parent_prec, bool right_side);
 
 void print_child(const Expr& c, std::string& out, int pp, bool right_side) {
-    bool need = prec(c) < pp || (right_side && prec(c) == pp && prec(c) <= 2);
+    const bool neg_num = c->k == NK::Num && is_neg(c->num.re) && is_zero(c->num.im);
+    bool need = neg_num || prec(c) < pp || (right_side && prec(c) == pp && prec(c) <= 2);
     if (need) out += '(';
     print(c, out, pp, right_side);
     if (need) out += ')';
@@ -310,6 +354,7 @@ Expr mk_num(double d) {
     auto n = std::make_shared<Node>();
     n->k = NK::Num;
     n->num = c_from_double(d);
+    finish(*n);
     return n;
 }
 
@@ -317,6 +362,7 @@ Expr mk_var(std::string name) {
     auto n = std::make_shared<Node>();
     n->k = NK::Var;
     n->var = std::move(name);
+    finish(*n);
     return n;
 }
 
@@ -385,7 +431,10 @@ std::string fmt_num(double d) {
 bool same(const Expr& a, const Expr& b) {
     if (a == b) return true;
     if (!a || !b) return false;
-    return to_string(a) == to_string(b);
+    if (a->k != b->k || a->hash != b->hash) return false;
+    if (a->k == NK::Num) return re_eq(a->num.re, b->num.re) && re_eq(a->num.im, b->num.im);
+    if (a->k == NK::Var) return a->var == b->var;
+    return same(a->a, b->a) && same(a->b, b->b);
 }
 
 }  // namespace pna

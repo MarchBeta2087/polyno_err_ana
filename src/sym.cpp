@@ -25,6 +25,7 @@ void normalize(Term& t) {
     out.erase(std::remove_if(out.begin(), out.end(), [](const Factor& f) { return c_is_zero(f.exp); }),
               out.end());
     std::sort(out.begin(), out.end(), [](const Factor& x, const Factor& y) {
+        if (x.atom->hash != y.atom->hash) return x.atom->hash < y.atom->hash;
         return to_string(x.atom) < to_string(y.atom);
     });
     t.fac = std::move(out);
@@ -214,7 +215,11 @@ std::string exp_text(const Cplx& e) {
 
 std::string catom(const Expr& e) {
     std::string s = to_string(e);
-    if (e->k == NK::Var || e->k == NK::Num) return s;
+    if (e->k == NK::Var) return s;
+    if (e->k == NK::Num) {
+        const bool neg = c_is_real(e->num) ? is_neg(e->num.re) : false;
+        return neg ? "(" + s + ")" : s;   // x+-2 → x+(-2)
+    }
     return "(" + s + ")";
 }
 }  // namespace
@@ -224,6 +229,12 @@ std::string sym_show(const Sym& a) {
     std::string out;
     bool first = true;
     for (const auto& t : a.terms) {
+        if (!c_is_finite(t.coeff)) {
+            if (!first) out += " + ";
+            first = false;
+            out += "Undefined";
+            continue;
+        }
         const bool real_coeff = c_is_real(t.coeff);
         const bool negt = real_coeff && is_neg(t.coeff.re);
         Real c = real_coeff ? abs(t.coeff.re) : c_abs(t.coeff);
@@ -237,6 +248,11 @@ std::string sym_show(const Sym& a) {
             Factor g{f.atom, pos ? f.exp : c_neg(f.exp)};
             (pos ? num : den).push_back(g);
         }
+        auto by_text = [](const Factor& x, const Factor& y) {
+            return to_string(x.atom) < to_string(y.atom);
+        };
+        std::sort(num.begin(), num.end(), by_text);
+        std::sort(den.begin(), den.end(), by_text);
 
         const bool unit = real_coeff && is_zero(c - Real::one());
         if (!(unit && !num.empty())) {

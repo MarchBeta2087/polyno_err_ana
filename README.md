@@ -20,6 +20,7 @@
 | 极限分类（`--lim all` / `VAR:p0|n0|pinf|ninf`） | ✅ 实数 + 复数（`c0/cinf`） |
 | 复数变量 `-C`、`i`、复数指数、`--estimated z=1+2i` | ✅ 里程碑 2 |
 | `-k` 分支号（`exp(w·(log z + 2πik))`） | ✅ 里程碑 2 |
+| `--real-root`（负实底数取实根，与 `-k` 互斥） | ✅ 里程碑 4 |
 | `--kernel mpfr` | ❌ 需先构建 GMP |
 
 ## 构建
@@ -81,6 +82,10 @@ GCC 14+ 默认 C23 会让 GMP 的 long-long 探针失败，脚本已加 `-std=gn
 
 # 复数 + 分支号（T-6）
 ./build/polyno_err_ana -C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+z)^(1+i)' -k 2 --vars
+
+# 负实底数：默认复主值 vs --real-root 实根
+./build/polyno_err_ana -R x 1e-4 --estimated x=0.5 -f 'x+(-8)^(1/3)' --vars
+./build/polyno_err_ana -R x 1e-4 --estimated x=0.5 -f 'x+(-8)^(1/3)' --vars --real-root
 ```
 
 退出码：`0` 成功、`1` 公式解析错误（含列号）、`2` 命令行错误、`3` 数值异常。
@@ -95,6 +100,7 @@ src/main.cpp           命令行与输出
 tests/checks.sh        断言式回归（CTest: regression）
 tests/cases.txt        快照用例（CTest: snapshot）
 tests/snapshots/       期望输出（与内核无关）
+scripts/bench.sh       性能冒烟
 scripts/build-mpfr.sh  GMP/MPFR 构建脚本
 mpfr/, numextend/      git submodule（上游依赖）
 ```

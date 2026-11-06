@@ -129,6 +129,7 @@ Real pow(const Real& base, const Real& e) {
     return r;
 }
 
+bool re_eq(const Real& a, const Real& b) { return bigfloat_cmp(&a.v, &b.v) == 0; }
 bool is_zero(const Real& a) { return bigfloat_is_zero(&a.v); }
 bool is_finite(const Real& a) {
     switch (a.v.flag) {
@@ -139,6 +140,7 @@ bool is_finite(const Real& a) {
         default: return false;
     }
 }
+bool is_nan(const Real& a) { return bigfloat_is_nan(&a.v); }
 bool is_neg(const Real& a) { return a.v.flag == BIGFLOAT_NEG_E || a.v.flag == BIGFLOAT_NEG_INF_E; }
 
 int sign(const Real& a) {

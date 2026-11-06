@@ -1,5 +1,5 @@
 ### --real --absolute x 1e-4 -f '(1+x)^4' --vars --lim all
-polyno_err_ana 0.2.0-m2  (KERNEL, 256 bit)
+polyno_err_ana 0.4.0-m4  (KERNEL, 256 bit)
 
 f    = (1+x)^4
 x ≈ 0,  δx = 0.0001 (absolute)
@@ -23,7 +23,7 @@ x ≈ 0,  δx = 0.0001 (absolute)
   +inf     +inf         +inf         (x)
   -inf     -inf         -inf         (x)
 ### --real --absolute x 1e-4 --estimated x=0.6 -f '(1+x)^4' --vars
-polyno_err_ana 0.2.0-m2  (KERNEL, 256 bit)
+polyno_err_ana 0.4.0-m4  (KERNEL, 256 bit)
 
 f    = (1+x)^4
 x ≈ 0.6,  δx = 0.0001 (absolute)
@@ -47,7 +47,7 @@ x ≈ 0.6,  δx = 0.0001 (absolute)
   +inf     +inf         +inf         (x)
   -inf     -inf         -inf         (x)
 ### --real --relative x 1e-4 --estimated x=0.6 -f '(1+x)^4' --vars
-polyno_err_ana 0.2.0-m2  (KERNEL, 256 bit)
+polyno_err_ana 0.4.0-m4  (KERNEL, 256 bit)
 
 f    = (1+x)^4
 x ≈ 0.6,  δx = 6.0000e-05 (relative)
@@ -71,7 +71,7 @@ x ≈ 0.6,  δx = 6.0000e-05 (relative)
   +inf     +inf         +inf         (x)
   -inf     -inf         -inf         (x)
 ### --real --absolute x 1e-4 y 1e-4 --estimated x=0.5 --estimated y=0.5 -f '(1+x*y)^5' --lim all
-polyno_err_ana 0.2.0-m2  (KERNEL, 256 bit)
+polyno_err_ana 0.4.0-m4  (KERNEL, 256 bit)
 
 f    = (1+x*y)^5
 x ≈ 0.5,  δx = 0.0001 (absolute)
@@ -91,7 +91,7 @@ y ≈ 0.5,  δy = 0.0001 (absolute)
   +inf     +inf         +inf         (y)
   -inf     -inf         -inf         (y)
 ### --real --absolute x 1e-4 --estimated x=-1 -f '(1+x)^2' --lim all
-polyno_err_ana 0.2.0-m2  (KERNEL, 256 bit)
+polyno_err_ana 0.4.0-m4  (KERNEL, 256 bit)
 
 f    = (1+x)^2
 x ≈ -1,  δx = 0.0001 (absolute)
@@ -105,7 +105,7 @@ x ≈ -1,  δx = 0.0001 (absolute)
   +inf     +inf         fin          (x)
   -inf     +inf         fin          (x)
 ### --real --absolute x 1e-4 --estimated x=-1 -f '(1+x)^3' --lim all
-polyno_err_ana 0.2.0-m2  (KERNEL, 256 bit)
+polyno_err_ana 0.4.0-m4  (KERNEL, 256 bit)
 
 f    = (1+x)^3
 x ≈ -1,  δx = 0.0001 (absolute)
@@ -119,7 +119,7 @@ x ≈ -1,  δx = 0.0001 (absolute)
   +inf     +inf         fin          (x)
   -inf     -inf         fin          (x)
 ### --real --absolute x 1e-4 --estimated x=-1 -f '(1+x)^(1/2)' --lim all
-polyno_err_ana 0.2.0-m2  (KERNEL, 256 bit)
+polyno_err_ana 0.4.0-m4  (KERNEL, 256 bit)
 
 f    = (1+x)^(1/2)
 x ≈ -1,  δx = 0.0001 (absolute)
@@ -133,7 +133,7 @@ x ≈ -1,  δx = 0.0001 (absolute)
   +inf     +inf         undef        (x)
   -inf     undef        undef        (x)
 ### -C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+z)^(1+i)' -k 2 --vars
-polyno_err_ana 0.2.0-m2  (KERNEL, 256 bit)
+polyno_err_ana 0.4.0-m4  (KERNEL, 256 bit)
 branch k = 2
 
 f    = (1+z)^(1+i)
@@ -156,7 +156,7 @@ z ≈ (1+0.5i),  δz = (0.0001+0.0001i) (absolute)
   +0       c0           c0           (z)
   +inf     cinf         cinf         (z)
 ### -C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+z)^2' --vars --lim all
-polyno_err_ana 0.2.0-m2  (KERNEL, 256 bit)
+polyno_err_ana 0.4.0-m4  (KERNEL, 256 bit)
 
 f    = (1+z)^2
 z ≈ (1+0.5i),  δz = (0.0001+0.0001i) (absolute)
@@ -177,3 +177,113 @@ z ≈ (1+0.5i),  δz = (0.0001+0.0001i) (absolute)
   δv →  δf          δf/f       
   +0       c0           c0           (z)
   +inf     cinf         cinf         (z)
+### --real --absolute x 1e-4 --estimated x=0.5 -f 'x+(-8)^(1/3)' --vars --lim all
+polyno_err_ana 0.4.0-m4  (KERNEL, 256 bit)
+
+f    = x+(-8)^(1/3)
+x ≈ 0.5,  δx = 0.0001 (absolute)
+
+δf    = 0.0001
+      = 0.0001
+δf/f  = 0.0001/(x+(1+1.73205i))
+      = (2.8571e-05-3.2991e-05i)
+
+∂f/∂x  = 1
+δx     = 0.0001
+δx/x   = 0.0002
+
+δ_{R+}f   δ_{R-}f   δ_{R+}f/f   δ_{R-}f/f
+0.0001     0.0001     4.3644e-05  4.3644e-05  (x)
+
+  极限分类（单变量变，其余 δ=0）
+  δv →  δf          δf/f       
+  +0       +0           +0           (x)
+  -0       -0           -0           (x)
+  +inf     +inf         +inf         (x)
+  -inf     -inf         -inf         (x)
+### --real --absolute x 1e-4 --estimated x=0.5 -f 'x+(-8)^(1/3)' --real-root --vars --lim all
+polyno_err_ana 0.4.0-m4  (KERNEL, 256 bit)
+
+f    = x+(-8)^(1/3)
+x ≈ 0.5,  δx = 0.0001 (absolute)
+
+δf    = 0.0001
+      = 0.0001
+δf/f  = 0.0001/(x+(-2))
+      = -6.6667e-05
+
+∂f/∂x  = 1
+δx     = 0.0001
+δx/x   = 0.0002
+
+δ_{R+}f   δ_{R-}f   δ_{R+}f/f   δ_{R-}f/f
+0.0001     0.0001     6.6667e-05  6.6667e-05  (x)
+
+  极限分类（单变量变，其余 δ=0）
+  δv →  δf          δf/f       
+  +0       +0           +0           (x)
+  -0       -0           -0           (x)
+  +inf     +inf         +inf         (x)
+  -inf     -inf         -inf         (x)
+### --real --absolute x 1e-4 --estimated x=0.5 -f 'x+(-8)^(1/2)' --real-root --vars --lim all
+polyno_err_ana 0.4.0-m4  (KERNEL, 256 bit)
+
+f    = x+(-8)^(1/2)
+x ≈ 0.5,  δx = 0.0001 (absolute)
+
+δf    = 0.0001
+      = 0.0001
+δf/f  = 0.0001/(x+Undefined)
+      = Undefined
+
+∂f/∂x  = 1
+δx     = 0.0001
+δx/x   = 0.0002
+
+δ_{R+}f   δ_{R-}f   δ_{R+}f/f   δ_{R-}f/f
+Undefined  Undefined  Undefined   Undefined   (x)
+
+  极限分类（单变量变，其余 δ=0）
+  δv →  δf          δf/f       
+  +0       undef        undef        (x)
+  -0       undef        undef        (x)
+  +inf     undef        undef        (x)
+  -inf     undef        undef        (x)
+### --real --absolute x 1e-4 -f 'x+0^0' --vars --lim all
+polyno_err_ana 0.4.0-m4  (KERNEL, 256 bit)
+
+f    = x+0^0
+x ≈ 0,  δx = 0.0001 (absolute)
+
+δf    = 0.0001
+      = 0.0001
+δf/f  = 0.0001/(x+Undefined)
+      = Undefined
+
+∂f/∂x  = 1
+δx     = 0.0001
+δx/x   = N/A（估计点为 0）
+
+δ_{R+}f   δ_{R-}f   δ_{R+}f/f   δ_{R-}f/f
+Undefined  Undefined  Undefined   Undefined   (x)
+
+  极限分类（单变量变，其余 δ=0）
+  δv →  δf          δf/f       
+  +0       undef        undef        (x)
+  -0       undef        undef        (x)
+  +inf     undef        undef        (x)
+  -inf     undef        undef        (x)
+### --real --absolute x 1e-4 -f '1/(x-x)' --lim all
+polyno_err_ana 0.4.0-m4  (KERNEL, 256 bit)
+
+f    = 1/(x-x)
+x ≈ 0,  δx = 0.0001 (absolute)
+δ_{R+}f   δ_{R-}f   δ_{R+}f/f   δ_{R-}f/f
+Undefined  Undefined  Undefined   Undefined   (x)
+
+  极限分类（单变量变，其余 δ=0）
+  δv →  δf          δf/f       
+  +0       undef        undef        (x)
+  -0       undef        undef        (x)
+  +inf     undef        undef        (x)
+  -inf     undef        undef        (x)
