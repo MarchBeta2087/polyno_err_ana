@@ -40,6 +40,10 @@ jobs:
         with:
           path: site/_out
   deploy:
+    # 私有仓库在免费计划下不支持 Pages（API 会返回 422）。
+    # 转公开后：Settings → Pages → Source = GitHub Actions，并把仓库变量
+    # ENABLE_PAGES 设为 true（或删除本 if）。
+    if: vars.ENABLE_PAGES == 'true'
     needs: build
     runs-on: ubuntu-latest
     environment:

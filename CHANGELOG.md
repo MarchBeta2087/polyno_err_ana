@@ -8,6 +8,7 @@
   （构建 artifact；Pages 可用时自动部署）
 - 社区文件：`CODE_OF_CONDUCT.md`（Contributor Covenant v2.1 摘要）、`SECURITY.md`（私有报告渠道与处理时限）
 - GitHub 模板：`.github/ISSUE_TEMPLATE/{bug_report,feature_request,config}.yml`、`PULL_REQUEST_TEMPLATE.md`
+- 注：私有仓库免费计划不支持 Pages，部署作业由仓库变量 `ENABLE_PAGES=true` 控制；转公开后开启即可
 
 ## v0.14.0-m14
 

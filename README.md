@@ -9,7 +9,9 @@
 - **不提供商业双许可**（决定记录：`docs/history/2026-11-07-license-decision.md`）
 - 贡献指南：`CONTRIBUTING.md`；行为准则：`CODE_OF_CONDUCT.md`；安全策略：`SECURITY.md`
 - 常见问题（含许可边界）：`FAQ.md`；待办与路线图：`TODO.md`
-- 文档站：<https://marchbeta2087.github.io/polyno_err_ana/>（`scripts/build-docs.sh` 生成，CI 同时上传 artifact）
+- 文档站：`scripts/build-docs.sh` 本地生成；CI 上传 `docs-site` artifact。
+  仓库转公开后启用 Pages（Source = GitHub Actions）并把仓库变量 `ENABLE_PAGES` 设为 `true`，
+  即可发布到 `https://<owner>.github.io/polyno_err_ana/`（私有仓库免费计划不支持 Pages）
 
 需求与验收：`需求分析.md`（v0.4）；实现说明与偏差：`设计.md`；版本记录：`CHANGELOG.md`。
 

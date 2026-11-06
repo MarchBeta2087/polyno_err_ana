@@ -23,6 +23,10 @@
 
 - m14.1：文档站（pandoc + Pages 工作流）、CoC、SECURITY、Issue/PR 模板
 
+## 待办补充
+
+- [ ] 仓库转公开后：启用 Pages（Source = GitHub Actions）+ 设置变量 `ENABLE_PAGES=true`
+
 - m14：`--lang` 六语言（zh/en/ja/ko/es/pt），单表实现 + 6 份帮助文本
 
 - m13.4：移除 `mpfr/` submodule，迁移到官方 tarball 4.2.1（`docs/history/2026-11-07-mpfr-tarball-migration.md`）
