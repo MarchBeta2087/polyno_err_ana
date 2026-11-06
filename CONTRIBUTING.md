@@ -40,6 +40,11 @@ bash tests/snapshot_dump.sh ./build/polyno_err_ana.exe > tests/snapshots/expecte
 bash tests/snapshot_test.sh ./build/polyno_err_ana.exe
 ```
 
+## 待办与里程碑
+
+待办只在 `TODO.md` 维护（P0/P1/P2，带验收方式）。完成一项就**从 TODO 删除**，并在
+`CHANGELOG.md` 记一笔；不要在 `设计.md` 里另开清单，避免两处漂移。
+
 ## 提交
 
 - 信息用中文或英文均可，首行不超过 72 字符，正文说明“为什么”。

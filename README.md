@@ -6,7 +6,7 @@
 - 语言：C++23
 - 数值内核：numextend（默认）或 MPFR（`-DPOLYNO_ENABLE_MPFR=ON`）
 - 许可证：GPL-3.0-or-later（见 `LICENSE.md`；第三方组件见 `THIRD_PARTY.md`）
-- 贡献指南：`CONTRIBUTING.md`；常见问题（含许可边界）：`FAQ.md`
+- 贡献指南：`CONTRIBUTING.md`；常见问题（含许可边界）：`FAQ.md`；待办与路线图：`TODO.md`
 
 需求与验收：`需求分析.md`（v0.3）；实现说明与偏差：`设计.md`；版本记录：`CHANGELOG.md`。
 
@@ -102,6 +102,7 @@ tests/checks.sh        断言式回归（CTest: regression）
 tests/cases.txt        快照用例（CTest: snapshot）
 tests/snapshots/       期望输出（与内核无关）
 scripts/bench.sh       性能冒烟
+TODO.md                路线图（唯一待办来源）
 scripts/build-mpfr.sh  GMP/MPFR 构建脚本
 mpfr/, numextend/      git submodule（上游依赖）
 ```
