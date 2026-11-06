@@ -82,13 +82,6 @@ jobs:
           cmake --build build-mpfr -j4
       - name: 回归（MPFR 内核）
         run: ctest --test-dir build-mpfr --output-on-failure
-        run: |
-          cmake -S numextend -B numextend/build-universal -DCMAKE_BUILD_TYPE=Release                 -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
-          cmake --build numextend/build-universal -j"$(sysctl -n hw.ncpu)"
-          cmake -S . -B build-universal -DCMAKE_BUILD_TYPE=Release                 -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"                 -DNEX_LIB="$PWD/numextend/build-universal/libnex.a"
-          cmake --build build-universal -j"$(sysctl -n hw.ncpu)"
-          lipo -info build-universal/polyno_err_ana
-          ctest --test-dir build-universal --output-on-failure
 
   macos:
     runs-on: macos-latest
