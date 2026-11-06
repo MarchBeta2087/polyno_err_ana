@@ -2,6 +2,12 @@
 
 版本按里程碑打 tag：`vX.Y.0-mN`。每条只记用户可见的变化；设计细节见 `设计.md`，待办见 `TODO.md`。
 
+## v0.13.0-m13
+
+- 新增 `--json-schema`：输出 `schema/json_out.schema.json`（draft 2020-12），构建时嵌入二进制
+- 新增 `--lang zh|en`：错误信息、`--help`、输出块标题中英切换；符号标签不翻译
+- `checks.sh` 增加 schema 校验（不依赖 jsonschema 包）与英文消息断言；快照扩到 40 条（含 2 条英文输出）
+
 ## v0.12.0-m12
 
 - 新增 `--json`：一次输出 meta/`symbolic`/`boundary`/`limits`，数值保持字符串格式（字段见需求 §3.9）

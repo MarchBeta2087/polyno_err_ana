@@ -10,8 +10,7 @@
 
 ## P1 — 工程
 
-- [ ] 错误消息英文版（`--lang en`）：需求 N-2 只要求列号，属可选；需先定“输出标签是否也翻译”
-- [ ] JSON schema 化（`schema/json_out.schema.json`）并加 `--json-schema` 自检，便于下游校验
+- [ ] `--lang` 扩展到更多语言（当前 zh/en），消息表在 `src/i18n.cpp`
 
 ## P2 — 发布/社区
 
@@ -25,6 +24,7 @@
 
 - m11：Release 工作流（linux/windows 静态构建 + SHA256SUMS）、`bench/history.csv` 与 `bench_compare.sh`
 - m12：`--json` 输出、`render` 输出块、`deps.lock` + `verify-deps.sh`
+- m13：`--json-schema`、`--lang zh|en`、schema 自检
 
 - m10：`render` 模块、`sym_mul` 增量合并（上限按结果项数判定）、快照 35 条、低精度字面量对齐
 

@@ -11,6 +11,8 @@
 #include "ast.hpp"
 #include "num.hpp"
 #include "json_out.hpp"
+#include "i18n.hpp"
+#include "json_schema.hpp"
 #include "render.hpp"
 #include "license_text.hpp"
 #include "sym.hpp"
@@ -19,7 +21,7 @@ using namespace pna;
 
 namespace {
 
-constexpr const char* kVersion = "0.12.0-m12";
+constexpr const char* kVersion = "0.13.0-m13";
 
 struct Var {
     std::string name;
@@ -177,6 +179,8 @@ struct Opts {
     Mode mode = Mode::Absolute;
     bool vars_out = false;
     bool json = false;
+    bool json_schema = false;
+    pna::Lang lang = pna::Lang::Zh;
     int precision = 256;
     int branch = 0;
     bool real_root = false;
@@ -186,14 +190,14 @@ struct Opts {
 };
 
 [[noreturn]] void usage_error(const std::string& m) {
-    throw std::runtime_error("命令行错误: " + m);
+    throw std::runtime_error(tr_message("命令行错误: " + m));
 }
 
 Cplx parse_num(const std::string& s) {
     try {
         return c_from_str(s.c_str());
     } catch (const NumError&) {
-        throw std::runtime_error("命令行错误: 无法解析数值: " + s);
+        throw std::runtime_error(tr_message("命令行错误: 无法解析数值: " + s));
     }
 }
 
@@ -202,8 +206,8 @@ Cplx parse_value(const std::string& s) {
     try {
         return const_value(parse(s));
     } catch (const ParseError& e) {
-        throw std::runtime_error("命令行错误: --estimated 值非法（第 " + std::to_string(e.col) +
-                                 " 列）: " + e.what());
+        throw std::runtime_error(tr_message("命令行错误: --estimated 值非法（第 " + std::to_string(e.col) +
+                                                " 列）: " + e.what()));
     }
 }
 
@@ -313,6 +317,13 @@ Opts parse_args(int argc, char** argv) {
             }
         } else if (a == "--real-root") {
             o.real_root = true;
+        } else if (a == "--lang") {
+            std::string v = need(i, "--lang");
+            if (v == "zh") o.lang = pna::Lang::Zh;
+            else if (v == "en") o.lang = pna::Lang::En;
+            else usage_error("--lang 只支持 zh / en");
+        } else if (a == "--json-schema") {
+            o.json_schema = true;
         } else if (a == "--json") {
             o.json = true;
         } else if (a == "--vars") {
@@ -355,19 +366,9 @@ Opts parse_args(int argc, char** argv) {
         } else if (a == "--kernel") {
             std::string k = need(i, "--kernel");
             if (k != kernel_name())
-                usage_error(std::string("当前构建的内核是 ") + kernel_name() + "，不支持 --kernel " + k);
+                usage_error(tr_message(std::string("当前构建的内核是 ") + kernel_name() + "，不支持 --kernel " + k));
         } else if (a == "-h" || a == "--help") {
-            std::printf(
-                "用法: polyno_err_ana [OPTIONS] -f FORMULA\n"
-                "  -R, --real VARNAME ERR [VARNAME ERR ...]        实数变量与误差\n"
-                "  -C, --comp VARNAME RE_ERR IM_ERR [...]          复数变量与实/虚部误差\n"
-                "  -a, --absolute | -r, --relative                 误差模式（默认绝对）\n"
-                "      --vars                                      显示符号推导\n"
-                "      --estimated VARNAME=VALUE                   估计点（可多次，支持 1+2i）\n"
-                "  -p, --precision INT                             精度 bit（默认 256）\n"
-                "  -k, --branch INT                                复数幂分支号（默认 0）\n"
-                "      --lim all | VAR:p0|n0|pinf|ninf              极限分类规格\n"
-                "  -V, --version   -G, --gpl   -h, --help\n");
+            std::fputs(pna::help_text(), stdout);
             std::exit(0);
         } else if (a == "-V" || a == "--version") {
             std::printf("polyno_err_ana %s (kernel: %s, %d bit)\n", kVersion, kernel_name(), o.precision);
@@ -396,6 +397,7 @@ Opts parse_args(int argc, char** argv) {
         o.vars.push_back(std::move(v));
     }
 
+    if (o.json_schema) return o;   // --json-schema 不需要公式/变量
     if (o.formula.empty()) usage_error("缺少 -f FORMULA");
     if (o.vars.empty()) usage_error("至少需要一个 -R 或 -C 变量");
     for (size_t i = 0; i < o.vars.size(); ++i)
@@ -430,7 +432,15 @@ Cplx value_of(const Env& env, const std::string& name) {
 
 int main(int argc, char** argv) {
     try {
+        for (int i = 1; i + 1 < argc; ++i)
+            if (std::string(argv[i]) == "--lang" && std::string(argv[i + 1]) == "en")
+                set_lang(pna::Lang::En);
         Opts o = parse_args(argc, argv);
+        set_lang(o.lang);
+        if (o.json_schema) {
+            std::fputs(pna::kJsonSchema, stdout);
+            return 0;
+        }
         set_precision(o.precision);
         set_branch(o.branch);
         set_real_root(o.real_root);
@@ -478,7 +488,10 @@ int main(int argc, char** argv) {
             vl.est = c_fmt(value_of(env, vv.decl->name));
             vl.dv = c_fmt(vv.dv);
             vl.mode = o.mode == Mode::Absolute ? "absolute" : "relative";
-            vl.note = vv.degraded ? "  [δv = 0（估计点为 0，相对误差失效）]" : "";
+            vl.note = vv.degraded
+                          ? tr("  [δv = 0（估计点为 0，相对误差失效）]",
+                               "  [δv = 0: estimate is 0, relative error not applicable]")
+                          : "";
             var_lines.push_back(std::move(vl));
         }
 
@@ -655,13 +668,14 @@ int main(int argc, char** argv) {
         print_limits(lrow);
         return 0;
     } catch (const ParseError& e) {
-        std::fprintf(stderr, "解析错误（第 %zu 列）: %s\n", e.col, e.what());
+        std::fprintf(stderr, tr("解析错误（第 %zu 列）: %s\n", "parse error (column %zu): %s\n"), e.col,
+                     e.what());
         return 1;
     } catch (const EvalError& e) {
-        std::fprintf(stderr, "求值错误: %s\n", e.what());
+        std::fprintf(stderr, tr("求值错误: %s\n", "evaluation error: %s\n"), e.what());
         return 3;
     } catch (const NumError& e) {
-        std::fprintf(stderr, "数值错误: %s\n", e.what());
+        std::fprintf(stderr, tr("数值错误: %s\n", "numeric error: %s\n"), e.what());
         return 3;
     } catch (const std::exception& e) {
         std::fprintf(stderr, "%s\n", e.what());

@@ -218,6 +218,59 @@ PY
 [ $? -eq 0 ] || { printf 'FAIL JSON 复数分类
 '; fail=$((fail+1)); }
 
+# JSON Schema 自检：schema 可解析 + 输出按 required/type/enum 校验（不依赖 jsonschema 包）
+"$BIN" --json-schema > "$TMPJSON" 2>&1
+"$PY" - "$TMPJSON" <<'PY'
+import json, sys
+schema = json.load(open(sys.argv[1], encoding="utf-8"))
+assert schema["$schema"].startswith("https://json-schema.org/draft/2020-12")
+assert set(schema["$defs"]) == {"var", "partial", "symbolic", "boundary", "limit"}
+PY
+[ $? -eq 0 ] || { printf 'FAIL --json-schema 输出
+'; fail=$((fail+1)); }
+
+"$BIN" -R x 1e-4 -C z 1e-4 1e-4 --estimated z=1+0.5i -f '(1+x)^2+z' --vars --json > "$TMPJSON" 2>&1
+"$PY" - "$TMPJSON" <<'PY'
+import json, sys
+
+doc = json.load(open(sys.argv[1], encoding="utf-8"))
+schema = json.load(open("schema/json_out.schema.json", encoding="utf-8"))
+defs = schema["$defs"]
+
+def check(node, sch, path="$"):
+    if "$ref" in sch:
+        return check(node, defs[sch["$ref"].split("/")[-1]], path)
+    t = sch.get("type")
+    if t == "object":
+        assert isinstance(node, dict), path
+        for k in sch.get("required", []):
+            assert k in node, f"{path}.{k} missing"
+        if sch.get("additionalProperties") is False:
+            extra = set(node) - set(sch["properties"])
+            assert not extra, f"{path} extra {extra}"
+        for k, sub in sch.get("properties", {}).items():
+            if k in node:
+                check(node[k], sub, f"{path}.{k}")
+    elif t == "array":
+        assert isinstance(node, list), path
+        for i, item in enumerate(node):
+            check(item, sch["items"], f"{path}[{i}]")
+    elif t == "string":
+        assert isinstance(node, str), path
+    elif t == "integer":
+        assert isinstance(node, int) and not isinstance(node, bool), path
+        assert node >= sch.get("minimum", node), path
+    elif t == "boolean":
+        assert isinstance(node, bool), path
+    if "enum" in sch:
+        assert node in sch["enum"], f"{path}={node!r} not in {sch['enum']}"
+
+check(doc, schema)
+print("schema validation ok")
+PY
+[ $? -eq 0 ] || { printf 'FAIL JSON 与 schema 不一致
+'; fail=$((fail+1)); }
+
 "$BIN" -R a 1e-4 b 1e-4 --max-terms 3 -f '(a+b)^2*(a+b)^2' --json > "$TMPJSON" 2>&1
 "$PY" - "$TMPJSON" <<'PY'
 import json, sys
@@ -228,6 +281,19 @@ PY
 '; fail=$((fail+1)); }
 rm -f "$TMPJSON"
 fi
+
+# ---- --lang en ----
+out=$(run --lang en -h)
+check_contains "英文帮助" "$out" 'Usage: polyno_err_ana'
+out=$(run --lang en -f 'a^b' -R x 1e-4)
+check_contains "英文解析错误" "$out" 'parse error (column 3)'
+out=$(run --lang en --nope -R x 1e-4 -f x)
+check_contains "英文命令行错误" "$out" 'command line error: unknown option: --nope'
+out=$(run --lang en -R x 1e-4 -f '(1+x)^4' --vars)
+check_contains "英文输出块" "$out" 'Exact boundary (one variable perturbed'
+check_contains "英文分类块" "$out" 'Limit classification (one variable perturbed'
+out=$(run --lang en -R x 1e-4 --relative --estimated x=0 -f '(1+x)^4')
+check_contains "英文 N-5 提示" "$out" 'relative error not applicable'
 
 # ---- CLI 错误路径（退出码 2） ----
 expect_rc2() {

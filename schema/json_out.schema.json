@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MarchBeta2087/polyno_err_ana/schema/json_out.schema.json",
+  "title": "polyno_err_ana --json output",
+  "description": "需求分析.md §3.9：所有数值为字符串，保持 §3.7 的格式化。",
+  "type": "object",
+  "required": ["version", "kernel", "precision", "branch", "formula", "mode", "vars", "symbolic",
+               "boundary", "limits"],
+  "additionalProperties": false,
+  "properties": {
+    "version": { "type": "string", "description": "如 0.12.0-m12" },
+    "kernel": { "enum": ["numextend", "mpfr"] },
+    "precision": { "type": "integer", "minimum": 2, "description": "位（-p）" },
+    "branch": { "type": "integer", "description": "分支号（-k）" },
+    "formula": { "type": "string" },
+    "mode": { "enum": ["absolute", "relative"] },
+    "vars": { "type": "array", "items": { "$ref": "#/$defs/var" } },
+    "symbolic": { "$ref": "#/$defs/symbolic" },
+    "boundary": { "type": "array", "items": { "$ref": "#/$defs/boundary" } },
+    "limits": { "type": "array", "items": { "$ref": "#/$defs/limit" } }
+  },
+  "$defs": {
+    "var": {
+      "type": "object",
+      "required": ["name", "estimate", "delta", "mode"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "estimate": { "type": "string" },
+        "delta": { "type": "string" },
+        "mode": { "enum": ["absolute", "relative"] }
+      }
+    },
+    "partial": {
+      "type": "object",
+      "required": ["var", "expr", "delta"],
+      "additionalProperties": false,
+      "properties": {
+        "var": { "type": "string" },
+        "expr": { "type": "string", "description": "∂f/∂v 的符号形式" },
+        "delta": { "type": "string" }
+      }
+    },
+    "symbolic": {
+      "type": "object",
+      "required": ["available", "df", "df_value", "df_f", "df_f_value", "partials"],
+      "additionalProperties": false,
+      "properties": {
+        "available": { "type": "boolean", "description": "false 时字符串为空、partials 为空数组" },
+        "df": { "type": "string" },
+        "df_value": { "type": "string" },
+        "df_f": { "type": "string" },
+        "df_f_value": { "type": "string" },
+        "partials": { "type": "array", "items": { "$ref": "#/$defs/partial" } }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "required": ["var", "r_plus", "r_minus", "r_plus_rel", "r_minus_rel"],
+      "additionalProperties": false,
+      "properties": {
+        "var": { "type": "string" },
+        "r_plus": { "type": "string" },
+        "r_minus": { "type": "string" },
+        "r_plus_rel": { "type": "string" },
+        "r_minus_rel": { "type": "string" }
+      }
+    },
+    "limit": {
+      "type": "object",
+      "required": ["var", "state", "df", "df_f"],
+      "additionalProperties": false,
+      "properties": {
+        "var": { "type": "string" },
+        "state": {
+          "enum": ["+0", "-0", "+inf", "-inf", "0", "inf"],
+          "description": "LimState；复数变量只用 0 / inf"
+        },
+        "df": { "enum": ["fin", "+0", "-0", "+inf", "-inf", "c0", "cinf", "undef"] },
+        "df_f": { "enum": ["fin", "+0", "-0", "+inf", "-inf", "c0", "cinf", "undef"] }
+      }
+    }
+  }
+}
