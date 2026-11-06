@@ -16,7 +16,7 @@ using namespace pna;
 
 namespace {
 
-constexpr const char* kVersion = "0.5.0-m5";
+constexpr const char* kVersion = "0.7.0-m7";
 
 struct Var {
     std::string name;
@@ -463,9 +463,10 @@ int main(int argc, char** argv) {
         }
 
         // 精确边界（§3.4）
+        if (!o.vars_out) std::printf("\n");
         Cplx f0 = eval(f, env);
         Real f0abs = c_abs(f0);
-        std::printf("\n  精确边界（单变量变，其余固定在估计点）\n\n");
+        std::printf("  精确边界（单变量变，其余固定在估计点）\n\n");
         std::vector<std::vector<std::string>> brow;
         for (const auto& vv : views) {
             Env ep = env, em = env;
